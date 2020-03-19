@@ -1,4 +1,4 @@
-> ⚠️ Note: This is _very much_ a WIP. Don't use this (yet!)
+> ⚠️ Note: This is _very much_ a WIP!
 
 # GroceryTime
 
