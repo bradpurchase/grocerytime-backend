@@ -1,0 +1,39 @@
+version: '3'
+services:
+  app:
+    image: grocerytime_backend:latest
+    container_name: grocerytime_server
+    volumes:
+      - app:/server
+    restart: always
+    build:
+      context: ./server
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    networks:
+      - gt-network
+
+  postgres:
+    image: postgres:latest
+    container_name: grocerytime_db
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST}
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - gt-network
+
+volumes:
+  app:
+  database_postgres:
+
+networks:
+  gt-network:
