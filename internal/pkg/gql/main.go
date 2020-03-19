@@ -61,6 +61,16 @@ func init() {
 					},
 					Resolve: resolvers.TokenResolver,
 				},
+				"createList": &graphql.Field{
+					Type:        gql.ListType,
+					Description: "Create a grocery list",
+					Args: graphql.FieldConfigArgument{
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.CreateListResolver,
+				},
 			},
 		},
 	)

@@ -1,6 +1,7 @@
 package gql
 
 import (
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
 	"github.com/graphql-go/graphql"
 )
 
@@ -26,6 +27,10 @@ var UserType = graphql.NewObject(
 			},
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
+			},
+			"lists": &graphql.Field{
+				Type:    graphql.NewList(ListType),
+				Resolve: resolvers.ListsResolver,
 			},
 		},
 	},
