@@ -13,7 +13,7 @@ func ListsResolver(p graphql.ResolveParams) (interface{}, error) {
 
 	user := p.Source.(models.User)
 	lists := []models.List{}
-	if err := db.Where("user_id = ?", p.Source.(models.User).ID).Find(&lists).Error; err != nil {
+	if err := db.Where("user_id = ?", user.ID).Find(&lists).Error; err != nil {
 		return nil, err
 	}
 	return lists, nil
