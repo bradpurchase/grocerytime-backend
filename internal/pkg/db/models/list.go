@@ -17,7 +17,6 @@ type List struct {
 	UpdatedAt time.Time
 
 	// Associations
-	User         User
 	ListUsers    []ListUser
 	GroceryTrips []GroceryTrip
 }

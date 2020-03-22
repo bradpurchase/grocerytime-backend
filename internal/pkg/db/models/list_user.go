@@ -10,8 +10,8 @@ import (
 
 type ListUser struct {
 	ID      uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
-	ListID  uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();not null"`
-	UserID  uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();not null"`
+	ListID  uuid.UUID `gorm:"type:uuid;not null"`
+	UserID  uuid.UUID `gorm:"type:uuid;not null"`
 	Creator bool      `gorm:"default:false;not null"`
 	Active  bool      `gorm:"default:true;not null"`
 

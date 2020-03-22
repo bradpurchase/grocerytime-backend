@@ -2,19 +2,25 @@ package gql
 
 import "github.com/graphql-go/graphql"
 
-// ListType defines a graphql type for List
-var ListType = graphql.NewObject(
+// ListUserType defines a graphql type for ListUser
+var ListUserType = graphql.NewObject(
 	graphql.ObjectConfig{
-		Name: "List",
+		Name: "ListUser",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.ID),
+			},
+			"listId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"userId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
-			"name": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.String),
+			"creator": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.Boolean),
+			},
+			"active": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.Boolean),
 			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
@@ -22,10 +28,6 @@ var ListType = graphql.NewObject(
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},
-			// "listUsers": &graphql.Field{
-			// 	Type: graphql.NewList(ListUserType),
-			// 	Resolve: resolvers.ListUsersResolver,
-			// },
 		},
 	},
 )

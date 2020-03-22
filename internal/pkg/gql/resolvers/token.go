@@ -37,7 +37,7 @@ func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
 		email := p.Args["email"]
 		password := p.Args["password"]
 		if email == nil || password == nil {
-			return nil, errors.New("missing required arguments for login grant type: email, password")
+			return nil, errors.New("Missing required arguments for login grant type: email, password")
 		}
 		user := &models.User{}
 		if err := db.Where("email = ?", email.(string)).First(&user).Error; err != nil {
@@ -63,7 +63,7 @@ func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
 		// than a year old, as identified by the creation time of the AuthToken record
 		refreshToken := p.Args["refreshToken"]
 		if refreshToken == nil {
-			return nil, errors.New("missing required arguments for refreshToken grant type: refreshToken")
+			return nil, errors.New("Missing required arguments for refreshToken grant type: refreshToken")
 		}
 
 		authToken := &models.AuthToken{}
@@ -82,6 +82,6 @@ func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
 
 		return newAuthToken, nil
 	default:
-		return nil, errors.New("invalid value retrieved for grantType")
+		return nil, errors.New("Invalid value retrieved for grantType")
 	}
 }

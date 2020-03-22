@@ -71,6 +71,35 @@ func init() {
 					},
 					Resolve: resolvers.CreateListResolver,
 				},
+				"addListUser": &graphql.Field{
+					Type:        gql.ListUserType,
+					Description: "Add a user to a list",
+					Args: graphql.FieldConfigArgument{
+						"listId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"email": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.AddListUserResolver,
+				},
+				"addItemToList": &graphql.Field{
+					Type:        gql.ItemType,
+					Description: "Add an item to a list",
+					Args: graphql.FieldConfigArgument{
+						"listId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"quantity": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+					},
+					Resolve: resolvers.AddItemResolver,
+				},
 			},
 		},
 	)

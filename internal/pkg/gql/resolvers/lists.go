@@ -7,6 +7,9 @@ import (
 )
 
 // ListsResolver returns List records for the current user
+//TODO: this needs to return any record where the user has a ListUser association.
+// Returning List records will only return lists the user created, not including ones
+// they got added to
 func ListsResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
