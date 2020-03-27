@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	// Postgres dialect for GORM
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
 	uuid "github.com/satori/go.uuid"
