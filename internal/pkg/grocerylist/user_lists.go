@@ -1,4 +1,4 @@
-package list
+package grocerylist
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"

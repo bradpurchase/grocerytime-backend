@@ -1,4 +1,4 @@
-package list
+package grocerylist
 
 import (
 	"testing"
