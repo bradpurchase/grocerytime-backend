@@ -1,7 +1,9 @@
 package grocerylist
 
 import (
+	"database/sql/driver"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -10,6 +12,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+type AnyTime struct{}
+
+// Match satisfies sqlmock.Argument interface
+func (a AnyTime) Match(v driver.Value) bool {
+	_, ok := v.(time.Time)
+	return ok
+}
 
 func TestAddUserToList_UserDoesntExist(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
@@ -34,11 +44,13 @@ func TestAddUserToList_UserExists(t *testing.T) {
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
+	db.LogMode(true)
 
-	email := "test@example.com"
-	list := &models.List{Name: "Test List"}
+	listID := uuid.NewV4()
+	list := &models.List{ID: listID, Name: "Test List", CreatedAt: time.Now(), UpdatedAt: time.Now()}
+
 	userID := uuid.NewV4()
-
+	email := "test@example.com"
 	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
 		WithArgs(email).
 		WillReturnRows(sqlmock.
@@ -48,13 +60,13 @@ func TestAddUserToList_UserExists(t *testing.T) {
 			}).
 			AddRow(userID, email))
 
-	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
-		WithArgs(userID).
-		WillReturnRows(sqlmock.NewRows([]string{}))
+	mock.ExpectBegin()
+	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
+		WithArgs(listID, userID, AnyTime{}, AnyTime{}).
+		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
+	mock.ExpectCommit()
 
-	//TODOmock.ExpectQuery("INSERT") because this is the case where it creates a new ListUser
-
-	userLists, err := AddUserToList(db, email, list)
+	listUser, err := AddUserToList(db, email, list)
 	require.NoError(t, err)
-	assert.Equal(t, userLists, &models.ListUser{})
+	assert.Equal(t, listUser.(*models.ListUser).UserID, userID)
 }

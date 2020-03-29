@@ -16,11 +16,10 @@ func AddUserToList(db *gorm.DB, email string, list *models.List) (interface{}, e
 	}
 
 	listUser := &models.ListUser{
-		UserID:  user.ID,
-		ListID:  list.ID,
-		Creator: false,
+		UserID: user.ID,
+		ListID: list.ID,
 	}
-	if err := db.Where(listUser).FirstOrCreate(&models.ListUser{}).Error; err != nil {
+	if err := db.Create(&listUser).Error; err != nil {
 		return nil, err
 	}
 	return listUser, nil
