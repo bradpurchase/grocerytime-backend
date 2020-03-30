@@ -6,7 +6,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// RetrieveUserLists retrieves lists that the user has created or has been added to
+// RetrieveUserLists retrieves lists that the userID has created or has been added to
 func RetrieveUserLists(db *gorm.DB, userID uuid.UUID) (interface{}, error) {
 	lists := []models.List{}
 	query := db.
@@ -19,4 +19,13 @@ func RetrieveUserLists(db *gorm.DB, userID uuid.UUID) (interface{}, error) {
 		return nil, err
 	}
 	return lists, nil
+}
+
+// RetrieveListForUser retrieves a specific list for a user
+func RetrieveListForUser(db *gorm.DB, listID interface{}, userID uuid.UUID) (interface{}, error) {
+	list := &models.List{}
+	if err := db.Where("id = ? AND user_id = ?", listID, userID).First(&list).Error; err != nil {
+		return nil, err
+	}
+	return list, nil
 }

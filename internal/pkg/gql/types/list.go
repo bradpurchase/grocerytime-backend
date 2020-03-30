@@ -1,6 +1,9 @@
 package gql
 
-import "github.com/graphql-go/graphql"
+import (
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
+	"github.com/graphql-go/graphql"
+)
 
 // ListType defines a graphql type for List
 var ListType = graphql.NewObject(
@@ -21,6 +24,15 @@ var ListType = graphql.NewObject(
 			},
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
+			},
+			"items": &graphql.Field{
+				Type: graphql.NewList(ItemType),
+				Args: graphql.FieldConfigArgument{
+					"filter": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+				},
+				Resolve: resolvers.ListItemsResolver,
 			},
 			// "listUsers": &graphql.Field{
 			// 	Type: graphql.NewList(ListUserType),

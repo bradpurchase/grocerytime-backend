@@ -7,6 +7,7 @@ import (
 	gql "github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/types"
 )
 
+// Schema defines a graphql.Schema instance
 var Schema graphql.Schema
 
 func init() {
@@ -19,6 +20,16 @@ func init() {
 					Type:        gql.UserType,
 					Description: "Retrieve the current user",
 					Resolve:     resolvers.AuthenticatedUserResolver,
+				},
+				"list": &graphql.Field{
+					Type:        gql.ListType,
+					Description: "Retrieve a list and its items",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.ListResolver,
 				},
 			},
 		},

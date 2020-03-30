@@ -18,6 +18,7 @@ type List struct {
 
 	// Associations
 	ListUsers    []ListUser
+	Item         []Item
 	GroceryTrips []GroceryTrip
 }
 
