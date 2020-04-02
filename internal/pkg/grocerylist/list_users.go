@@ -15,12 +15,11 @@ func AddUserToList(db *gorm.DB, email string, list *models.List) (interface{}, e
 		return listUser, nil
 	}
 
-	listUser := &models.ListUser{
+	listUser := models.ListUser{
 		UserID: user.ID,
 		ListID: list.ID,
 	}
-	//TODO .FirstOrCreate, OR check that the user isn't in the list already before adding
-	if err := db.Create(&listUser).Error; err != nil {
+	if err := db.Where(listUser).FirstOrCreate(&listUser).Error; err != nil {
 		return nil, err
 	}
 	return listUser, nil

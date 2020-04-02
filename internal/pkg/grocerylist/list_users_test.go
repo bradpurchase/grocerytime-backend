@@ -39,12 +39,11 @@ func TestAddUserToList_UserDoesntExist(t *testing.T) {
 	assert.Equal(t, userLists, &models.ListUser{})
 }
 
-func TestAddUserToList_UserExists(t *testing.T) {
+func TestAddUserToList_UserExistsNotYetAdded(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
-	db.LogMode(true)
 
 	listID := uuid.NewV4()
 	list := &models.List{ID: listID, Name: "Test List", CreatedAt: time.Now(), UpdatedAt: time.Now()}
@@ -60,6 +59,10 @@ func TestAddUserToList_UserExists(t *testing.T) {
 			}).
 			AddRow(userID, email))
 
+	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
+		WithArgs(listID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
 	mock.ExpectBegin()
 	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
 		WithArgs(listID, userID, AnyTime{}, AnyTime{}).
@@ -68,5 +71,36 @@ func TestAddUserToList_UserExists(t *testing.T) {
 
 	listUser, err := AddUserToList(db, email, list)
 	require.NoError(t, err)
-	assert.Equal(t, listUser.(*models.ListUser).UserID, userID)
+	assert.Equal(t, listUser.(models.ListUser).UserID, userID)
+}
+
+func TestAddUserToList_UserExistsAlreadyAdded(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listID := uuid.NewV4()
+	list := &models.List{ID: listID, Name: "Test List", CreatedAt: time.Now(), UpdatedAt: time.Now()}
+
+	userID := uuid.NewV4()
+	email := "test@example.com"
+	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
+		WithArgs(email).
+		WillReturnRows(sqlmock.
+			NewRows([]string{
+				"id",
+				"email",
+			}).
+			AddRow(userID, email))
+
+	listUserID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
+		WithArgs(listID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listUserID))
+
+	listUser, err := AddUserToList(db, email, list)
+	require.NoError(t, err)
+	assert.Equal(t, listUser.(models.ListUser).ID, listUserID)
+	assert.Equal(t, listUser.(models.ListUser).UserID, userID)
 }
