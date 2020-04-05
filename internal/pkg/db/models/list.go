@@ -25,7 +25,7 @@ type List struct {
 // AfterCreate hook to automatically create a ListUser record
 // for the user who is creating the list
 func (l *List) AfterCreate(tx *gorm.DB) (err error) {
-	var listUser = ListUser{ListID: l.ID, UserID: l.UserID, Creator: true}
+	var listUser = ListUser{ListID: l.ID, UserID: l.UserID, Creator: true, Active: true}
 	tx.Create(&listUser)
 	return nil
 }

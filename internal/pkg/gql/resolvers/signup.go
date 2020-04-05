@@ -1,10 +1,7 @@
 package resolvers
 
 import (
-	"time"
-
 	"github.com/graphql-go/graphql"
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
@@ -28,23 +25,12 @@ func SignupResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	// Create a new user account with the args provided
-	password, err := bcrypt.GenerateFromPassword([]byte(p.Args["password"].(string)), bcrypt.DefaultCost)
+	email := p.Args["email"].(string)
+	password := p.Args["password"].(string)
+	user, err := auth.CreateUser(db, email, password, apiClient.ID)
 	if err != nil {
 		return nil, err
 	}
-	user := &models.User{
-		Email:      p.Args["email"].(string),
-		Password:   string(password),
-		LastSeenAt: time.Now(),
-		Tokens: []models.AuthToken{
-			{ClientID: apiClient.ID},
-		},
-		Lists: []models.List{
-			{Name: "My Grocery List"},
-		},
-	}
-	if err := db.Create(&user).Error; err != nil {
-		return nil, err
-	}
-	return user.Tokens[0], nil
+	token := user.Tokens[0]
+	return token, nil
 }

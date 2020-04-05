@@ -46,7 +46,7 @@ func AutoMigrateService(db *gorm.DB) error {
 			// Create default API client
 			ID: "202003021034_default_api_client",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Create(&models.ApiClient{Name: "Test"}).Error
+				return tx.Create(&models.ApiClient{Name: "GroceryTime for iOS"}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Where("name = ?", "Test").Delete(&models.ApiClient{}).Error

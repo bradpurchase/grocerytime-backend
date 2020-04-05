@@ -10,7 +10,12 @@ import (
 func AddUserToList(db *gorm.DB, email string, list *models.List) (interface{}, error) {
 	user := &models.User{}
 	if err := db.Where("email = ?", email).First(&user).Error; gorm.IsRecordNotFoundError(err) {
-		// TODO User doesn't exist; need to create 'em
+		// TODO User doesn't exist flow:
+		// - Add the user to the list by email
+		// - Send an email to them asking them to sign up
+		// - When a user signs up and they are in a UserList
+		// associated by Email and not UserID, link the UserID to the UserList
+		// so that their "membership" to that list is complete
 		listUser := &models.ListUser{}
 		return listUser, nil
 	}
