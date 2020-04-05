@@ -65,7 +65,7 @@ func TestAddUserToList_UserExistsNotYetAdded(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
-		WithArgs(listID, userID, AnyTime{}, AnyTime{}).
+		WithArgs(listID, userID, "", AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
 	mock.ExpectCommit()
 
