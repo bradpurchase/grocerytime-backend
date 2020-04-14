@@ -39,20 +39,23 @@ func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
 		if email == nil || password == nil {
 			return nil, errors.New("Missing required arguments for login grant type: email, password")
 		}
+
+		//TODO i18n
+		wrongCredsMsg := "Could not log you in with those details. Please try again!"
 		user := &models.User{}
 		if err := db.Where("email = ?", email.(string)).First(&user).Error; err != nil {
-			return nil, err
+			return nil, errors.New(wrongCredsMsg)
 		}
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password.(string))); err != nil {
-			return nil, err
+			return nil, errors.New(wrongCredsMsg)
 		}
 
 		authToken := &models.AuthToken{UserID: user.ID, ClientID: apiClient.ID}
 		if err := db.Where("user_id = ? AND client_id = ?", user.ID, apiClient.ID).Delete(&authToken).Error; err != nil {
-			return nil, err
+			return nil, errors.New(wrongCredsMsg)
 		}
 		if err := db.Create(&authToken).Error; err != nil {
-			return nil, err
+			return nil, errors.New(wrongCredsMsg)
 		}
 
 		return authToken, nil

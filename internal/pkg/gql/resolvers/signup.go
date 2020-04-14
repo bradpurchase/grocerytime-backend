@@ -1,6 +1,8 @@
 package resolvers
 
 import (
+	"errors"
+
 	"github.com/graphql-go/graphql"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
@@ -29,7 +31,7 @@ func SignupResolver(p graphql.ResolveParams) (interface{}, error) {
 	password := p.Args["password"].(string)
 	user, err := auth.CreateUser(db, email, password, apiClient.ID)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Hmm, we could not sign you up successfully. Please try again")
 	}
 	token := user.Tokens[0]
 	return token, nil
