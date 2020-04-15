@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"errors"
+
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/jinzhu/gorm"
 )
@@ -13,7 +15,7 @@ func FetchAuthenticatedUser(db *gorm.DB, header string) (interface{}, error) {
 	}
 	authToken := &models.AuthToken{}
 	if err := db.Preload("User").Where("access_token = ? AND expires_in > now()", token).Last(&authToken).Error; err != nil {
-		return nil, err
+		return nil, errors.New("Token is invalid or session has expired")
 	}
 	return authToken.User, nil
 }
