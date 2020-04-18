@@ -26,11 +26,11 @@ type AuthToken struct {
 }
 
 // BeforeCreate generates the AccessToken and RefreshToken, and sets
-// ExpiresIn to 1 hour from creation time so that access tokens frequently expire
+// ExpiresIn to 10 minutes from creation time so that access tokens frequently expire
 func (c *AuthToken) BeforeCreate(scope *gorm.Scope) (err error) {
 	scope.SetColumn("AccessToken", utils.RandString(20))
 	scope.SetColumn("RefreshToken", utils.RandString(20))
-	scope.SetColumn("ExpiresIn", time.Now().Add(time.Hour*1))
+	scope.SetColumn("ExpiresIn", time.Now().Add(time.Minute*10))
 
 	return nil
 }
