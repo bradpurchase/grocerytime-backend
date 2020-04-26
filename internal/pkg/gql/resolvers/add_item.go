@@ -7,7 +7,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// AddItemResolver adds an item to the list with the listId variable
+// AddItemResolver adds an item to the list with the listId param
 func AddItemResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()

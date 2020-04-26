@@ -111,6 +111,16 @@ func init() {
 					},
 					Resolve: resolvers.AddItemResolver,
 				},
+				"deleteItem": &graphql.Field{
+					Type:        gql.ItemType,
+					Description: "Remove an item from a list",
+					Args: graphql.FieldConfigArgument{
+						"itemId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.DeleteItemResolver,
+				},
 			},
 		},
 	)
