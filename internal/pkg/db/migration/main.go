@@ -52,6 +52,19 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Where("name = ?", "Test").Delete(&models.ApiClient{}).Error
 			},
 		},
+		{
+			// Add completed to items
+			ID: "202004290846_add_completed_to_items",
+			Migrate: func(tx *gorm.DB) error {
+				type Item struct {
+					Completed bool
+				}
+				return tx.AutoMigrate(&models.Item{}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("items").DropColumn("completed").Error
+			},
+		},
 	})
 	return m.Migrate()
 }

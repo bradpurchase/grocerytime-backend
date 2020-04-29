@@ -121,6 +121,19 @@ func init() {
 					},
 					Resolve: resolvers.DeleteItemResolver,
 				},
+				"updateItem": &graphql.Field{
+					Type:        gql.ItemType,
+					Description: "Updates the properties of an item in a list",
+					Args: graphql.FieldConfigArgument{
+						"itemId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"completed": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+					},
+					Resolve: resolvers.UpdateItemResolver,
+				},
 			},
 		},
 	)
