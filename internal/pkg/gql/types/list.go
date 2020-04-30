@@ -25,6 +25,10 @@ var ListType = graphql.NewObject(
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},
+			"itemsCount": &graphql.Field{
+				Type:    graphql.Int,
+				Resolve: resolvers.ListItemsCountResolver,
+			},
 			"items": &graphql.Field{
 				Type: graphql.NewList(ItemType),
 				Args: graphql.FieldConfigArgument{
