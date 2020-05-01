@@ -21,10 +21,21 @@ func RetrieveUserLists(db *gorm.DB, userID uuid.UUID) (interface{}, error) {
 	return lists, nil
 }
 
-// RetrieveListForUser retrieves a specific list for a user
+// RetrieveListForUser retrieves a specific list by listID and userID
 func RetrieveListForUser(db *gorm.DB, listID interface{}, userID uuid.UUID) (interface{}, error) {
 	list := &models.List{}
 	if err := db.Where("id = ? AND user_id = ?", listID, userID).First(&list).Error; err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+// RetrieveListForUserByName retrieves a specific list by name and userID.
+// It is used in resolvers.CreateListResolver to determine whether a list with
+// a given name already exists in the user's account, to avoid duplicates.
+func RetrieveListForUserByName(db *gorm.DB, name string, userID uuid.UUID) (interface{}, error) {
+	list := &models.List{}
+	if err := db.Where("name = ? AND user_id = ?", name, userID).First(&list).Error; err != nil {
 		return nil, err
 	}
 	return list, nil
