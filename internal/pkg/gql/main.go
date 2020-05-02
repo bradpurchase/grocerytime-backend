@@ -74,13 +74,23 @@ func init() {
 				},
 				"createList": &graphql.Field{
 					Type:        gql.ListType,
-					Description: "Create a grocery list",
+					Description: "Create a list",
 					Args: graphql.FieldConfigArgument{
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},
 					},
 					Resolve: resolvers.CreateListResolver,
+				},
+				"deleteList": &graphql.Field{
+					Type:        gql.ListType,
+					Description: "Delete a list",
+					Args: graphql.FieldConfigArgument{
+						"listId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.DeleteListResolver,
 				},
 				"addListUser": &graphql.Field{
 					Type:        gql.ListUserType,
