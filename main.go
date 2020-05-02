@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -10,11 +9,10 @@ import (
 	// Autoload env variables from .env
 	_ "github.com/joho/godotenv/autoload"
 
+	handlers "github.com/bradpurchase/grocerytime-backend/handlers"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql"
 
 	"github.com/gorilla/mux"
-	"github.com/graphql-go/handler"
 )
 
 func main() {
@@ -24,16 +22,7 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", heartbeat)
-	router.Handle("/graphql", handler.New(&handler.Config{
-		Schema:   &gql.Schema,
-		Pretty:   true,
-		GraphiQL: true,
-		RootObjectFn: func(ctx context.Context, r *http.Request) map[string]interface{} {
-			return map[string]interface{}{
-				"Authorization": r.Header.Get("Authorization"),
-			}
-		},
-	}))
+	router.Handle("/graphql", handlers.GraphQLHandler())
 
 	port := os.Getenv("PORT")
 	log.Println("[main] ...Listening on port " + port)

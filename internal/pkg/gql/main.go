@@ -138,11 +138,25 @@ func init() {
 		},
 	)
 
+	// Define the root subscription type
+	subscriptionType := graphql.NewObject(graphql.ObjectConfig{
+		Name: "Subscription",
+		Fields: graphql.Fields{
+			"newItemInList": &graphql.Field{
+				Type: gql.ItemType,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					return p.Info.RootValue, nil
+				},
+			},
+		},
+	})
+
 	var err error
 	Schema, err = graphql.NewSchema(
 		graphql.SchemaConfig{
-			Query:    queryType,
-			Mutation: mutationType,
+			Query:        queryType,
+			Mutation:     mutationType,
+			Subscription: subscriptionType,
 		},
 	)
 	if err != nil {
