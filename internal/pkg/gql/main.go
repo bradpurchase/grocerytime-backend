@@ -92,6 +92,19 @@ func init() {
 					},
 					Resolve: resolvers.DeleteListResolver,
 				},
+				"updateList": &graphql.Field{
+					Type:        gql.ListType,
+					Description: "Update a list",
+					Args: graphql.FieldConfigArgument{
+						"listId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+					},
+					Resolve: resolvers.UpdateListResolver,
+				},
 				"addListUser": &graphql.Field{
 					Type:        gql.ListUserType,
 					Description: "Add a user to a list",
