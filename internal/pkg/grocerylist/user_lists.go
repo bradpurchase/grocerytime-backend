@@ -41,9 +41,8 @@ func RetrieveListForUserByName(db *gorm.DB, name string, userID uuid.UUID) (inte
 	return list, nil
 }
 
-// DeleteList deletes a list, its associated list users, and notifies
-// the list users that the list has been deleted
-// RetrieveListForUser retrieves a specific list by listID and userID
+// DeleteList deletes a list, its associated items, list users,
+// and notifies the list users that the list has been deleted
 func DeleteList(db *gorm.DB, listID interface{}, userID uuid.UUID) (interface{}, error) {
 	list := &models.List{}
 	if err := db.Where("id = ? AND user_id = ?", listID, userID).First(&list).Error; err != nil {
@@ -53,14 +52,22 @@ func DeleteList(db *gorm.DB, listID interface{}, userID uuid.UUID) (interface{},
 		return nil, err
 	}
 
-	listUsers := &models.ListUser{}
+	// Delete items, note: we can just use `.Delete` directly here because
+	// we don't need to do anything with the items after deletion.
+	// for list users we need to fetch, notify, and *then* delete
+	items := &[]models.Item{}
+	if err := db.Where("list_id = ?", listID).Delete(&items).Error; err != nil {
+		return nil, err
+	}
+
+	listUsers := &[]models.ListUser{}
 	if err := db.Where("list_id = ?", listID).Find(&listUsers).Error; err != nil {
 		return nil, err
 	}
 
 	//TODO notify list users that list was deleted (except creator)
 
-	if err := db.Delete(&listUsers).Error; err != nil {
+	if err := db.Where("list_id = ?", listID).Delete(&listUsers).Error; err != nil {
 		return nil, err
 	}
 

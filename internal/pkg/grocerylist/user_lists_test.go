@@ -200,12 +200,19 @@ func TestDeleteList_ListFound(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
+	mock.ExpectBegin()
+	mock.ExpectExec("^DELETE FROM \"items\" WHERE*").
+		WithArgs(listID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
 		WithArgs(listID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
 
 	mock.ExpectBegin()
-	mock.ExpectExec("^DELETE FROM \"list_users\" (.+)$").
+	mock.ExpectExec("DELETE FROM \"list_users\" WHERE*").
+		WithArgs(listID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 

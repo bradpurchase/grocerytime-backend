@@ -8,8 +8,8 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// DeleteListResolver deletes a list, its associated list users, and notifies
-// the list users that the list has been deleted
+// DeleteListResolver resolves the deleteList mutation by deleting a list
+// and its associated list users and items
 func DeleteListResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
