@@ -21,11 +21,55 @@ func RetrieveUserLists(db *gorm.DB, userID uuid.UUID) (interface{}, error) {
 	return lists, nil
 }
 
-// RetrieveListForUser retrieves a specific list for a user
+// RetrieveListForUser retrieves a specific list by listID and userID
 func RetrieveListForUser(db *gorm.DB, listID interface{}, userID uuid.UUID) (interface{}, error) {
 	list := &models.List{}
 	if err := db.Where("id = ? AND user_id = ?", listID, userID).First(&list).Error; err != nil {
 		return nil, err
 	}
+	return list, nil
+}
+
+// RetrieveListForUserByName retrieves a specific list by name and userID.
+// It is used in resolvers.CreateListResolver to determine whether a list with
+// a given name already exists in the user's account, to avoid duplicates.
+func RetrieveListForUserByName(db *gorm.DB, name string, userID uuid.UUID) (interface{}, error) {
+	list := &models.List{}
+	if err := db.Where("name = ? AND user_id = ?", name, userID).First(&list).Error; err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+// DeleteList deletes a list, its associated items, list users,
+// and notifies the list users that the list has been deleted
+func DeleteList(db *gorm.DB, listID interface{}, userID uuid.UUID) (interface{}, error) {
+	list := &models.List{}
+	if err := db.Where("id = ? AND user_id = ?", listID, userID).First(&list).Error; err != nil {
+		return nil, err
+	}
+	if err := db.Delete(&list).Error; err != nil {
+		return nil, err
+	}
+
+	// Delete items, note: we can just use `.Delete` directly here because
+	// we don't need to do anything with the items after deletion.
+	// for list users we need to fetch, notify, and *then* delete
+	items := &[]models.Item{}
+	if err := db.Where("list_id = ?", listID).Delete(&items).Error; err != nil {
+		return nil, err
+	}
+
+	listUsers := &[]models.ListUser{}
+	if err := db.Where("list_id = ?", listID).Find(&listUsers).Error; err != nil {
+		return nil, err
+	}
+
+	//TODO notify list users that list was deleted (except creator)
+
+	if err := db.Where("list_id = ?", listID).Delete(&listUsers).Error; err != nil {
+		return nil, err
+	}
+
 	return list, nil
 }

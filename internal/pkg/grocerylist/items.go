@@ -9,7 +9,7 @@ import (
 // RetrieveItemsInList finds all items in a list by listID
 func RetrieveItemsInList(db *gorm.DB, listID uuid.UUID) (interface{}, error) {
 	items := []models.Item{}
-	if err := db.Where("list_id = ?", listID).Find(&items).Error; err != nil {
+	if err := db.Where("list_id = ?", listID).Order("completed ASC").Find(&items).Error; err != nil {
 		return nil, err
 	}
 	return items, nil

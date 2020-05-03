@@ -19,3 +19,17 @@ func ListItemsResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 	return items, nil
 }
+
+// ListItemsCountResolver returns a count of items in a list
+func ListItemsCountResolver(p graphql.ResolveParams) (interface{}, error) {
+	db := db.FetchConnection()
+	defer db.Close()
+
+	listID := p.Source.(models.List).ID
+	items, err := grocerylist.RetrieveItemsInList(db, listID)
+	if err != nil {
+		return 0, err
+	}
+	itemsCount := len(items.([]models.Item))
+	return itemsCount, nil
+}

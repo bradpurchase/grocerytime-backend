@@ -131,3 +131,92 @@ func TestRetrieveListForUser_Found(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, list.(*models.List).Name, "Example List")
 }
+
+func TestRetrieveListForUserByName_NotFound(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listName := "Example List"
+	userID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listName, userID).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
+	_, e := RetrieveListForUserByName(db, listName, userID)
+	require.Error(t, e)
+	assert.Equal(t, e.Error(), "record not found")
+}
+
+func TestRetrieveListForUserByName_Found(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listName := "Example List"
+	userID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listName, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"name", "user_id"}).AddRow(listName, userID))
+
+	list, err := RetrieveListForUserByName(db, listName, userID)
+	require.NoError(t, err)
+	assert.Equal(t, list.(*models.List).Name, listName)
+}
+
+func TestDeleteList_ListNotFound(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listID := uuid.NewV4()
+	userID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
+	_, e := DeleteList(db, listID, userID)
+	require.Error(t, e)
+	assert.Equal(t, e.Error(), "record not found")
+}
+
+func TestDeleteList_ListFound(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listID := uuid.NewV4()
+	userID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(listID, userID))
+
+	mock.ExpectBegin()
+	mock.ExpectExec("^DELETE FROM \"lists\" (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	mock.ExpectBegin()
+	mock.ExpectExec("^DELETE FROM \"items\" WHERE*").
+		WithArgs(listID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
+
+	mock.ExpectBegin()
+	mock.ExpectExec("DELETE FROM \"list_users\" WHERE*").
+		WithArgs(listID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	list, err := DeleteList(db, listID, userID)
+	require.NoError(t, err)
+	assert.Equal(t, list.(*models.List).ID, listID)
+}
