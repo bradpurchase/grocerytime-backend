@@ -25,3 +25,16 @@ func ListResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 	return list, nil
 }
+
+// SharableListResolver resolves the sharableList GraphQL query by retrieving
+// basic info about a list for sharing purposes
+func SharableListResolver(p graphql.ResolveParams) (interface{}, error) {
+	db := db.FetchConnection()
+	defer db.Close()
+
+	list, err := grocerylist.RetrieveSharableList(db, p.Args["id"])
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
+}

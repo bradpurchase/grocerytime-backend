@@ -38,6 +38,10 @@ var ListType = graphql.NewObject(
 				},
 				Resolve: resolvers.ListItemsResolver,
 			},
+			"creator": &graphql.Field{
+				Type:    BasicUserType,
+				Resolve: resolvers.BasicUserResolver,
+			},
 			// "listUsers": &graphql.Field{
 			// 	Type: graphql.NewList(ListUserType),
 			// 	Resolve: resolvers.ListUsersResolver,

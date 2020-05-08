@@ -31,6 +31,16 @@ func init() {
 					},
 					Resolve: resolvers.ListResolver,
 				},
+				"sharableList": &graphql.Field{
+					Type:        gql.ListType,
+					Description: "Retrieve basic info about a list for sharing",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.SharableListResolver,
+				},
 			},
 		},
 	)
