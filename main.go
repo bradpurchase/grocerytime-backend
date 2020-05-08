@@ -24,7 +24,8 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", heartbeat)
-	router.Handle("/graphql", handler.New(&handler.Config{
+
+	gqlHandler := handler.New(&handler.Config{
 		Schema:   &gql.Schema,
 		Pretty:   true,
 		GraphiQL: true,
@@ -33,7 +34,8 @@ func main() {
 				"Authorization": r.Header.Get("Authorization"),
 			}
 		},
-	}))
+	})
+	router.Handle("/graphql", corsHandler(gqlHandler))
 
 	port := os.Getenv("PORT")
 	log.Println("[main] ...Listening on port " + port)
@@ -47,4 +49,14 @@ type heartbeatResponse struct {
 
 func heartbeat(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(heartbeatResponse{Status: "OK", Code: 200})
+}
+
+func corsHandler(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, Content-Length, Accept-Encoding")
+
+		h.ServeHTTP(w, r)
+	})
 }
