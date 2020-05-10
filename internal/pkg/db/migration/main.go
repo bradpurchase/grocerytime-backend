@@ -65,6 +65,16 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Table("items").DropColumn("completed").Error
 			},
 		},
+		{
+			// Create web app API client
+			ID: "202005101540_webapp_api_client",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Create(&models.ApiClient{Name: "GroceryTime for Web"}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Where("name = ?", "Test").Delete(&models.ApiClient{}).Error
+			},
+		},
 	})
 	return m.Migrate()
 }
