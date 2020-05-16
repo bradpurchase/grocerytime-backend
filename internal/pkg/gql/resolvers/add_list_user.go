@@ -31,8 +31,8 @@ func AddListUserResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	email := p.Args["email"].(string)
-	listUser, err := grocerylist.AddUserToList(db, email, list)
+	sharedUserID := p.Args["userId"].(string)
+	listUser, err := grocerylist.AddUserToList(db, sharedUserID, list)
 	if err != nil {
 		return nil, err
 	}

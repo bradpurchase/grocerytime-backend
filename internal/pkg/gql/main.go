@@ -122,8 +122,8 @@ func init() {
 						"listId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
-						"email": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
+						"userId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},
 					Resolve: resolvers.AddListUserResolver,
