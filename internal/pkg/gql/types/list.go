@@ -42,10 +42,10 @@ var ListType = graphql.NewObject(
 				Type:    BasicUserType,
 				Resolve: resolvers.BasicUserResolver,
 			},
-			// "listUsers": &graphql.Field{
-			// 	Type: graphql.NewList(ListUserType),
-			// 	Resolve: resolvers.ListUsersResolver,
-			// },
+			"listUsers": &graphql.Field{
+				Type:    graphql.NewList(ListUserType),
+				Resolve: resolvers.ListUsersResolver,
+			},
 		},
 	},
 )

@@ -104,3 +104,34 @@ func TestAddUserToList_UserExistsAlreadyAdded(t *testing.T) {
 	assert.Equal(t, listUser.(models.ListUser).ID, listUserID)
 	assert.Equal(t, listUser.(models.ListUser).UserID, userID)
 }
+
+func TestRetrieveListUsers_HasListUsers(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listID := uuid.NewV4()
+	list := &models.List{ID: listID, Name: "Test List", CreatedAt: time.Now(), UpdatedAt: time.Now()}
+
+	listUserRows := sqlmock.
+		NewRows([]string{
+			"id",
+			"list_id",
+			"user_id",
+			"creator",
+			"active",
+			"created_at",
+			"updated_at",
+		}).
+		AddRow(uuid.NewV4(), listID, uuid.NewV4(), true, true, time.Now(), time.Now()).
+		AddRow(uuid.NewV4(), listID, uuid.NewV4(), false, true, time.Now(), time.Now())
+	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
+		WithArgs(listID).
+		WillReturnRows(listUserRows)
+
+	listUsers, err := RetrieveListUsers(db, list.ID)
+	require.NoError(t, err)
+	assert.Equal(t, len(listUsers.([]models.ListUser)), 2)
+	assert.Equal(t, listUsers.([]models.ListUser)[0].ListID, list.ID)
+}
