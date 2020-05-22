@@ -27,6 +27,7 @@ func TestAddUserToList_UserDoesntExist(t *testing.T) {
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
 
+	userID := uuid.NewV4()
 	email := "test@example.com"
 	list := &models.List{Name: "Test List"}
 
@@ -34,7 +35,7 @@ func TestAddUserToList_UserDoesntExist(t *testing.T) {
 		WithArgs(email).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	userLists, err := AddUserToList(db, email, list)
+	userLists, err := AddUserToList(db, userID, list)
 	require.NoError(t, err)
 	assert.Equal(t, userLists, &models.ListUser{})
 }
@@ -49,15 +50,13 @@ func TestAddUserToList_UserExistsNotYetAdded(t *testing.T) {
 	list := &models.List{ID: listID, Name: "Test List", CreatedAt: time.Now(), UpdatedAt: time.Now()}
 
 	userID := uuid.NewV4()
-	email := "test@example.com"
 	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
-		WithArgs(email).
+		WithArgs(userID).
 		WillReturnRows(sqlmock.
 			NewRows([]string{
 				"id",
-				"email",
 			}).
-			AddRow(userID, email))
+			AddRow(userID))
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
 		WithArgs(listID, userID).
@@ -69,7 +68,7 @@ func TestAddUserToList_UserExistsNotYetAdded(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
 	mock.ExpectCommit()
 
-	listUser, err := AddUserToList(db, email, list)
+	listUser, err := AddUserToList(db, userID, list)
 	require.NoError(t, err)
 	assert.Equal(t, listUser.(models.ListUser).UserID, userID)
 }
@@ -84,22 +83,20 @@ func TestAddUserToList_UserExistsAlreadyAdded(t *testing.T) {
 	list := &models.List{ID: listID, Name: "Test List", CreatedAt: time.Now(), UpdatedAt: time.Now()}
 
 	userID := uuid.NewV4()
-	email := "test@example.com"
 	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
-		WithArgs(email).
+		WithArgs(userID).
 		WillReturnRows(sqlmock.
 			NewRows([]string{
 				"id",
-				"email",
 			}).
-			AddRow(userID, email))
+			AddRow(userID))
 
 	listUserID := uuid.NewV4()
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
 		WithArgs(listID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listUserID))
 
-	listUser, err := AddUserToList(db, email, list)
+	listUser, err := AddUserToList(db, userID, list)
 	require.NoError(t, err)
 	assert.Equal(t, listUser.(models.ListUser).ID, listUserID)
 	assert.Equal(t, listUser.(models.ListUser).UserID, userID)

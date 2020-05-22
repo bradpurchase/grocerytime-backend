@@ -7,7 +7,7 @@ import (
 )
 
 // AddUserToList adds a user to a list by user ID
-func AddUserToList(db *gorm.DB, userID string, list *models.List) (interface{}, error) {
+func AddUserToList(db *gorm.DB, userID uuid.UUID, list *models.List) (interface{}, error) {
 	user := &models.User{}
 	if err := db.Where("id = ?", userID).First(&user).Error; gorm.IsRecordNotFoundError(err) {
 		listUser := &models.ListUser{}

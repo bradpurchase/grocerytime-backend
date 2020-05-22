@@ -115,18 +115,15 @@ func init() {
 					},
 					Resolve: resolvers.UpdateListResolver,
 				},
-				"addListUser": &graphql.Field{
+				"joinList": &graphql.Field{
 					Type:        gql.ListUserType,
-					Description: "Add a user to a list",
+					Description: "Join a list via share link",
 					Args: graphql.FieldConfigArgument{
 						"listId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
-						"userId": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.ID),
-						},
 					},
-					Resolve: resolvers.AddListUserResolver,
+					Resolve: resolvers.JoinListResolver,
 				},
 				"addItemToList": &graphql.Field{
 					Type:        gql.ItemType,
