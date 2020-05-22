@@ -8,14 +8,8 @@ import (
 
 // AddUserToList adds a user to a list by user ID
 func AddUserToList(db *gorm.DB, userID uuid.UUID, list *models.List) (interface{}, error) {
-	user := &models.User{}
-	if err := db.Where("id = ?", userID).First(&user).Error; gorm.IsRecordNotFoundError(err) {
-		listUser := &models.ListUser{}
-		return listUser, nil
-	}
-
 	listUser := models.ListUser{
-		UserID: user.ID,
+		UserID: userID,
 		ListID: list.ID,
 	}
 	if err := db.Where(listUser).FirstOrCreate(&listUser).Error; err != nil {
