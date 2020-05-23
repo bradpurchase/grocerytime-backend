@@ -194,6 +194,39 @@ func TestRetrieveListForUserByName_Found(t *testing.T) {
 	assert.Equal(t, list.(*models.List).Name, listName)
 }
 
+func TestRetrieveSharableList_NotFound(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
+	_, e := RetrieveSharableList(db, listID)
+	require.Error(t, e)
+	//assert.Equal(t, list.(*models.List).Name, listID)
+}
+
+func TestRetrieveSharableList_Found(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(listID, "My Test List"))
+
+	list, e := RetrieveSharableList(db, listID)
+	require.NoError(t, e)
+	assert.Equal(t, list.(*models.List).ID, listID)
+	assert.Equal(t, list.(*models.List).Name, "My Test List")
+}
+
 func TestDeleteList_ListNotFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
