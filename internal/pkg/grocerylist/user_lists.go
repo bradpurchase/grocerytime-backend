@@ -26,7 +26,12 @@ func RetrieveUserLists(db *gorm.DB, userID uuid.UUID) (interface{}, error) {
 // RetrieveListForUser retrieves a specific list by listID and userID
 func RetrieveListForUser(db *gorm.DB, listID interface{}, userID uuid.UUID) (interface{}, error) {
 	list := &models.List{}
-	if err := db.Where("id = ? AND user_id = ?", listID, userID).First(&list).Error; err != nil {
+	if err := db.Where("id = ?", listID).First(&list).Error; err != nil {
+		return nil, err
+	}
+	// Check that the passed userID is a member of this list
+	listUser := &models.ListUser{}
+	if err := db.Where("list_id = ? AND user_id = ? AND active = ?", listID, userID, true).First(&listUser).Error; err != nil {
 		return nil, err
 	}
 	return list, nil
