@@ -18,7 +18,7 @@ func NewItemInList(p graphql.ResolveParams) (interface{}, error) {
 	rootValue := p.Info.RootValue.(map[string]interface{})
 	payload := rootValue["addItemToList"].(map[string]interface{})
 
-	listID := p.Args["list_id"]
+	listID := p.Args["listId"]
 	item := &models.Item{}
 	if err := db.Where("id = ? AND list_id = ?", payload["id"], listID).First(&item).Error; err != nil {
 		return nil, err
