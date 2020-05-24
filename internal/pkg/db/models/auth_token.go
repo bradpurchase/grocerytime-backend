@@ -1,6 +1,7 @@
 package models
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -28,6 +29,7 @@ type AuthToken struct {
 // BeforeCreate generates the AccessToken and RefreshToken, and sets
 // ExpiresIn to 10 minutes from creation time so that access tokens frequently expire
 func (c *AuthToken) BeforeCreate(scope *gorm.Scope) (err error) {
+	rand.Seed(time.Now().UnixNano())
 	scope.SetColumn("AccessToken", utils.RandString(20))
 	scope.SetColumn("RefreshToken", utils.RandString(20))
 	scope.SetColumn("ExpiresIn", time.Now().Add(time.Minute*10))

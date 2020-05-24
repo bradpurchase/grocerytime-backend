@@ -1,6 +1,8 @@
 package grocerylist
 
 import (
+	"errors"
+
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
@@ -24,7 +26,12 @@ func RetrieveUserLists(db *gorm.DB, userID uuid.UUID) (interface{}, error) {
 // RetrieveListForUser retrieves a specific list by listID and userID
 func RetrieveListForUser(db *gorm.DB, listID interface{}, userID uuid.UUID) (interface{}, error) {
 	list := &models.List{}
-	if err := db.Where("id = ? AND user_id = ?", listID, userID).First(&list).Error; err != nil {
+	if err := db.Where("id = ?", listID).First(&list).Error; err != nil {
+		return nil, err
+	}
+	// Check that the passed userID is a member of this list
+	listUser := &models.ListUser{}
+	if err := db.Where("list_id = ? AND user_id = ? AND active = ?", listID, userID, true).First(&listUser).Error; err != nil {
 		return nil, err
 	}
 	return list, nil
@@ -37,6 +44,21 @@ func RetrieveListForUserByName(db *gorm.DB, name string, userID uuid.UUID) (inte
 	list := &models.List{}
 	if err := db.Where("name = ? AND user_id = ?", name, userID).First(&list).Error; err != nil {
 		return nil, err
+	}
+	return list, nil
+}
+
+// RetrieveSharableList retrieves only publicly information about a list.
+// It is used on the share web app to display basic info about a list that someone has been invited to
+func RetrieveSharableList(db *gorm.DB, listID interface{}) (interface{}, error) {
+	list := &models.List{}
+	query := db.
+		Select("lists.id, lists.name, lists.user_id").
+		Where("lists.id = ?", listID).
+		Find(&list).
+		Error
+	if err := query; err != nil {
+		return nil, errors.New("list not found")
 	}
 	return list, nil
 }

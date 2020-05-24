@@ -31,6 +31,16 @@ func init() {
 					},
 					Resolve: resolvers.ListResolver,
 				},
+				"sharableList": &graphql.Field{
+					Type:        gql.ListType,
+					Description: "Retrieve basic info about a list for sharing",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.SharableListResolver,
+				},
 			},
 		},
 	)
@@ -105,18 +115,15 @@ func init() {
 					},
 					Resolve: resolvers.UpdateListResolver,
 				},
-				"addListUser": &graphql.Field{
+				"joinList": &graphql.Field{
 					Type:        gql.ListUserType,
-					Description: "Add a user to a list",
+					Description: "Join a list via share link",
 					Args: graphql.FieldConfigArgument{
 						"listId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
-						"email": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
 					},
-					Resolve: resolvers.AddListUserResolver,
+					Resolve: resolvers.JoinListResolver,
 				},
 				"addItemToList": &graphql.Field{
 					Type:        gql.ItemType,

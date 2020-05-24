@@ -8,8 +8,8 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// ListResolver resolves the list GraphQL query by retrieving a list by ID param
-func ListResolver(p graphql.ResolveParams) (interface{}, error) {
+// JoinListResolver adds the current user to a list
+func JoinListResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
@@ -19,22 +19,16 @@ func ListResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	list, err := grocerylist.RetrieveListForUser(db, p.Args["id"], user.(models.User).ID)
+	// Verify that the list with the ID provided exists
+	list := &models.List{}
+	if err := db.Where("id = ?", p.Args["listId"]).First(&list).Error; err != nil {
+		return nil, err
+	}
+
+	userID := user.(models.User).ID
+	listUser, err := grocerylist.AddUserToList(db, userID, list)
 	if err != nil {
 		return nil, err
 	}
-	return list, nil
-}
-
-// SharableListResolver resolves the sharableList GraphQL query by retrieving
-// basic info about a list for sharing purposes
-func SharableListResolver(p graphql.ResolveParams) (interface{}, error) {
-	db := db.FetchConnection()
-	defer db.Close()
-
-	list, err := grocerylist.RetrieveSharableList(db, p.Args["id"])
-	if err != nil {
-		return nil, err
-	}
-	return list, nil
+	return listUser, nil
 }

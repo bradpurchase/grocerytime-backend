@@ -5,6 +5,7 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 )
 
 // AuthenticatedUserResolver resolves me GraphQL query by returning the
@@ -16,6 +17,19 @@ func AuthenticatedUserResolver(p graphql.ResolveParams) (interface{}, error) {
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(db, header.(string))
 	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+// BasicUserResolver resolves the creator field in the ListType by retrieving
+// basic information about a user (email, first name, last name)
+func BasicUserResolver(p graphql.ResolveParams) (interface{}, error) {
+	db := db.FetchConnection()
+	defer db.Close()
+
+	user := &models.User{}
+	if err := db.Where("id = ?", p.Source.(*models.List).UserID).Find(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
