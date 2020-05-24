@@ -174,7 +174,13 @@ func init() {
 		Name: "Subscription",
 		Fields: graphql.Fields{
 			"newItemInList": &graphql.Field{
-				Type:    gql.ItemType,
+				Type:        gql.ItemType,
+				Description: "Retrieve a new item in a list",
+				Args: graphql.FieldConfigArgument{
+					"listId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.ID),
+					},
+				},
 				Resolve: subscriptions.NewItemInList,
 			},
 		},

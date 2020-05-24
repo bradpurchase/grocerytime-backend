@@ -26,10 +26,11 @@ func AddItemResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	item := &models.Item{
-		ListID:   listUser.ListID,
-		UserID:   userID,
-		Name:     p.Args["name"].(string),
-		Quantity: p.Args["quantity"].(int),
+		ListID:    listUser.ListID,
+		UserID:    userID,
+		Name:      p.Args["name"].(string),
+		Quantity:  p.Args["quantity"].(int),
+		Completed: false,
 	}
 	if err := db.Create(&item).Error; err != nil {
 		return nil, err
