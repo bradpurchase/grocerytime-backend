@@ -4,6 +4,7 @@ import (
 	"github.com/graphql-go/graphql"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/subscriptions"
 	gql "github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/types"
 )
 
@@ -168,11 +169,23 @@ func init() {
 		},
 	)
 
+	// Define the root subscription type
+	subscriptionType := graphql.NewObject(graphql.ObjectConfig{
+		Name: "Subscription",
+		Fields: graphql.Fields{
+			"newItemInList": &graphql.Field{
+				Type:    gql.ItemType,
+				Resolve: subscriptions.NewItemInList,
+			},
+		},
+	})
+
 	var err error
 	Schema, err = graphql.NewSchema(
 		graphql.SchemaConfig{
-			Query:    queryType,
-			Mutation: mutationType,
+			Query:        queryType,
+			Mutation:     mutationType,
+			Subscription: subscriptionType,
 		},
 	)
 	if err != nil {
