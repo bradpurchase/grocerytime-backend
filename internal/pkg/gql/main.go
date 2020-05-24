@@ -4,6 +4,7 @@ import (
 	"github.com/graphql-go/graphql"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/subscriptions"
 	gql "github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/types"
 )
 
@@ -173,10 +174,8 @@ func init() {
 		Name: "Subscription",
 		Fields: graphql.Fields{
 			"newItemInList": &graphql.Field{
-				Type: gql.ItemType,
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					return p.Info.RootValue, nil
-				},
+				Type:    gql.ItemType,
+				Resolve: subscriptions.NewItemInList,
 			},
 		},
 	})

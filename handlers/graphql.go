@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -26,8 +27,6 @@ func GraphQLHandler() http.HandlerFunc {
 			VariableValues: opts.Variables,
 			OperationName:  opts.OperationName,
 			RootObject:     rootValue,
-			// Pretty:         true,
-			// GraphiQL:       true,
 		}
 
 		result := graphql.Do(params)
@@ -38,11 +37,17 @@ func GraphQLHandler() http.HandlerFunc {
 			return
 		}
 
-		//TODO publish to graphql pub/sub for subscriptions here
-		log.Println(opts.OperationName)
+		// Publish to graphql pub/sub for subscriptions here
+		operationName := opts.OperationName
+		if operationName == "AddItemToList" {
+			fmt.Printf("publishing message %v\n", result.Data)
+			gqlPubSub.Publish("newItemInList", result.Data)
+		}
 
 		response.WriteHeader(http.StatusOK)
 		response.Header().Set("Access-Control-Allow-Origin", "*")
+		response.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		response.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, Content-Length, Accept-Encoding")
 		response.Write(payload)
 	}
 }

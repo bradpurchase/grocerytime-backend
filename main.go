@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/bradpurchase/grocerytime-backend/handlers"
+
 	// Autoload env variables from .env
 
 	_ "github.com/joho/godotenv/autoload"
 
-	handlers "github.com/bradpurchase/grocerytime-backend/handlers"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 
 	"github.com/gorilla/mux"
@@ -23,7 +24,9 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", heartbeat)
-	router.Handle("/graphql", corsHandler(handlers.GraphQLHandler()))
+
+	router.Handle("/graphql", handlers.GraphQLHandler())
+	router.Handle("/subscriptions", handlers.WebsocketHandler())
 
 	port := os.Getenv("PORT")
 	log.Println("[main] ...Listening on port " + port)
