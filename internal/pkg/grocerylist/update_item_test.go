@@ -129,14 +129,19 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	args := map[string]interface{}{"itemId": itemID, "quantity": 10, "completed": true}
+	args := map[string]interface{}{
+		"itemId":    itemID,
+		"quantity":  10,
+		"completed": true,
+		"name":      "Bananas",
+	}
 	item, err := UpdateItem(db, args)
 	require.NoError(t, err)
 	// Assert only quantity and completed states changed
 	assert.Equal(t, item.(*models.Item).ID, itemID)
 	assert.Equal(t, item.(*models.Item).ListID, listID)
 	assert.Equal(t, item.(*models.Item).UserID, userID)
-	assert.Equal(t, item.(*models.Item).Name, "Apples")
+	assert.Equal(t, item.(*models.Item).Name, "Bananas")
 	assert.Equal(t, item.(*models.Item).Quantity, 10)
 	assert.Equal(t, item.(*models.Item).Completed, true)
 }

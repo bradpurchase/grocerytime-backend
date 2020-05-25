@@ -159,8 +159,14 @@ func init() {
 						"itemId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 						"completed": &graphql.ArgumentConfig{
 							Type: graphql.Boolean,
+						},
+						"quantity": &graphql.ArgumentConfig{
+							Type: graphql.Int,
 						},
 					},
 					Resolve: resolvers.UpdateItemResolver,

@@ -12,6 +12,9 @@ func UpdateItem(db *gorm.DB, args map[string]interface{}) (interface{}, error) {
 		return nil, err
 	}
 
+	if args["name"] != nil {
+		item.Name = args["name"].(string)
+	}
 	if args["completed"] != nil {
 		item.Completed = args["completed"].(bool)
 	}
