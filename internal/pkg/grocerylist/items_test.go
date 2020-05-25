@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRetrieveItemsInLists_NoItems(t *testing.T) {
+func TestRetrieveItemsInList_NoItems(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
@@ -30,7 +30,7 @@ func TestRetrieveItemsInLists_NoItems(t *testing.T) {
 	assert.Equal(t, len(items.([]models.Item)), 0)
 }
 
-func TestRetrieveItemsInLists_HasItems(t *testing.T) {
+func TestRetrieveItemsInList_HasItems(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
@@ -61,4 +61,8 @@ func TestRetrieveItemsInLists_HasItems(t *testing.T) {
 	assert.Equal(t, items.([]models.Item)[0].ListID, list.ID)
 	assert.Equal(t, items.([]models.Item)[0].Name, "Apples")
 	assert.Equal(t, items.([]models.Item)[1].Name, "Bananas")
+}
+
+func TestRetrieveItemsInList_Order(t *testing.T) {
+	//TODO write test proving order.. new ones on top, completed ones on bottom
 }
