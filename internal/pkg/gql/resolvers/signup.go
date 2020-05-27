@@ -1,13 +1,14 @@
 package resolvers
 
 import (
-	"errors"
+	"log"
 
 	"github.com/graphql-go/graphql"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
 )
 
 // SignupResolver creates a new user account and assigns it a
@@ -31,8 +32,16 @@ func SignupResolver(p graphql.ResolveParams) (interface{}, error) {
 	password := p.Args["password"].(string)
 	user, err := auth.CreateUser(db, email, password, apiClient.ID)
 	if err != nil {
-		return nil, errors.New("Hmm, we could not sign you up successfully. Please try again")
+		return nil, err
 	}
 	token := user.Tokens[0]
+
+	// Finally, send an email upon signup
+	mail, mailErr := mailer.SendNewUserEmail(user)
+	if mailErr != nil {
+		return nil, mailErr
+	}
+	log.Println(mail)
+
 	return token, nil
 }

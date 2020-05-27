@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"time"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -15,7 +16,13 @@ func CreateUser(db *gorm.DB, email string, password string, clientID uuid.UUID) 
 	if err != nil {
 		return nil, err
 	}
-	//TODO handle dupe email
+
+	// Handle dupe email
+	dupeUser := &models.User{}
+	if err := db.Where("email = ?", email).First(&dupeUser).Error; !gorm.IsRecordNotFoundError(err) {
+		return nil, errors.New("An account with this email address already exists")
+	}
+
 	user := &models.User{
 		Email:      email,
 		Password:   string(passhash),
@@ -30,10 +37,6 @@ func CreateUser(db *gorm.DB, email string, password string, clientID uuid.UUID) 
 	if err := db.Create(&user).Error; err != nil {
 		return nil, err
 	}
-
-	// If the user was added to a list before they signed up, we can now associate
-	// those ListUser records by UserID
-	db.Model(&models.ListUser{}).Where("email = ? AND user_id IS NULL").Update("user_id", user.ID)
 
 	return user, nil
 }

@@ -32,6 +32,19 @@ func TestCreateUser_InvalidPassword(t *testing.T) {
 }
 
 func TestCreateUser_DuplicateEmail(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	email := "test@example.com"
+	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
+		WithArgs(email).
+		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(email))
+
+	_, e := CreateUser(db, email, "password", uuid.NewV4())
+	require.Error(t, e)
+	assert.Equal(t, e.Error(), "An account with this email address already exists")
 }
 
 func TestCreateUser_UserCreated(t *testing.T) {
@@ -42,6 +55,11 @@ func TestCreateUser_UserCreated(t *testing.T) {
 
 	email := "test@example.com"
 	listName := "My Grocery List"
+
+	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
+		WithArgs(email).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
 	mock.ExpectBegin()
 	mock.ExpectQuery("^INSERT INTO \"users\" (.+)$").
 		WithArgs(email, sqlmock.AnyArg(), "", "", AnyTime{}, AnyTime{}, AnyTime{}).
