@@ -1,8 +1,6 @@
 package resolvers
 
 import (
-	"log"
-
 	"github.com/graphql-go/graphql"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
@@ -37,11 +35,10 @@ func SignupResolver(p graphql.ResolveParams) (interface{}, error) {
 	token := user.Tokens[0]
 
 	// Finally, send an email upon signup
-	mail, mailErr := mailer.SendNewUserEmail(user)
+	_, mailErr := mailer.SendNewUserEmail(user)
 	if mailErr != nil {
 		return nil, mailErr
 	}
-	log.Println(mail)
 
 	return token, nil
 }
