@@ -36,6 +36,10 @@ func TestUpdateListForUser_NoUpdates(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
+	mock.ExpectQuery("^SELECT u.email FROM list_users AS lu*").
+		WithArgs(listID, false).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
 	args := map[string]interface{}{"listId": listID}
 	list, err := UpdateListForUser(db, userID, args)
 	require.NoError(t, err)
@@ -67,6 +71,10 @@ func TestUpdateListForUser_UpdateSingleColumn(t *testing.T) {
 	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
+
+	mock.ExpectQuery("^SELECT u.email FROM list_users AS lu*").
+		WithArgs(listID, false).
+		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	args := map[string]interface{}{"listId": listID, "name": "My Renamed List"}
 	list, err := UpdateListForUser(db, userID, args)
