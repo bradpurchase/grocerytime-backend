@@ -24,8 +24,7 @@ func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", heartbeat)
-
-	router.Handle("/graphql", handlers.GraphQLHandler())
+	router.Handle("/graphql", corsHandler(handlers.GraphQLHandler()))
 	router.Handle("/subscriptions", handlers.WebsocketHandler())
 
 	port := os.Getenv("PORT")

@@ -46,8 +46,6 @@ func GraphQLHandler() http.HandlerFunc {
 
 		response.WriteHeader(http.StatusOK)
 		response.Header().Set("Access-Control-Allow-Origin", "*")
-		response.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		response.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, Content-Length, Accept-Encoding")
 		response.Write(payload)
 	}
 }
