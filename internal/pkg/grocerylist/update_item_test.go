@@ -87,6 +87,7 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 	mock.ExpectCommit()
 
 	args := map[string]interface{}{"itemId": itemID, "completed": true}
+
 	item, err := UpdateItem(db, args)
 	require.NoError(t, err)
 	// Assert only completed state changed
@@ -107,22 +108,27 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 	itemID := uuid.NewV4()
 	listID := uuid.NewV4()
 	userID := uuid.NewV4()
-	itemRows := sqlmock.
-		NewRows([]string{
-			"id",
-			"list_id",
-			"user_id",
-			"name",
-			"quantity",
-			"completed",
-			"created_at",
-			"updated_at",
-		}).
-		AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now())
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
-		WillReturnRows(itemRows)
+		WillReturnRows(sqlmock.
+			NewRows([]string{
+				"id",
+				"list_id",
+				"user_id",
+				"name",
+				"quantity",
+				"completed",
+				"created_at",
+				"updated_at",
+			}).
+			AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now()))
+
+	// // Because we are changing the completed state to true, the item's position
+	// // shifts to the bottom of the list
+	// mock.ExpectQuery("^SELECT position FROM \"items\"*").
+	// 	WithArgs(listID).
+	// 	WillReturnRows(sqlmock.NewRows([]string{"position"}).AddRow(1002))
 
 	mock.ExpectBegin()
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
@@ -135,6 +141,7 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 		"completed": true,
 		"name":      "Bananas",
 	}
+
 	item, err := UpdateItem(db, args)
 	require.NoError(t, err)
 	// Assert only quantity and completed states changed

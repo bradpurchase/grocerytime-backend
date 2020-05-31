@@ -19,7 +19,7 @@ func TestUpdateListForUser_NoUpdates(t *testing.T) {
 
 	listID := uuid.NewV4()
 	userID := uuid.NewV4()
-	itemRows := sqlmock.
+	listRows := sqlmock.
 		NewRows([]string{
 			"id",
 			"user_id",
@@ -29,7 +29,7 @@ func TestUpdateListForUser_NoUpdates(t *testing.T) {
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
 		WithArgs(listID, userID).
-		WillReturnRows(itemRows)
+		WillReturnRows(listRows)
 
 	mock.ExpectBegin()
 	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").

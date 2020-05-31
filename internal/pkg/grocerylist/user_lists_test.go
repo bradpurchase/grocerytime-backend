@@ -50,8 +50,6 @@ func TestRetrieveUserLists_HasListsCreated(t *testing.T) {
 		WithArgs(userID).
 		WillReturnRows(listRows)
 
-	db.Exec("INSERT INTO lists (name, user_id) VALUES (?, ?)", "Not My List", uuid.NewV4())
-
 	userLists, err := RetrieveUserLists(db, userID)
 	require.NoError(t, err)
 	assert.Len(t, userLists, 2)
@@ -85,8 +83,6 @@ func TestRetrieveUserLists_HasListsCreatedAndJoined(t *testing.T) {
 		ExpectQuery("^SELECT lists.* FROM \"lists\"*").
 		WithArgs(userID).
 		WillReturnRows(listRows)
-
-	db.Exec("INSERT INTO list_users (list_id, user_id) VALUES (?, ?)", sharedListID, userID)
 
 	userLists, err := RetrieveUserLists(db, userID)
 	require.NoError(t, err)
