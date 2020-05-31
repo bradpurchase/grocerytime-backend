@@ -66,3 +66,12 @@ func TestRetrieveItemsInList_HasItems(t *testing.T) {
 func TestRetrieveItemsInList_Order(t *testing.T) {
 	//TODO write test proving order.. new ones on top, completed ones on bottom
 }
+
+func TestAddItemToList_UserDoesntBelongInList(t *testing.T) {
+	//TODO write test providing error thrown when user is trying to add item to a list
+	// they dont belong in
+}
+
+func TestAddItemToList_AddsItem(t *testing.T) {
+	//TODO write test
+}

@@ -65,6 +65,19 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Table("items").DropColumn("completed").Error
 			},
 		},
+		{
+			// Add sort_order to items
+			ID: "202005301245_add_position_to_items",
+			Migrate: func(tx *gorm.DB) error {
+				type Item struct {
+					Position int
+				}
+				return tx.AutoMigrate(&models.Item{}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("items").DropColumn("position").Error
+			},
+		},
 	})
 	return m.Migrate()
 }

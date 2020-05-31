@@ -168,6 +168,9 @@ func init() {
 						"quantity": &graphql.ArgumentConfig{
 							Type: graphql.Int,
 						},
+						"position": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
 					},
 					Resolve: resolvers.UpdateItemResolver,
 				},

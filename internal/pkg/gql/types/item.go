@@ -22,6 +22,9 @@ var ItemType = graphql.NewObject(
 			"quantity": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.Int),
 			},
+			"position": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.Int),
+			},
 			"completed": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.Boolean),
 			},

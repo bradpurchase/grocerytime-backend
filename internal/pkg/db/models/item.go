@@ -17,6 +17,7 @@ type Item struct {
 	Name      string    `gorm:"type:varchar(100);not null"`
 	Quantity  int       `gorm:"default:1;not null"`
 	Completed bool      `gorm:"default:false;not null"`
+	Position  int       `gorm:"default:1000;not null"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
