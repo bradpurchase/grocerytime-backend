@@ -124,12 +124,6 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 			}).
 			AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
-	// // Because we are changing the completed state to true, the item's position
-	// // shifts to the bottom of the list
-	// mock.ExpectQuery("^SELECT position FROM \"items\"*").
-	// 	WithArgs(listID).
-	// 	WillReturnRows(sqlmock.NewRows([]string{"position"}).AddRow(1002))
-
 	mock.ExpectBegin()
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -151,4 +145,48 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 	assert.Equal(t, item.(*models.Item).Name, "Bananas")
 	assert.Equal(t, item.(*models.Item).Quantity, 10)
 	assert.Equal(t, item.(*models.Item).Completed, true)
+}
+
+func TestUpdateItem_ReorderItemPosition(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	itemID := uuid.NewV4()
+	listID := uuid.NewV4()
+	userID := uuid.NewV4()
+	itemRows := sqlmock.
+		NewRows([]string{
+			"id",
+			"list_id",
+			"user_id",
+			"name",
+			"quantity",
+			"completed",
+			"position",
+			"created_at",
+			"updated_at",
+		}).
+		AddRow(uuid.NewV4(), listID, userID, "Apples", 5, false, 1000, time.Now(), time.Now()).
+		AddRow(uuid.NewV4(), listID, userID, "Bananas", 10, false, 998, time.Now(), time.Now()).
+		AddRow(itemID, listID, userID, "Oranges", 1, false, 996, time.Now(), time.Now())
+
+	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(itemRows)
+
+	args := map[string]interface{}{"itemId": itemID, "position": 999}
+	mock.ExpectBegin()
+	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	item, err := UpdateItem(db, args)
+	require.NoError(t, err)
+	// Assert only completed state changed
+	assert.Equal(t, item.(*models.Item).ID, itemID)
+	assert.Equal(t, item.(*models.Item).ListID, listID)
+	assert.Equal(t, item.(*models.Item).UserID, userID)
+	assert.Equal(t, item.(*models.Item).Position, 999)
 }
