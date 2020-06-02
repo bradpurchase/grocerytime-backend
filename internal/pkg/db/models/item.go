@@ -18,12 +18,17 @@ type Item struct {
 	Name      string    `gorm:"type:varchar(100);not null"`
 	Quantity  int       `gorm:"default:1;not null"`
 	Completed bool      `gorm:"default:false;not null"`
-	Position  int       `gorm:"default:1000;not null"`
+	Position  int       `gorm:"default:1;not null"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
 	// Associations
 	List List
+}
+
+func (i *Item) BeforeCreate(tx *gorm.DB) (err error) {
+	tx.Exec("UPDATE items SET position = position + 1 WHERE list_id = ? AND position >= 0", i.ListID)
+	return nil
 }
 
 // AfterCreate hook to touch the associated list after an item is created
@@ -36,15 +41,30 @@ func (i *Item) AfterCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-// AfterUpdate hook to touch the associated list after an item is created
-// so that its UpdatedAt column is updated
+// BeforeUpdate hook handles reordering item around an item when
+func (i *Item) BeforeUpdate(tx *gorm.DB) (err error) {
+	item := &Item{}
+	if err := tx.Where("id = ?", i.ID).Find(&item).Error; err != nil {
+		return err
+	}
+	currPosition := item.Position
+	newPosition := i.Position
+	if currPosition == newPosition {
+		return nil
+	}
+	if currPosition > newPosition {
+		tx.Exec("UPDATE items SET position = position + 1 WHERE list_id = ? AND position >= ?", i.ListID, newPosition)
+	} else {
+		tx.Exec("UPDATE items SET position = position - 1 WHERE list_id = ? AND position <= ? AND position > 0", i.ListID, newPosition)
+	}
+	return nil
+}
+
 func (i *Item) AfterUpdate(tx *gorm.DB) (err error) {
 	tx.Model(&List{}).Where("id = ?", i.ListID).Update("updated_at", time.Now())
 	return nil
 }
 
-// AfterDelete hook to touch the associated list after an item is created
-// so that its UpdatedAt column is updated
 func (i *Item) AfterDelete(tx *gorm.DB) (err error) {
 	tx.Model(&List{}).Where("id = ?", i.ListID).Update("updated_at", time.Now())
 	return nil

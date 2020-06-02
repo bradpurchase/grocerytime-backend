@@ -30,16 +30,12 @@ func AddItemToList(db *gorm.DB, userID uuid.UUID, args map[string]interface{}) (
 		return nil, err
 	}
 
-	position, err := DetermineListPosition("top", db, listID)
-	if err != nil {
-		return nil, err
-	}
 	item := &models.Item{
 		ListID:   listUser.ListID,
 		UserID:   userID,
 		Name:     args["name"].(string),
 		Quantity: args["quantity"].(int),
-		Position: int(position),
+		Position: 1,
 	}
 	if err := db.Create(&item).Error; err != nil {
 		return nil, err
