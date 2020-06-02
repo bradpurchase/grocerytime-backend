@@ -13,7 +13,7 @@ import (
 // Item defines the model for items
 type Item struct {
 	ID        uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
-	ListID    uuid.UUID `gorm:"type:uuid;not null"`
+	ListID    uuid.UUID `gorm:"type:uuid;index:list_id;not null"`
 	UserID    uuid.UUID `gorm:"type:uuid;not null"`
 	Name      string    `gorm:"type:varchar(100);not null"`
 	Quantity  int       `gorm:"default:1;not null"`

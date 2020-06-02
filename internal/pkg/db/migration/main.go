@@ -78,6 +78,36 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Table("items").DropColumn("position").Error
 			},
 		},
+		{
+			// Add index idx_items_list_id
+			ID: "202006021110_add_idx_items_list_id",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Table("items").AddIndex("idx_items_list_id", "list_id").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("items").RemoveIndex("idx_items_list_id").Error
+			},
+		},
+		{
+			// Add index idx_list_users_list_id
+			ID: "202006021117_add_idx_items_list_id",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Table("list_users").AddIndex("idx_list_users_list_id", "list_id").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("list_users").RemoveIndex("idx_list_users_list_id").Error
+			},
+		},
+		{
+			// Add index idx_list_users_user_id
+			ID: "202006021118_add_idx_items_user_id",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Table("list_users").AddIndex("idx_list_users_user_id", "user_id").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("list_users").RemoveIndex("idx_list_users_user_id").Error
+			},
+		},
 	})
 	return m.Migrate()
 }
