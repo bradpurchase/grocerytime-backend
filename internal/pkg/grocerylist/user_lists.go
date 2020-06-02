@@ -14,7 +14,7 @@ func RetrieveUserLists(db *gorm.DB, userID uuid.UUID) (interface{}, error) {
 	query := db.
 		Select("lists.*").
 		Joins("INNER JOIN list_users ON list_users.list_id = lists.id").
-		Joins("INNER JOIN items ON items.list_id = lists.id").
+		Joins("LEFT OUTER JOIN items ON items.list_id = lists.id").
 		Where("list_users.user_id = ?", userID).
 		Group("lists.id").
 		Order("MAX(items.updated_at) DESC").
