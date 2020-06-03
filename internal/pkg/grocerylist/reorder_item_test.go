@@ -56,6 +56,5 @@ func TestReorder_ReorderItemPosition(t *testing.T) {
 
 	list, err := ReorderItem(db, itemID, 4)
 	require.NoError(t, err)
-	// Assert only completed state changed
 	assert.Equal(t, list.ID, listID)
 }

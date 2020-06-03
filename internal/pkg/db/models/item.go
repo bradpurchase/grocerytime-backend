@@ -53,9 +53,9 @@ func (i *Item) BeforeUpdate(tx *gorm.DB) (err error) {
 		return nil
 	}
 	if currPosition > newPosition {
-		tx.Exec("UPDATE items SET position = position + 1 WHERE list_id = ? AND position >= ?", i.ListID, newPosition)
+		tx.Exec("UPDATE items SET position = position + 1 WHERE list_id = ? AND position >= ? AND position < ?", i.ListID, newPosition, currPosition)
 	} else {
-		tx.Exec("UPDATE items SET position = position - 1 WHERE list_id = ? AND position <= ? AND position > 0", i.ListID, newPosition)
+		tx.Exec("UPDATE items SET position = position - 1 WHERE list_id = ? AND position > ? AND position <= ?", i.ListID, currPosition, newPosition)
 	}
 	return nil
 }
