@@ -38,15 +38,15 @@ func GetNewPosition(db *gorm.DB, listID uuid.UUID, completed bool) int {
 	newPosition := 1
 	if completed {
 		// If the item was marked completed, move to the bottom of the list
-		//TODO fix this
-		var bottomPos int
+		// The BeforeUpdate hook on items will handle reordering the items around it
+		bottomItem := &models.Item{}
 		db.
 			Select("position").
 			Where("list_id = ?", listID).
 			Order("position DESC").
 			Limit(1).
-			Scan(&bottomPos)
-		newPosition = bottomPos + 1
+			Find(&bottomItem)
+		newPosition = bottomItem.Position
 	}
 	return newPosition
 }

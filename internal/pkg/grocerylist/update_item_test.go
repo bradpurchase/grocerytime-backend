@@ -21,25 +21,29 @@ func TestUpdateItem_NoUpdates(t *testing.T) {
 	itemID := uuid.NewV4()
 	listID := uuid.NewV4()
 	userID := uuid.NewV4()
-	itemRows := sqlmock.
-		NewRows([]string{
-			"id",
-			"list_id",
-			"user_id",
-			"name",
-			"quantity",
-			"completed",
-			"created_at",
-			"updated_at",
-		}).
-		AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now())
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
-		WillReturnRows(itemRows)
+		WillReturnRows(sqlmock.
+			NewRows([]string{
+				"id",
+				"list_id",
+				"user_id",
+				"name",
+				"quantity",
+				"completed",
+				"created_at",
+				"updated_at",
+			}).
+			AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
 	mock.ExpectBegin()
+	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -64,25 +68,29 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 	itemID := uuid.NewV4()
 	listID := uuid.NewV4()
 	userID := uuid.NewV4()
-	itemRows := sqlmock.
-		NewRows([]string{
-			"id",
-			"list_id",
-			"user_id",
-			"name",
-			"quantity",
-			"completed",
-			"created_at",
-			"updated_at",
-		}).
-		AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now())
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
-		WillReturnRows(itemRows)
+		WillReturnRows(sqlmock.
+			NewRows([]string{
+				"id",
+				"list_id",
+				"user_id",
+				"name",
+				"quantity",
+				"completed",
+				"created_at",
+				"updated_at",
+			}).
+			AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
 	mock.ExpectBegin()
+	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -125,7 +133,12 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 			AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
 	mock.ExpectBegin()
+	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -168,17 +181,22 @@ func TestUpdateItem_ReorderItemPosition(t *testing.T) {
 			"created_at",
 			"updated_at",
 		}).
-		AddRow(uuid.NewV4(), listID, userID, "Apples", 5, false, 1000, time.Now(), time.Now()).
-		AddRow(uuid.NewV4(), listID, userID, "Bananas", 10, false, 998, time.Now(), time.Now()).
-		AddRow(itemID, listID, userID, "Oranges", 1, false, 996, time.Now(), time.Now())
+		AddRow(uuid.NewV4(), listID, userID, "Apples", 5, false, 1, time.Now(), time.Now()).
+		AddRow(uuid.NewV4(), listID, userID, "Bananas", 10, false, 2, time.Now(), time.Now()).
+		AddRow(itemID, listID, userID, "Oranges", 1, false, 3, time.Now(), time.Now())
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
 		WillReturnRows(itemRows)
 
-	args := map[string]interface{}{"itemId": itemID, "position": 999}
+	args := map[string]interface{}{"itemId": itemID, "position": 4}
 	mock.ExpectBegin()
+	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -188,5 +206,5 @@ func TestUpdateItem_ReorderItemPosition(t *testing.T) {
 	assert.Equal(t, item.(*models.Item).ID, itemID)
 	assert.Equal(t, item.(*models.Item).ListID, listID)
 	assert.Equal(t, item.(*models.Item).UserID, userID)
-	assert.Equal(t, item.(*models.Item).Position, 999)
+	assert.Equal(t, item.(*models.Item).Position, 4)
 }
