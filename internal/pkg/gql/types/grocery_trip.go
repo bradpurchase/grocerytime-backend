@@ -1,29 +1,22 @@
 package gql
 
-import "github.com/graphql-go/graphql"
+import (
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
+	"github.com/graphql-go/graphql"
+)
 
-// ItemType defines a graphql type for Item
-var ItemType = graphql.NewObject(
+var GroceryTripType = graphql.NewObject(
 	graphql.ObjectConfig{
-		Name: "Item",
+		Name: "GroceryTrip",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
-			"groceryTripId": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.ID),
-			},
-			"userId": &graphql.Field{
+			"listID": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"name": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.String),
-			},
-			"quantity": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.Int),
-			},
-			"position": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.Int),
 			},
 			"completed": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.Boolean),
@@ -33,6 +26,15 @@ var ItemType = graphql.NewObject(
 			},
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
+			},
+			"items": &graphql.Field{
+				Type: graphql.NewList(ItemType),
+				Args: graphql.FieldConfigArgument{
+					"filter": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+				},
+				Resolve: resolvers.ListItemsResolver,
 			},
 		},
 	},

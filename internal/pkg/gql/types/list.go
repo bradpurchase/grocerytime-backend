@@ -29,14 +29,9 @@ var ListType = graphql.NewObject(
 				Type:    graphql.Int,
 				Resolve: resolvers.ListItemsCountResolver,
 			},
-			"items": &graphql.Field{
-				Type: graphql.NewList(ItemType),
-				Args: graphql.FieldConfigArgument{
-					"filter": &graphql.ArgumentConfig{
-						Type: graphql.String,
-					},
-				},
-				Resolve: resolvers.ListItemsResolver,
+			"trip": &graphql.Field{
+				Type:    GroceryTripType,
+				Resolve: resolvers.GroceryTripResolver,
 			},
 			"creator": &graphql.Field{
 				Type:    BasicUserType,

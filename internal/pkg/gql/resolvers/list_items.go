@@ -12,8 +12,8 @@ func ListItemsResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
-	listID := p.Source.(*models.List).ID
-	items, err := grocerylist.RetrieveItemsInList(db, listID)
+	tripID := p.Source.(models.GroceryTrip).ID
+	items, err := grocerylist.RetrieveItemsInList(db, tripID)
 	if err != nil {
 		return nil, err
 	}

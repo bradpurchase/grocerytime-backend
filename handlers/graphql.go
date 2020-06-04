@@ -39,7 +39,7 @@ func GraphQLHandler() http.HandlerFunc {
 
 		// Publish to graphql pub/sub for subscriptions here
 		operationName := opts.OperationName
-		if operationName == "AddItemToList" {
+		if operationName == "AddItemToTrip" {
 			fmt.Printf("publishing message %v\n", result.Data)
 			gqlPubSub.Publish("newItemInList", result.Data)
 		}

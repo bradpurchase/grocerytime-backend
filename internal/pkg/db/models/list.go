@@ -22,10 +22,17 @@ type List struct {
 	GroceryTrips []GroceryTrip
 }
 
-// AfterCreate hook to automatically create a ListUser record
-// for the user who is creating the list
+// AfterCreate hook to automatically create some associated records
 func (l *List) AfterCreate(tx *gorm.DB) (err error) {
-	var listUser = ListUser{ListID: l.ID, UserID: l.UserID, Creator: true, Active: true}
-	tx.Create(&listUser)
+	listUser := ListUser{ListID: l.ID, UserID: l.UserID, Creator: true}
+	if err := tx.Create(&listUser).Error; err != nil {
+		return err
+	}
+
+	trip := GroceryTrip{ListID: l.ID, Name: "Grocery Trip 1"}
+	if err := tx.Create(&trip).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
