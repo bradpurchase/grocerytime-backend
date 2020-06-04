@@ -30,7 +30,7 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 		updateItemsQuery := tx.
 			Model(&Item{}).
 			Where("trip_id = ? AND completed = ?", g.ID, false).
-			Update("completed", true).
+			UpdateColumn("completed", true).
 			Error
 		if err := updateItemsQuery; err != nil {
 			return err
