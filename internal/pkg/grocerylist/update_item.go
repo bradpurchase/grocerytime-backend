@@ -24,6 +24,9 @@ func UpdateItem(db *gorm.DB, args map[string]interface{}) (interface{}, error) {
 	if args["quantity"] != nil {
 		item.Quantity = args["quantity"].(int)
 	}
+	if args["position"] != nil {
+		item.Position = args["position"].(int)
+	}
 	if err := db.Save(&item).Error; err != nil {
 		return nil, err
 	}
