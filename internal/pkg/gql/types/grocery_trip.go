@@ -27,6 +27,10 @@ var GroceryTripType = graphql.NewObject(
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},
+			"itemsCount": &graphql.Field{
+				Type:    graphql.Int,
+				Resolve: resolvers.TripItemsCountResolver,
+			},
 			"items": &graphql.Field{
 				Type: graphql.NewList(ItemType),
 				Args: graphql.FieldConfigArgument{
@@ -34,7 +38,7 @@ var GroceryTripType = graphql.NewObject(
 						Type: graphql.String,
 					},
 				},
-				Resolve: resolvers.ListItemsResolver,
+				Resolve: resolvers.TripItemsResolver,
 			},
 		},
 	},

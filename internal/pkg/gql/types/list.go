@@ -25,10 +25,6 @@ var ListType = graphql.NewObject(
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},
-			"itemsCount": &graphql.Field{
-				Type:    graphql.Int,
-				Resolve: resolvers.ListItemsCountResolver,
-			},
 			"trip": &graphql.Field{
 				Type:    GroceryTripType,
 				Resolve: resolvers.GroceryTripResolver,

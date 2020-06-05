@@ -1,4 +1,4 @@
-package grocerylist
+package trips
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -6,8 +6,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// RetrieveItemsInList finds all items in a grocery trip by tripID
-func RetrieveItemsInList(db *gorm.DB, tripID uuid.UUID) (interface{}, error) {
+// RetrieveItems finds all items in a grocery trip by tripID
+func RetrieveItems(db *gorm.DB, tripID uuid.UUID) (interface{}, error) {
 	items := []models.Item{}
 	query := db.
 		Where("grocery_trip_id = ?", tripID).
