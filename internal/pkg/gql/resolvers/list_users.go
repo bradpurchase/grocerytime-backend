@@ -13,7 +13,7 @@ func ListUsersResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
-	listID := p.Source.(*models.List).ID
+	listID := p.Source.(models.List).ID
 	listUsers, err := grocerylist.RetrieveListUsers(db, listID)
 	if err != nil {
 		return nil, err

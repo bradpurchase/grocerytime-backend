@@ -19,23 +19,23 @@ var ListType = graphql.NewObject(
 			"name": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.String),
 			},
-			"createdAt": &graphql.Field{
-				Type: graphql.DateTime,
-			},
-			"updatedAt": &graphql.Field{
-				Type: graphql.DateTime,
+			"creator": &graphql.Field{
+				Type:    BasicUserType,
+				Resolve: resolvers.BasicUserResolver,
 			},
 			"trip": &graphql.Field{
 				Type:    GroceryTripType,
 				Resolve: resolvers.GroceryTripResolver,
 			},
-			"creator": &graphql.Field{
-				Type:    BasicUserType,
-				Resolve: resolvers.BasicUserResolver,
-			},
 			"listUsers": &graphql.Field{
 				Type:    graphql.NewList(ListUserType),
 				Resolve: resolvers.ListUsersResolver,
+			},
+			"createdAt": &graphql.Field{
+				Type: graphql.DateTime,
+			},
+			"updatedAt": &graphql.Field{
+				Type: graphql.DateTime,
 			},
 		},
 	},

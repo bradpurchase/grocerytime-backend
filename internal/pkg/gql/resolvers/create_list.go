@@ -22,11 +22,12 @@ func CreateListResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
+	//TODO this needs to be moved into the grocerylist package
 	// Check if this user has a list with this name already
 	userID := user.(models.User).ID
 	listName := p.Args["name"].(string)
 	dupeList, _ := grocerylist.RetrieveListForUserByName(db, listName, userID)
-	if dupeList != nil {
+	if dupeList.Name != "" {
 		return nil, errors.New("You already have a list with this name")
 	}
 
