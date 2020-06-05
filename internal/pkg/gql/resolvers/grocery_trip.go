@@ -20,7 +20,7 @@ func GroceryTripResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	listID := p.Source.(*models.List).ID
+	listID := p.Source.(models.List).ID
 	userID := user.(models.User).ID
 	trip, err := trips.RetrieveCurrentTripInList(db, listID, userID)
 	if err != nil {
