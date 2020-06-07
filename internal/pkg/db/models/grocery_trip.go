@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"time"
 
 	// Postgres dialect for GORM
@@ -23,12 +22,6 @@ type GroceryTrip struct {
 
 	// Associations
 	List List
-}
-
-//TODO not working
-func (g *GroceryTrip) AfterSave(tx *gorm.DB) (err error) {
-	log.Println(g)
-	return tx.Model(&List{}).Where("id = ?", g.ListID).Update("updated_at", time.Now()).Error
 }
 
 // AfterUpdate hook is triggered after a trip is updated, such as in trips.UpdateTrip
