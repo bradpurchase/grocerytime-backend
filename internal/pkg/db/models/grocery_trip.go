@@ -26,6 +26,10 @@ type GroceryTrip struct {
 
 // AfterUpdate hook is triggered after a trip is updated, such as in trips.UpdateTrip
 func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
+	// Update lists.updated_at when a trip is updated
+	// Note: trips are also updated when items are added/updated/created
+	tx.Model(&List{}).Where("id = ?", g.ListID).Update("updated_at", time.Now())
+
 	if g.Completed {
 		// Create the next trip for the user
 		newTrip := GroceryTrip{ListID: g.ListID, Name: "New Trip"}
