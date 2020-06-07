@@ -17,6 +17,9 @@ func UpdateTrip(db *gorm.DB, args map[string]interface{}) (interface{}, error) {
 	if args["completed"] != nil {
 		trip.Completed = args["completed"].(bool)
 	}
+	if args["copyRemainingItems"] != nil {
+		trip.CopyRemainingItems = args["copyRemainingItems"].(bool)
+	}
 	if err := db.Save(&trip).Error; err != nil {
 		return nil, err
 	}
