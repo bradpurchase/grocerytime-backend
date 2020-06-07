@@ -43,7 +43,7 @@ func TestUpdateItem_NoUpdates(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
+	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -90,7 +90,7 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
+	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -138,7 +138,7 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
+	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
