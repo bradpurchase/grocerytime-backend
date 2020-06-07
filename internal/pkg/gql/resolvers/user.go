@@ -29,7 +29,7 @@ func BasicUserResolver(p graphql.ResolveParams) (interface{}, error) {
 	defer db.Close()
 
 	user := &models.User{}
-	if err := db.Where("id = ?", p.Source.(*models.List).UserID).Find(&user).Error; err != nil {
+	if err := db.Where("id = ?", p.Source.(models.List).UserID).Find(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
