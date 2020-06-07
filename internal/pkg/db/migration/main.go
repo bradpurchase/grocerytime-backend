@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 	"gopkg.in/gormigrate.v1"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -106,6 +107,58 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Table("list_users").RemoveIndex("idx_list_users_user_id").Error
+			},
+		},
+		{
+			// Add list_id to grocery_trips
+			ID: "202006040726_add_list_id_to_grocery_trips",
+			Migrate: func(tx *gorm.DB) error {
+				type GroceryTrip struct {
+					ListID uuid.UUID
+				}
+				return tx.AutoMigrate(&models.GroceryTrip{}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("grocery_trips").DropColumn("list_id").Error
+			},
+		},
+		{
+			// Add completed to grocery_trips
+			ID: "202006040732_add_completed_to_grocery_trips",
+			Migrate: func(tx *gorm.DB) error {
+				type GroceryTrip struct {
+					Completed bool
+				}
+				return tx.AutoMigrate(&models.GroceryTrip{}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("grocery_trips").DropColumn("completed").Error
+			},
+		},
+		{
+			// Add grocery_trip_id to items
+			ID: "202006040733_add_grocery_trip_id_to_items",
+			Migrate: func(tx *gorm.DB) error {
+				type Item struct {
+					GroceryTripID uuid.UUID
+				}
+				return tx.AutoMigrate(&models.Item{}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("items").DropColumn("grocery_trip_id").Error
+			},
+		},
+		{
+			// Add copy_remaining_items to grocery_trips
+			ID: "202006071147_add_copy_remaining_items_to_grocery_trips",
+			Migrate: func(tx *gorm.DB) error {
+				type GroceryTrip struct {
+					CopyRemainingItems bool
+				}
+				return tx.AutoMigrate(&models.GroceryTrip{}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("grocery_trips").DropColumn("copy_remaining_items").Error
 			},
 		},
 	})

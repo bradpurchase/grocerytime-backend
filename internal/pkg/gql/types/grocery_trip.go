@@ -5,37 +5,40 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// ListType defines a graphql type for List
-var ListType = graphql.NewObject(
+var GroceryTripType = graphql.NewObject(
 	graphql.ObjectConfig{
-		Name: "List",
+		Name: "GroceryTrip",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
-			"userId": &graphql.Field{
+			"listID": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"name": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.String),
 			},
-			"creator": &graphql.Field{
-				Type:    BasicUserType,
-				Resolve: resolvers.BasicUserResolver,
-			},
-			"trip": &graphql.Field{
-				Type:    GroceryTripType,
-				Resolve: resolvers.GroceryTripResolver,
-			},
-			"listUsers": &graphql.Field{
-				Type:    graphql.NewList(ListUserType),
-				Resolve: resolvers.ListUsersResolver,
+			"completed": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.Boolean),
 			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
+			},
+			"itemsCount": &graphql.Field{
+				Type:    graphql.Int,
+				Resolve: resolvers.TripItemsCountResolver,
+			},
+			"items": &graphql.Field{
+				Type: graphql.NewList(ItemType),
+				Args: graphql.FieldConfigArgument{
+					"filter": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+				},
+				Resolve: resolvers.TripItemsResolver,
 			},
 		},
 	},

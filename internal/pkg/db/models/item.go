@@ -12,32 +12,33 @@ import (
 
 // Item defines the model for items
 type Item struct {
-	ID        uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
-	ListID    uuid.UUID `gorm:"type:uuid;not null"`
-	UserID    uuid.UUID `gorm:"type:uuid;not null"`
-	Name      string    `gorm:"type:varchar(100);not null"`
-	Quantity  int       `gorm:"default:1;not null"`
-	Completed bool      `gorm:"default:false;not null"`
-	Position  int       `gorm:"default:1;not null"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID            uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	ListID        uuid.UUID `gorm:"type:uuid;not null"`
+	GroceryTripID uuid.UUID `gorm:"type:uuid;not null"`
+	UserID        uuid.UUID `gorm:"type:uuid;not null"`
+	Name          string    `gorm:"type:varchar(100);not null"`
+	Quantity      int       `gorm:"default:1;not null"`
+	Completed     bool      `gorm:"default:false;not null"`
+	Position      int       `gorm:"default:1;not null"`
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 
 	// Associations
 	List List
 }
 
 func (i *Item) BeforeCreate(tx *gorm.DB) (err error) {
-	tx.Exec("UPDATE items SET position = position + 1 WHERE list_id = ? AND position >= 0", i.ListID)
+	tx.Exec("UPDATE items SET position = position + 1 WHERE grocery_trip_id = ? AND position >= 0", i.GroceryTripID)
 	return nil
 }
 
-// AfterCreate hook to touch the associated list after an item is created
+// AfterCreate hook to touch the associated grocery trip after an item is created
 // so that its UpdatedAt column is updated
 //
 // Note: We're updating an arbitrary column here to get UpdatedAt to update -
 // not sure if this is needed or if there's a better way to do this...
 func (i *Item) AfterCreate(tx *gorm.DB) (err error) {
-	tx.Model(&List{}).Where("id = ?", i.ListID).Update("updated_at", time.Now())
+	tx.Model(&GroceryTrip{}).Where("id = ?", i.GroceryTripID).Update("updated_at", time.Now())
 	return nil
 }
 
@@ -53,19 +54,19 @@ func (i *Item) BeforeUpdate(tx *gorm.DB) (err error) {
 		return nil
 	}
 	if currPosition > newPosition {
-		tx.Exec("UPDATE items SET position = position + 1 WHERE list_id = ? AND position >= ? AND position < ?", i.ListID, newPosition, currPosition)
+		tx.Exec("UPDATE items SET position = position + 1 WHERE grocery_trip_id = ? AND position >= ? AND position < ?", i.GroceryTripID, newPosition, currPosition)
 	} else {
-		tx.Exec("UPDATE items SET position = position - 1 WHERE list_id = ? AND position > ? AND position <= ?", i.ListID, currPosition, newPosition)
+		tx.Exec("UPDATE items SET position = position - 1 WHERE grocery_trip_id = ? AND position > ? AND position <= ?", i.GroceryTripID, currPosition, newPosition)
 	}
 	return nil
 }
 
 func (i *Item) AfterUpdate(tx *gorm.DB) (err error) {
-	tx.Model(&List{}).Where("id = ?", i.ListID).Update("updated_at", time.Now())
+	tx.Model(&GroceryTrip{}).Where("id = ?", i.GroceryTripID).Update("updated_at", time.Now())
 	return nil
 }
 
 func (i *Item) AfterDelete(tx *gorm.DB) (err error) {
-	tx.Model(&List{}).Where("id = ?", i.ListID).Update("updated_at", time.Now())
+	tx.Model(&GroceryTrip{}).Where("id = ?", i.GroceryTripID).Update("updated_at", time.Now())
 	return nil
 }

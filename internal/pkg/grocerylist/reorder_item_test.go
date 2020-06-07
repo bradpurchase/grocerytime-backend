@@ -46,7 +46,7 @@ func TestReorder_ReorderItemPosition(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
+	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 

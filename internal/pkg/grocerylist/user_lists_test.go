@@ -53,10 +53,10 @@ func TestRetrieveUserLists_HasListsCreated(t *testing.T) {
 	userLists, err := RetrieveUserLists(db, userID)
 	require.NoError(t, err)
 	assert.Len(t, userLists, 2)
-	assert.Equal(t, userLists.([]models.List)[0].Name, "Provigo Grocery List")
-	assert.Equal(t, userLists.([]models.List)[0].UserID, userID)
-	assert.Equal(t, userLists.([]models.List)[1].Name, "Beer Store List")
-	assert.Equal(t, userLists.([]models.List)[1].UserID, userID)
+	assert.Equal(t, userLists[0].Name, "Provigo Grocery List")
+	assert.Equal(t, userLists[0].UserID, userID)
+	assert.Equal(t, userLists[1].Name, "Beer Store List")
+	assert.Equal(t, userLists[1].UserID, userID)
 }
 
 func TestRetrieveUserLists_HasListsCreatedAndJoined(t *testing.T) {
@@ -87,11 +87,11 @@ func TestRetrieveUserLists_HasListsCreatedAndJoined(t *testing.T) {
 	userLists, err := RetrieveUserLists(db, userID)
 	require.NoError(t, err)
 	assert.Len(t, userLists, 3)
-	assert.Equal(t, userLists.([]models.List)[0].Name, "Provigo Grocery List")
-	assert.Equal(t, userLists.([]models.List)[0].UserID, userID)
-	assert.Equal(t, userLists.([]models.List)[1].Name, "Beer Store List")
-	assert.Equal(t, userLists.([]models.List)[2].Name, "Shared List")
-	assert.Equal(t, userLists.([]models.List)[2].UserID, sharingUserID)
+	assert.Equal(t, userLists[0].Name, "Provigo Grocery List")
+	assert.Equal(t, userLists[0].UserID, userID)
+	assert.Equal(t, userLists[1].Name, "Beer Store List")
+	assert.Equal(t, userLists[2].Name, "Shared List")
+	assert.Equal(t, userLists[2].UserID, sharingUserID)
 }
 
 func TestRetrieveListForUser_NotFound(t *testing.T) {
@@ -128,7 +128,7 @@ func TestRetrieveListForUser_ListCreatedByUser(t *testing.T) {
 
 	list, err := RetrieveListForUser(db, listID, userID)
 	require.NoError(t, err)
-	assert.Equal(t, list.(*models.List).Name, "Example List")
+	assert.Equal(t, list.Name, "Example List")
 }
 
 func TestRetrieveListForUser_ListSharedToUser(t *testing.T) {
@@ -153,7 +153,7 @@ func TestRetrieveListForUser_ListSharedToUser(t *testing.T) {
 
 	list, err := RetrieveListForUser(db, listID, userID)
 	require.NoError(t, err)
-	assert.Equal(t, list.(*models.List).Name, "Example List")
+	assert.Equal(t, list.Name, "Example List")
 }
 
 func TestRetrieveListForUserByName_NotFound(t *testing.T) {
@@ -187,7 +187,7 @@ func TestRetrieveListForUserByName_Found(t *testing.T) {
 
 	list, err := RetrieveListForUserByName(db, listName, userID)
 	require.NoError(t, err)
-	assert.Equal(t, list.(*models.List).Name, listName)
+	assert.Equal(t, list.Name, listName)
 }
 
 func TestRetrieveSharableList_NotFound(t *testing.T) {
@@ -203,7 +203,7 @@ func TestRetrieveSharableList_NotFound(t *testing.T) {
 
 	_, e := RetrieveSharableList(db, listID)
 	require.Error(t, e)
-	//assert.Equal(t, list.(*models.List).Name, listID)
+	//assert.Equal(t, list.(models.List).Name, listID)
 }
 
 func TestRetrieveSharableList_Found(t *testing.T) {
@@ -219,8 +219,8 @@ func TestRetrieveSharableList_Found(t *testing.T) {
 
 	list, e := RetrieveSharableList(db, listID)
 	require.NoError(t, e)
-	assert.Equal(t, list.(*models.List).ID, listID)
-	assert.Equal(t, list.(*models.List).Name, "My Test List")
+	assert.Equal(t, list.ID, listID)
+	assert.Equal(t, list.Name, "My Test List")
 }
 
 func TestDeleteList_ListNotFound(t *testing.T) {
@@ -275,5 +275,5 @@ func TestDeleteList_ListFound(t *testing.T) {
 
 	list, err := DeleteList(db, listID, userID)
 	require.NoError(t, err)
-	assert.Equal(t, list.(*models.List).ID, listID)
+	assert.Equal(t, list.ID, listID)
 }

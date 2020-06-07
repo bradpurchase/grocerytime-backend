@@ -126,22 +126,6 @@ func init() {
 					},
 					Resolve: resolvers.JoinListResolver,
 				},
-				"addItemToList": &graphql.Field{
-					Type:        gql.ItemType,
-					Description: "Add an item to a list",
-					Args: graphql.FieldConfigArgument{
-						"listId": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.ID),
-						},
-						"name": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-						"quantity": &graphql.ArgumentConfig{
-							Type: graphql.Int,
-						},
-					},
-					Resolve: resolvers.AddItemResolver,
-				},
 				"deleteItem": &graphql.Field{
 					Type:        gql.ItemType,
 					Description: "Remove an item from a list",
@@ -187,6 +171,41 @@ func init() {
 					},
 					Resolve: resolvers.ReorderItemResolver,
 				},
+				"addItemToTrip": &graphql.Field{
+					Type:        gql.ItemType,
+					Description: "Add an item to a grocery trip",
+					Args: graphql.FieldConfigArgument{
+						"tripId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"quantity": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+					},
+					Resolve: resolvers.AddItemResolver,
+				},
+				"updateTrip": &graphql.Field{
+					Type:        gql.GroceryTripType,
+					Description: "Update the details about a grocery trip",
+					Args: graphql.FieldConfigArgument{
+						"tripId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"completed": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+						"copyRemainingItems": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+					},
+					Resolve: resolvers.UpdateTripResolver,
+				},
 			},
 		},
 	)
@@ -195,15 +214,15 @@ func init() {
 	subscriptionType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Subscription",
 		Fields: graphql.Fields{
-			"newItemInList": &graphql.Field{
+			"newItemInTrip": &graphql.Field{
 				Type:        gql.ItemType,
-				Description: "Retrieve a new item in a list",
+				Description: "Retrieve a new item in a trip",
 				Args: graphql.FieldConfigArgument{
 					"listId": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.ID),
 					},
 				},
-				Resolve: subscriptions.NewItemInList,
+				Resolve: subscriptions.NewItemInTrip,
 			},
 		},
 	})

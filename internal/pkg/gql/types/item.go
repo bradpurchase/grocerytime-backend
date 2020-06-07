@@ -10,7 +10,7 @@ var ItemType = graphql.NewObject(
 			"id": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
-			"listId": &graphql.Field{
+			"groceryTripId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"userId": &graphql.Field{

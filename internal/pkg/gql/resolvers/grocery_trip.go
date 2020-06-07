@@ -8,8 +8,9 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// AddItemResolver adds an item to the list with the listId param
-func AddItemResolver(p graphql.ResolveParams) (interface{}, error) {
+// GroceryTripResolver retrieves the current grocery trip in a list
+// as part of the List query
+func GroceryTripResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
@@ -19,9 +20,11 @@ func AddItemResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	item, err := trips.AddItem(db, user.(models.User).ID, p.Args)
+	listID := p.Source.(models.List).ID
+	userID := user.(models.User).ID
+	trip, err := trips.RetrieveCurrentTripInList(db, listID, userID)
 	if err != nil {
 		return nil, err
 	}
-	return item, nil
+	return trip, nil
 }
