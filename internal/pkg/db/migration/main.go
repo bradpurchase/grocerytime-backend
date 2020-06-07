@@ -148,6 +148,19 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Table("items").DropColumn("grocery_trip_id").Error
 			},
 		},
+		{
+			// Add copy_remaining_items to grocery_trips
+			ID: "202006071147_add_copy_remaining_items_to_grocery_trips",
+			Migrate: func(tx *gorm.DB) error {
+				type GroceryTrip struct {
+					CopyRemainingItems bool
+				}
+				return tx.AutoMigrate(&models.GroceryTrip{}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("grocery_trips").DropColumn("copy_remaining_items").Error
+			},
+		},
 	})
 	return m.Migrate()
 }

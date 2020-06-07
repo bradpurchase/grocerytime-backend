@@ -67,7 +67,7 @@ func TestUpdateTrip_NameUpdate(t *testing.T) {
 	assert.Equal(t, trip.(models.GroceryTrip).Name, "My Second Trip")
 }
 
-func TestUpdateTrip_CompletedUpdate(t *testing.T) {
+func TestUpdateTrip_MarkCompleted(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
@@ -89,11 +89,11 @@ func TestUpdateTrip_CompletedUpdate(t *testing.T) {
 	mock.ExpectBegin()
 	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
-		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(listID, "New Trip", AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
+	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	trip, err := UpdateTrip(db, args)

@@ -200,6 +200,9 @@ func init() {
 						"completed": &graphql.ArgumentConfig{
 							Type: graphql.Boolean,
 						},
+						"copyRemainingItems": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
 					},
 					Resolve: resolvers.UpdateTripResolver,
 				},
