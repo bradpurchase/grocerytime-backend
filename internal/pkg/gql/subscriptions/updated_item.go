@@ -8,15 +8,15 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// NewItem resolves the newItem subscription
-func NewItem(p graphql.ResolveParams) (interface{}, error) {
-	fmt.Println("Processing subscription NewItem...")
+// UpdatedItem resolves the updatedItem subscription
+func UpdatedItem(p graphql.ResolveParams) (interface{}, error) {
+	fmt.Println("Processing subscription UpdatedItem...")
 
 	db := db.FetchConnection()
 	defer db.Close()
 
 	rootValue := p.Info.RootValue.(map[string]interface{})
-	payload := rootValue["addItemToTrip"].(map[string]interface{})
+	payload := rootValue["updateItem"].(map[string]interface{})
 
 	tripID := p.Args["tripId"]
 	item := &models.Item{}

@@ -42,6 +42,12 @@ func GraphQLHandler() http.HandlerFunc {
 		if operationName == "AddItemToTrip" {
 			fmt.Printf("publishing message %v\n", result.Data)
 			gqlPubSub.Publish("newItem", result.Data)
+		} else if operationName == "UpdateItem" {
+			fmt.Printf("publishing message %v\n", result.Data)
+			gqlPubSub.Publish("updatedItem", result.Data)
+		} else if operationName == "DeleteItem" {
+			fmt.Printf("publishing message %v\n", result.Data)
+			gqlPubSub.Publish("deletedItem", result.Data)
 		}
 
 		response.WriteHeader(http.StatusOK)
