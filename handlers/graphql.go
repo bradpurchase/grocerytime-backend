@@ -41,7 +41,7 @@ func GraphQLHandler() http.HandlerFunc {
 		operationName := opts.OperationName
 		if operationName == "AddItemToTrip" {
 			fmt.Printf("publishing message %v\n", result.Data)
-			gqlPubSub.Publish("newItemInList", result.Data)
+			gqlPubSub.Publish("newItem", result.Data)
 		}
 
 		response.WriteHeader(http.StatusOK)

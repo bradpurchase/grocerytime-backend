@@ -214,15 +214,15 @@ func init() {
 	subscriptionType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Subscription",
 		Fields: graphql.Fields{
-			"newItemInTrip": &graphql.Field{
+			"newItem": &graphql.Field{
 				Type:        gql.ItemType,
 				Description: "Retrieve a new item in a trip",
 				Args: graphql.FieldConfigArgument{
-					"listId": &graphql.ArgumentConfig{
+					"tripId": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.ID),
 					},
 				},
-				Resolve: subscriptions.NewItemInTrip,
+				Resolve: subscriptions.NewItem,
 			},
 		},
 	})
