@@ -224,26 +224,26 @@ func init() {
 				},
 				Resolve: subscriptions.NewItem,
 			},
-			// "updatedItem": &graphql.Field{
-			// 	Type:        gql.ItemType,
-			// 	Description: "Retrieve an update to an item",
-			// 	Args: graphql.FieldConfigArgument{
-			// 		"tripId": &graphql.ArgumentConfig{
-			// 			Type: graphql.NewNonNull(graphql.ID),
-			// 		},
-			// 	},
-			// 	Resolve: subscriptions.UpdatedItem,
-			// },
-			// "deletedItem": &graphql.Field{
-			// 	Type:        gql.ItemType,
-			// 	Description: "Retrieve the deletion of an item",
-			// 	Args: graphql.FieldConfigArgument{
-			// 		"tripId": &graphql.ArgumentConfig{
-			// 			Type: graphql.NewNonNull(graphql.ID),
-			// 		},
-			// 	},
-			// 	Resolve: subscriptions.DeletedItem,
-			// },
+			"updatedItem": &graphql.Field{
+				Type:        gql.ItemType,
+				Description: "Retrieve an update to an item",
+				Args: graphql.FieldConfigArgument{
+					"tripId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.ID),
+					},
+				},
+				Resolve: subscriptions.UpdatedItem,
+			},
+			"deletedItem": &graphql.Field{
+				Type:        gql.ItemType,
+				Description: "Retrieve the deletion of an item",
+				Args: graphql.FieldConfigArgument{
+					"tripId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.ID),
+					},
+				},
+				Resolve: subscriptions.DeletedItem,
+			},
 		},
 	})
 
