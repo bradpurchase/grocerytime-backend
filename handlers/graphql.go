@@ -37,17 +37,18 @@ func GraphQLHandler() http.HandlerFunc {
 			return
 		}
 
-		// Publish to graphql pub/sub for subscriptions here
+		// Publish to graphql pub/sub for subscriptions here if the dataset is not nil
+		//TODO clean this up
 		operationName := opts.OperationName
-		if operationName == "AddItemToTrip" {
+		if operationName == "AddItemToTrip" && result.Data.(map[string]interface{})["addItemToTrip"] != nil {
 			fmt.Printf("publishing message %v\n", result.Data)
 			gqlPubSub.Publish("newItem", result.Data)
 		}
-		if operationName == "UpdateItem" {
+		if operationName == "UpdateItem" && result.Data.(map[string]interface{})["updateItem"] != nil {
 			fmt.Printf("publishing message %v\n", result.Data)
 			gqlPubSub.Publish("updatedItem", result.Data)
 		}
-		if operationName == "DeleteItem" {
+		if operationName == "DeleteItem" && result.Data.(map[string]interface{})["deletedItem"] != nil {
 			fmt.Printf("publishing message %v\n", result.Data)
 			gqlPubSub.Publish("deletedItem", result.Data)
 		}
