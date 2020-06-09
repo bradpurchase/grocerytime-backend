@@ -2,7 +2,6 @@ package subscriptions
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -17,12 +16,9 @@ func NewItem(p graphql.ResolveParams) (interface{}, error) {
 	defer db.Close()
 
 	rootValue := p.Info.RootValue.(map[string]interface{})
-	log.Println(rootValue)
 	payload := rootValue["addItemToTrip"].(map[string]interface{})
-	log.Println(payload)
 
 	tripID := p.Args["tripId"]
-	log.Println(tripID)
 	item := &models.Item{}
 	if err := db.Where("id = ? AND grocery_trip_id = ?", payload["id"], tripID).First(&item).Error; err != nil {
 		return nil, err
