@@ -44,14 +44,14 @@ func GraphQLHandler() http.HandlerFunc {
 			fmt.Printf("publishing message %v\n", result.Data)
 			gqlPubSub.Publish("newItem", result.Data)
 		}
-		if operationName == "UpdateItem" && result.Data.(map[string]interface{})["updateItem"] != nil {
-			fmt.Printf("publishing message %v\n", result.Data)
-			gqlPubSub.Publish("updatedItem", result.Data)
-		}
-		if operationName == "DeleteItem" && result.Data.(map[string]interface{})["deletedItem"] != nil {
-			fmt.Printf("publishing message %v\n", result.Data)
-			gqlPubSub.Publish("deletedItem", result.Data)
-		}
+		// if operationName == "UpdateItem" && result.Data.(map[string]interface{})["updateItem"] != nil {
+		// 	fmt.Printf("publishing message %v\n", result.Data)
+		// 	gqlPubSub.Publish("updatedItem", result.Data)
+		// }
+		// if operationName == "DeleteItem" && result.Data.(map[string]interface{})["deletedItem"] != nil {
+		// 	fmt.Printf("publishing message %v\n", result.Data)
+		// 	gqlPubSub.Publish("deletedItem", result.Data)
+		// }
 
 		response.WriteHeader(http.StatusOK)
 		response.Header().Set("Access-Control-Allow-Origin", "*")
