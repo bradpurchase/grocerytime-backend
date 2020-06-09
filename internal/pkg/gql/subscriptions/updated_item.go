@@ -6,6 +6,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/graphql-go/graphql"
+	"github.com/jinzhu/gorm"
 )
 
 // UpdatedItem resolves the updatedItem subscription
@@ -20,7 +21,7 @@ func UpdatedItem(p graphql.ResolveParams) (interface{}, error) {
 
 	tripID := p.Args["tripId"]
 	item := &models.Item{}
-	if err := db.Where("id = ? AND grocery_trip_id = ?", payload["id"], tripID).First(&item).Error; err != nil {
+	if err := db.Where("id = ? AND grocery_trip_id = ?", payload["id"], tripID).First(&item).Error; err != nil && !gorm.IsRecordNotFoundError(err) {
 		return nil, err
 	}
 
