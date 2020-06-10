@@ -9,7 +9,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// RetrieveCurrentTripInList Retrieves the currently active grocery trip in a
+// RetrieveCurrentTripInList retrieves the currently active grocery trip in a
 // list by listID if the userID has access to to the list
 func RetrieveCurrentTripInList(db *gorm.DB, listID uuid.UUID, userID uuid.UUID) (interface{}, error) {
 	if err := db.Where("list_id = ? AND user_id = ?", listID, userID).Find(&models.ListUser{}).Error; err != nil {
