@@ -28,10 +28,11 @@ func TestAddUserToList_UserExistsNotYetAdded(t *testing.T) {
 	require.NoError(t, err)
 
 	listID := uuid.NewV4()
-	list := &models.List{ID: listID, Name: "Test List", CreatedAt: time.Now(), UpdatedAt: time.Now()}
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
 
 	userID := uuid.NewV4()
-
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
 		WithArgs(listID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
@@ -42,7 +43,7 @@ func TestAddUserToList_UserExistsNotYetAdded(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
 	mock.ExpectCommit()
 
-	listUser, err := AddUserToList(db, userID, list)
+	listUser, err := AddUserToList(db, userID, listID)
 	require.NoError(t, err)
 	assert.Equal(t, listUser.(models.ListUser).UserID, userID)
 }
@@ -54,16 +55,17 @@ func TestAddUserToList_UserExistsAlreadyAdded(t *testing.T) {
 	require.NoError(t, err)
 
 	listID := uuid.NewV4()
-	list := &models.List{ID: listID, Name: "Test List", CreatedAt: time.Now(), UpdatedAt: time.Now()}
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
 
 	userID := uuid.NewV4()
-
 	listUserID := uuid.NewV4()
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
 		WithArgs(listID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listUserID))
 
-	listUser, err := AddUserToList(db, userID, list)
+	listUser, err := AddUserToList(db, userID, listID)
 	require.NoError(t, err)
 	assert.Equal(t, listUser.(models.ListUser).ID, listUserID)
 	assert.Equal(t, listUser.(models.ListUser).UserID, userID)
