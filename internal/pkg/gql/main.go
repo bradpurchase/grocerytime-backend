@@ -51,19 +51,6 @@ func init() {
 		graphql.ObjectConfig{
 			Name: "Mutation",
 			Fields: graphql.Fields{
-				"signup": &graphql.Field{
-					Type:        gql.AuthTokenType,
-					Description: "Create a new user account",
-					Args: graphql.FieldConfigArgument{
-						"email": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-						"password": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-					},
-					Resolve: resolvers.SignupResolver,
-				},
 				"token": &graphql.Field{
 					Type:        gql.AuthTokenType,
 					Description: "Retrieve an access token",
@@ -82,6 +69,35 @@ func init() {
 						},
 					},
 					Resolve: resolvers.TokenResolver,
+				},
+				"signup": &graphql.Field{
+					Type:        gql.AuthTokenType,
+					Description: "Create a new user account",
+					Args: graphql.FieldConfigArgument{
+						"email": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"password": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.SignupResolver,
+				},
+				"signupAndJoinList": &graphql.Field{
+					Type:        gql.UserType,
+					Description: "Create a new user account and automatically join a list",
+					Args: graphql.FieldConfigArgument{
+						"email": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"password": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"listID": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.SignupAndJoinListResolver,
 				},
 				"createList": &graphql.Field{
 					Type:        gql.ListType,
