@@ -5,7 +5,9 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // JoinListResolver adds the current user to a list
@@ -20,13 +22,9 @@ func JoinListResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	// Verify that the list with the ID provided exists
-	list := &models.List{}
-	if err := db.Where("id = ?", p.Args["listId"]).First(&list).Error; err != nil {
-		return nil, err
-	}
-
 	userID := user.(models.User).ID
-	listUser, err := grocerylist.AddUserToList(db, userID, list)
+	listID := p.Args["listID"].(uuid.UUID)
+	listUser, err := grocerylist.AddUserToList(db, userID, listID)
 	if err != nil {
 		return nil, err
 	}

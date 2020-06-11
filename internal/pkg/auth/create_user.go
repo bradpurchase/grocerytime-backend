@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -36,6 +37,12 @@ func CreateUser(db *gorm.DB, email string, password string, clientID uuid.UUID) 
 	}
 	if err := db.Create(&user).Error; err != nil {
 		return nil, err
+	}
+
+	// Send an email upon user creation
+	_, mailErr := mailer.SendNewUserEmail(user)
+	if mailErr != nil {
+		return nil, mailErr
 	}
 
 	return user, nil

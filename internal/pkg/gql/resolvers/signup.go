@@ -6,7 +6,6 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
 )
 
 // SignupResolver creates a new user account and assigns it a
@@ -33,12 +32,6 @@ func SignupResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 	token := user.Tokens[0]
-
-	// Finally, send an email upon signup
-	_, mailErr := mailer.SendNewUserEmail(user)
-	if mailErr != nil {
-		return nil, mailErr
-	}
 
 	return token, nil
 }

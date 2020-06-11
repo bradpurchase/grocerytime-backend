@@ -83,22 +83,6 @@ func init() {
 					},
 					Resolve: resolvers.SignupResolver,
 				},
-				"signupAndJoinList": &graphql.Field{
-					Type:        gql.UserType,
-					Description: "Create a new user account and automatically join a list",
-					Args: graphql.FieldConfigArgument{
-						"email": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-						"password": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-						"listID": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.ID),
-						},
-					},
-					Resolve: resolvers.SignupAndJoinListResolver,
-				},
 				"createList": &graphql.Field{
 					Type:        gql.ListType,
 					Description: "Create a list",
