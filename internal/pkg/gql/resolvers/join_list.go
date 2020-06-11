@@ -23,7 +23,7 @@ func JoinListResolver(p graphql.ResolveParams) (interface{}, error) {
 
 	// Verify that the list with the ID provided exists
 	userID := user.(models.User).ID
-	listID := p.Args["listID"].(uuid.UUID)
+	listID := p.Args["listId"].(uuid.UUID)
 	listUser, err := grocerylist.AddUserToList(db, userID, listID)
 	if err != nil {
 		return nil, err
