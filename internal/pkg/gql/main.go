@@ -22,9 +22,14 @@ func init() {
 					Description: "Retrieve the current user",
 					Resolve:     resolvers.AuthenticatedUserResolver,
 				},
+				"lists": &graphql.Field{
+					Type:        graphql.NewList(gql.ListType),
+					Description: "Retrieve lists for the current user",
+					Resolve:     resolvers.ListsResolver,
+				},
 				"list": &graphql.Field{
 					Type:        gql.ListType,
-					Description: "Retrieve a list and its items",
+					Description: "Retrieve a specific list",
 					Args: graphql.FieldConfigArgument{
 						"id": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),

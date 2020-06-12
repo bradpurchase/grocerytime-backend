@@ -1,6 +1,10 @@
 package gql
 
-import "github.com/graphql-go/graphql"
+import (
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/graphql-go/graphql"
+)
 
 // ListUserType defines a graphql type for ListUser
 var ListUserType = graphql.NewObject(
@@ -27,6 +31,20 @@ var ListUserType = graphql.NewObject(
 			},
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
+			},
+			"user": &graphql.Field{
+				Type: UserType,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					db := db.FetchConnection()
+					defer db.Close()
+
+					userID := p.Source.(models.ListUser).UserID
+					user := &models.User{}
+					if err := db.Where("id = ?", userID).First(&user).Error; err != nil {
+						return nil, err
+					}
+					return user, nil
+				},
 			},
 		},
 	},
