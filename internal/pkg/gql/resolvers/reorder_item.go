@@ -20,9 +20,9 @@ func ReorderItemResolver(p graphql.ResolveParams) (interface{}, error) {
 
 	itemID := p.Args["itemId"]
 	position := p.Args["position"].(int)
-	updatedList, err := grocerylist.ReorderItem(db, itemID, position)
+	item, err := grocerylist.ReorderItem(db, itemID, position)
 	if err != nil {
 		return nil, err
 	}
-	return updatedList, err
+	return item, err
 }
