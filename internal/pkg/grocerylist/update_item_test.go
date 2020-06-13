@@ -19,7 +19,7 @@ func TestUpdateItem_NoUpdates(t *testing.T) {
 	require.NoError(t, err)
 
 	itemID := uuid.NewV4()
-	listID := uuid.NewV4()
+	tripID := uuid.NewV4()
 	userID := uuid.NewV4()
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
@@ -27,7 +27,7 @@ func TestUpdateItem_NoUpdates(t *testing.T) {
 		WillReturnRows(sqlmock.
 			NewRows([]string{
 				"id",
-				"list_id",
+				"grocery_trip_id",
 				"user_id",
 				"name",
 				"quantity",
@@ -35,7 +35,7 @@ func TestUpdateItem_NoUpdates(t *testing.T) {
 				"created_at",
 				"updated_at",
 			}).
-			AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now()))
+			AddRow(itemID, tripID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
@@ -52,7 +52,7 @@ func TestUpdateItem_NoUpdates(t *testing.T) {
 	require.NoError(t, err)
 	// Assert no changes
 	assert.Equal(t, item.(*models.Item).ID, itemID)
-	assert.Equal(t, item.(*models.Item).ListID, listID)
+	assert.Equal(t, item.(*models.Item).GroceryTripID, tripID)
 	assert.Equal(t, item.(*models.Item).UserID, userID)
 	assert.Equal(t, item.(*models.Item).Name, "Apples")
 	assert.Equal(t, item.(*models.Item).Quantity, 5)
@@ -66,7 +66,7 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 	require.NoError(t, err)
 
 	itemID := uuid.NewV4()
-	listID := uuid.NewV4()
+	tripID := uuid.NewV4()
 	userID := uuid.NewV4()
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
@@ -74,7 +74,7 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 		WillReturnRows(sqlmock.
 			NewRows([]string{
 				"id",
-				"list_id",
+				"grocery_trip_id",
 				"user_id",
 				"name",
 				"quantity",
@@ -82,7 +82,7 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 				"created_at",
 				"updated_at",
 			}).
-			AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now()))
+			AddRow(itemID, tripID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
@@ -100,7 +100,7 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 	require.NoError(t, err)
 	// Assert only completed state changed
 	assert.Equal(t, item.(*models.Item).ID, itemID)
-	assert.Equal(t, item.(*models.Item).ListID, listID)
+	assert.Equal(t, item.(*models.Item).GroceryTripID, tripID)
 	assert.Equal(t, item.(*models.Item).UserID, userID)
 	assert.Equal(t, item.(*models.Item).Name, "Apples")
 	assert.Equal(t, item.(*models.Item).Quantity, 5)
@@ -114,7 +114,7 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 	require.NoError(t, err)
 
 	itemID := uuid.NewV4()
-	listID := uuid.NewV4()
+	tripID := uuid.NewV4()
 	userID := uuid.NewV4()
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
@@ -122,7 +122,7 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 		WillReturnRows(sqlmock.
 			NewRows([]string{
 				"id",
-				"list_id",
+				"grocery_trip_id",
 				"user_id",
 				"name",
 				"quantity",
@@ -130,7 +130,7 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 				"created_at",
 				"updated_at",
 			}).
-			AddRow(itemID, listID, userID, "Apples", 5, false, time.Now(), time.Now()))
+			AddRow(itemID, tripID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
@@ -153,7 +153,7 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 	require.NoError(t, err)
 	// Assert only quantity and completed states changed
 	assert.Equal(t, item.(*models.Item).ID, itemID)
-	assert.Equal(t, item.(*models.Item).ListID, listID)
+	assert.Equal(t, item.(*models.Item).GroceryTripID, tripID)
 	assert.Equal(t, item.(*models.Item).UserID, userID)
 	assert.Equal(t, item.(*models.Item).Name, "Bananas")
 	assert.Equal(t, item.(*models.Item).Quantity, 10)
