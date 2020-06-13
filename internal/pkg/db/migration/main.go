@@ -161,6 +161,32 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Table("grocery_trips").DropColumn("copy_remaining_items").Error
 			},
 		},
+		{
+			// Remove list_id from items
+			ID: "202006131150_remove_list_id_from_items",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Table("items").DropColumn("list_id").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				type Item struct {
+					ListID uuid.UUID
+				}
+				return tx.AutoMigrate(&models.Item{}).Error
+			},
+		},
+		{
+			// Add email to list_users
+			ID: "202006131236_remove_list_id_from_items",
+			Migrate: func(tx *gorm.DB) error {
+				type ListUser struct {
+					Email string
+				}
+				return tx.AutoMigrate(&models.ListUser{}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("list_users").DropColumn("email").Error
+			},
+		},
 	})
 	return m.Migrate()
 }

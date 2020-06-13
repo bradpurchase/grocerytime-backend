@@ -19,7 +19,7 @@ func UpdateItem(db *gorm.DB, args map[string]interface{}) (interface{}, error) {
 	if args["completed"] != nil {
 		completed := args["completed"].(bool)
 		item.Completed = completed
-		item.Position = GetNewPosition(db, item.ListID, completed)
+		item.Position = GetNewPosition(db, item.GroceryTripID, completed)
 	}
 	if args["quantity"] != nil {
 		item.Quantity = args["quantity"].(int)
@@ -34,7 +34,7 @@ func UpdateItem(db *gorm.DB, args map[string]interface{}) (interface{}, error) {
 }
 
 // GetNewPosition gets the new position of an updated item
-func GetNewPosition(db *gorm.DB, listID uuid.UUID, completed bool) int {
+func GetNewPosition(db *gorm.DB, tripID uuid.UUID, completed bool) int {
 	newPosition := 1
 	if completed {
 		// If the item was marked completed, move to the bottom of the list
@@ -42,7 +42,7 @@ func GetNewPosition(db *gorm.DB, listID uuid.UUID, completed bool) int {
 		bottomItem := &models.Item{}
 		db.
 			Select("position").
-			Where("list_id = ?", listID).
+			Where("grocery_trip_id = ?", tripID).
 			Order("position DESC").
 			Limit(1).
 			Find(&bottomItem)
