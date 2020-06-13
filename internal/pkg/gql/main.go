@@ -164,7 +164,7 @@ func init() {
 					Resolve: resolvers.UpdateItemResolver,
 				},
 				"reorderItem": &graphql.Field{
-					Type:        gql.ItemType,
+					Type:        gql.GroceryTripType,
 					Description: "Updates the order of an item in a list",
 					Args: graphql.FieldConfigArgument{
 						"itemId": &graphql.ArgumentConfig{

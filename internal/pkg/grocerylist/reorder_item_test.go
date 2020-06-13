@@ -50,8 +50,11 @@ func TestReorder_ReorderItemPosition(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	item, err := ReorderItem(db, itemID, 4)
+	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(tripID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
+
+	trip, err := ReorderItem(db, itemID, 4)
 	require.NoError(t, err)
-	assert.Equal(t, item.ID, itemID)
-	assert.Equal(t, item.Position, 4)
+	assert.Equal(t, trip.ID, tripID)
 }
