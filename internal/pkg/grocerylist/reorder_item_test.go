@@ -18,12 +18,12 @@ func TestReorder_ReorderItemPosition(t *testing.T) {
 	require.NoError(t, err)
 
 	itemID := uuid.NewV4()
-	listID := uuid.NewV4()
+	tripID := uuid.NewV4()
 	userID := uuid.NewV4()
 	itemRows := sqlmock.
 		NewRows([]string{
 			"id",
-			"list_id",
+			"grocery_trip_id",
 			"user_id",
 			"name",
 			"quantity",
@@ -32,9 +32,9 @@ func TestReorder_ReorderItemPosition(t *testing.T) {
 			"created_at",
 			"updated_at",
 		}).
-		AddRow(uuid.NewV4(), listID, userID, "Apples", 5, false, 1, time.Now(), time.Now()).
-		AddRow(uuid.NewV4(), listID, userID, "Bananas", 10, false, 2, time.Now(), time.Now()).
-		AddRow(itemID, listID, userID, "Oranges", 1, false, 3, time.Now(), time.Now())
+		AddRow(uuid.NewV4(), tripID, userID, "Apples", 5, false, 1, time.Now(), time.Now()).
+		AddRow(uuid.NewV4(), tripID, userID, "Bananas", 10, false, 2, time.Now(), time.Now()).
+		AddRow(itemID, tripID, userID, "Oranges", 1, false, 3, time.Now(), time.Now())
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
@@ -50,11 +50,8 @@ func TestReorder_ReorderItemPosition(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
-		WithArgs(listID).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
-
-	list, err := ReorderItem(db, itemID, 4)
+	item, err := ReorderItem(db, itemID, 4)
 	require.NoError(t, err)
-	assert.Equal(t, list.ID, listID)
+	assert.Equal(t, item.ID, itemID)
+	assert.Equal(t, item.Position, 4)
 }

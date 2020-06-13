@@ -45,7 +45,7 @@ func TestCreateList_Created(t *testing.T) {
 		WithArgs(userID, listName, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
 	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
-		WithArgs(listID, userID, true, AnyTime{}, AnyTime{}).
+		WithArgs(listID, userID, "", true, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(listID, "Grocery Trip 1", AnyTime{}, AnyTime{}).
