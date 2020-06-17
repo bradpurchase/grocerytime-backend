@@ -3,13 +3,12 @@ package mailer
 import (
 	"os"
 
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
 // SendNewUserEmail sends an email to a new user on signup
-func SendNewUserEmail(user *models.User) (interface{}, error) {
+func SendNewUserEmail(user interface{}) (interface{}, error) {
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
 	subject := "Welcome to GroceryTime! 🛒"
 	to := mail.NewEmail(user.FirstName+" "+user.LastName, user.Email)
