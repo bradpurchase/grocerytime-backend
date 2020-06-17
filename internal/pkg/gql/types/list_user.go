@@ -18,7 +18,10 @@ var ListUserType = graphql.NewObject(
 				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"userId": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.ID),
+				Type: graphql.ID,
+			},
+			"email": &graphql.Field{
+				Type: graphql.String,
 			},
 			"creator": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.Boolean),

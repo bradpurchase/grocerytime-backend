@@ -6,6 +6,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+// DEPRECATED
 // AddUserToList adds a user to a list by user ID
 //
 // If there is already a list_users record for this list and user,
@@ -19,6 +20,23 @@ func AddUserToList(db *gorm.DB, userID uuid.UUID, listID interface{}) (interface
 	listUser := models.ListUser{UserID: userID, ListID: list.ID}
 	if err := db.Where(listUser).FirstOrCreate(&listUser).Error; err != nil {
 		return nil, err
+	}
+	return listUser, nil
+}
+
+// InviteToListByEmail creates a list_users record for this list ID and email
+//
+// The list user will be considered pending until the invitation is accepted
+// by the user in the app, at which point they are associated by userID instead.
+func InviteToListByEmail(db *gorm.DB, listID interface{}, email string) (models.ListUser, error) {
+	list := &models.List{}
+	if err := db.Where("id = ?", listID).First(&list).Error; err != nil {
+		return models.ListUser{}, err
+	}
+
+	listUser := models.ListUser{ListID: list.ID, Email: email}
+	if err := db.Where(listUser).FirstOrCreate(&listUser).Error; err != nil {
+		return models.ListUser{}, err
 	}
 	return listUser, nil
 }

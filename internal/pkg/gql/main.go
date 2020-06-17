@@ -121,6 +121,19 @@ func init() {
 					},
 					Resolve: resolvers.UpdateListResolver,
 				},
+				"inviteToList": &graphql.Field{
+					Type:        gql.ListUserType,
+					Description: "Invite to a list via email",
+					Args: graphql.FieldConfigArgument{
+						"listId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"email": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.InviteToListResolver,
+				},
 				"joinList": &graphql.Field{
 					Type:        gql.ListUserType,
 					Description: "Join a list via share link",

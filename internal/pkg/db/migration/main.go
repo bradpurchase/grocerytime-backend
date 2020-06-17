@@ -80,18 +80,18 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 		},
 		{
-			// Add index idx_items_list_id
-			ID: "202006021110_add_idx_items_list_id",
+			// Add index idx_items_grocery_trip_id
+			ID: "202006021110_add_idx_items_grocery_trip_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Table("items").AddIndex("idx_items_list_id", "list_id").Error
+				return tx.Table("items").AddIndex("idx_items_list_id", "grocery_trip_id").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("items").RemoveIndex("idx_items_list_id").Error
+				return tx.Table("items").RemoveIndex("idx_items_grocery_trip_id").Error
 			},
 		},
 		{
 			// Add index idx_list_users_list_id
-			ID: "202006021117_add_idx_items_list_id",
+			ID: "202006021117_add_idx_list_users_list_id",
 			Migrate: func(tx *gorm.DB) error {
 				return tx.Table("list_users").AddIndex("idx_list_users_list_id", "list_id").Error
 			},
@@ -159,19 +159,6 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Table("grocery_trips").DropColumn("copy_remaining_items").Error
-			},
-		},
-		{
-			// Remove list_id from items
-			ID: "202006131150_remove_list_id_from_items",
-			Migrate: func(tx *gorm.DB) error {
-				return tx.Table("items").DropColumn("list_id").Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				type Item struct {
-					ListID uuid.UUID
-				}
-				return tx.AutoMigrate(&models.Item{}).Error
 			},
 		},
 		{

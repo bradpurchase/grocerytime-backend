@@ -4,6 +4,8 @@ import (
 	"time"
 
 	// Postgres dialect for GORM
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
+	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
 	uuid "github.com/satori/go.uuid"
@@ -24,4 +26,16 @@ type ListUser struct {
 	List      List
 	User      User
 	ListUsers []ListUser
+}
+
+// AfterCreate hook to handle sending an invite email to a new ListUser if the
+// email column is not empty (i.e. list invitation by another user)
+func (lu *ListUser) AfterCreate(tx *gorm.DB) (err error) {
+	if len(lu.Email) > 0 {
+		_, err := mailer.SendListInvitationEmail(lu)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return nil
 }
