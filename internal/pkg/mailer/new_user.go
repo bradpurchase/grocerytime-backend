@@ -23,7 +23,7 @@ func SendNewUserEmail(email string) (interface{}, error) {
 	htmlContent += "<li><strong>List sharing:</strong> Most people who use GroceryTime use it to share grocery lists with their spouse or a friend. You can easily share any list with up to 5 people and get updates in real time - just tap the \":\" icon when viewing a list and then tap \"Share list\".</li>"
 	htmlContent += "</ol>"
 	htmlContent += "<p>Thanks again for signing up for a GroceryTime account. If you have any questions, concerns, or general feedback you can email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a>.</p>"
-	htmlContent += "<p>Cheers,<br />Brad Purchase<br />Creator of GroceryTime</p>"
+	htmlContent += "<p>Cheers,<br />Brad from GroceryTime</p>"
 	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
 
 	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))

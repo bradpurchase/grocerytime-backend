@@ -32,6 +32,7 @@ type ListUser struct {
 // email column is not empty (i.e. list invitation by another user)
 func (lu *ListUser) AfterCreate(tx *gorm.DB) (err error) {
 	if len(lu.Email) > 0 {
+		//TODO lu.List.Name doesnt work :( prolly need to fetch the list separately
 		_, err := mailer.SendListInvitationEmail(lu.List.Name, lu.Email)
 		if err != nil {
 			return err
