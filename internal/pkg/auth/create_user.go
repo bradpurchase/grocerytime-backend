@@ -40,7 +40,7 @@ func CreateUser(db *gorm.DB, email string, password string, clientID uuid.UUID) 
 	}
 
 	// Send an email upon user creation
-	_, mailErr := mailer.SendNewUserEmail(user)
+	_, mailErr := mailer.SendNewUserEmail(user.Email)
 	if mailErr != nil {
 		return nil, mailErr
 	}

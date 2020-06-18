@@ -8,10 +8,10 @@ import (
 )
 
 // SendNewUserEmail sends an email to a new user on signup
-func SendNewUserEmail(user interface{}) (interface{}, error) {
+func SendNewUserEmail(email string) (interface{}, error) {
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
 	subject := "Welcome to GroceryTime! 🛒"
-	to := mail.NewEmail(user.FirstName+" "+user.LastName, user.Email)
+	to := mail.NewEmail("", email)
 
 	plainTextContent := "Hello and welcome to GroceryTime, the collaborative grocery list app! This is just a quick email to thank you for signing up."
 	htmlContent := "<p>Hello,</p>"
