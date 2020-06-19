@@ -91,6 +91,9 @@ func TestInviteToListByEmail_UserExistsNotYetAdded(t *testing.T) {
 	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
 		WithArgs(listID, "00000000-0000-0000-0000-000000000000", email, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
+	mock.ExpectQuery("^SELECT name FROM \"lists\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
 	mock.ExpectCommit()
 
 	listUser, err := InviteToListByEmail(db, listID, email)
