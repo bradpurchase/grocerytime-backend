@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/graphql-go/graphql"
+	"github.com/jinzhu/gorm"
 )
 
 // ListUserType defines a graphql type for ListUser
@@ -43,7 +44,7 @@ var ListUserType = graphql.NewObject(
 
 					userID := p.Source.(models.ListUser).UserID
 					user := &models.User{}
-					if err := db.Where("id = ?", userID).First(&user).Error; err != nil {
+					if err := db.Where("id = ?", userID).First(&user).Error; err != nil && !gorm.IsRecordNotFoundError(err) {
 						return nil, err
 					}
 					return user, nil
