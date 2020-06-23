@@ -19,7 +19,7 @@ func ListsResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	lists, err := grocerylist.RetrieveUserLists(db, user.(models.User).ID)
+	lists, err := grocerylist.RetrieveUserLists(db, user.(models.User))
 	if err != nil {
 		return nil, err
 	}

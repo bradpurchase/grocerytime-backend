@@ -18,12 +18,12 @@ func TestRetrieveUserLists_NoLists(t *testing.T) {
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
 
-	userID := uuid.NewV4()
+	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
-		WithArgs(userID).
+		WithArgs(user.ID, user.Email).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	userLists, err := RetrieveUserLists(db, userID)
+	userLists, err := RetrieveUserLists(db, user)
 	require.NoError(t, err)
 	assert.Equal(t, userLists, []models.List{})
 }
@@ -34,7 +34,7 @@ func TestRetrieveUserLists_HasListsCreated(t *testing.T) {
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
 
-	userID := uuid.NewV4()
+	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	listRows := sqlmock.
 		NewRows([]string{
 			"id",
@@ -43,20 +43,20 @@ func TestRetrieveUserLists_HasListsCreated(t *testing.T) {
 			"created_at",
 			"updated_at",
 		}).
-		AddRow(uuid.NewV4(), userID, "Provigo Grocery List", time.Now(), time.Now()).
-		AddRow(uuid.NewV4(), userID, "Beer Store List", time.Now(), time.Now())
+		AddRow(uuid.NewV4(), user.ID, "Provigo Grocery List", time.Now(), time.Now()).
+		AddRow(uuid.NewV4(), user.ID, "Beer Store List", time.Now(), time.Now())
 	mock.
 		ExpectQuery("^SELECT lists.* FROM \"lists\"*").
-		WithArgs(userID).
+		WithArgs(user.ID, user.Email).
 		WillReturnRows(listRows)
 
-	userLists, err := RetrieveUserLists(db, userID)
+	userLists, err := RetrieveUserLists(db, user)
 	require.NoError(t, err)
 	assert.Len(t, userLists, 2)
 	assert.Equal(t, userLists[0].Name, "Provigo Grocery List")
-	assert.Equal(t, userLists[0].UserID, userID)
+	assert.Equal(t, userLists[0].UserID, user.ID)
 	assert.Equal(t, userLists[1].Name, "Beer Store List")
-	assert.Equal(t, userLists[1].UserID, userID)
+	assert.Equal(t, userLists[1].UserID, user.ID)
 }
 
 func TestRetrieveUserLists_HasListsCreatedAndJoined(t *testing.T) {
@@ -65,7 +65,7 @@ func TestRetrieveUserLists_HasListsCreatedAndJoined(t *testing.T) {
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
 
-	userID := uuid.NewV4()
+	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	sharingUserID := uuid.NewV4()
 	sharedListID := uuid.NewV4()
 	listRows := sqlmock.
@@ -76,19 +76,19 @@ func TestRetrieveUserLists_HasListsCreatedAndJoined(t *testing.T) {
 			"created_at",
 			"updated_at",
 		}).
-		AddRow(uuid.NewV4(), userID, "Provigo Grocery List", time.Now(), time.Now()).
-		AddRow(uuid.NewV4(), userID, "Beer Store List", time.Now(), time.Now()).
+		AddRow(uuid.NewV4(), user.ID, "Provigo Grocery List", time.Now(), time.Now()).
+		AddRow(uuid.NewV4(), user.ID, "Beer Store List", time.Now(), time.Now()).
 		AddRow(sharedListID, sharingUserID, "Shared List", time.Now(), time.Now())
 	mock.
 		ExpectQuery("^SELECT lists.* FROM \"lists\"*").
-		WithArgs(userID).
+		WithArgs(user.ID, user.Email).
 		WillReturnRows(listRows)
 
-	userLists, err := RetrieveUserLists(db, userID)
+	userLists, err := RetrieveUserLists(db, user)
 	require.NoError(t, err)
 	assert.Len(t, userLists, 3)
 	assert.Equal(t, userLists[0].Name, "Provigo Grocery List")
-	assert.Equal(t, userLists[0].UserID, userID)
+	assert.Equal(t, userLists[0].UserID, user.ID)
 	assert.Equal(t, userLists[1].Name, "Beer Store List")
 	assert.Equal(t, userLists[2].Name, "Shared List")
 	assert.Equal(t, userLists[2].UserID, sharingUserID)
