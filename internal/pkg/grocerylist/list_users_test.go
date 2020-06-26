@@ -21,56 +21,6 @@ func (a AnyTime) Match(v driver.Value) bool {
 	return ok
 }
 
-func TestAddUserToList_UserExistsNotYetAdded(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
-	require.NoError(t, err)
-
-	listID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
-		WithArgs(listID).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
-
-	userID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
-		WithArgs(listID, userID).
-		WillReturnRows(sqlmock.NewRows([]string{}))
-
-	mock.ExpectBegin()
-	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
-		WithArgs(listID, userID, "", AnyTime{}, AnyTime{}).
-		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
-	mock.ExpectCommit()
-
-	listUser, err := AddUserToList(db, userID, listID)
-	require.NoError(t, err)
-	assert.Equal(t, listUser.(models.ListUser).UserID, userID)
-}
-
-func TestAddUserToList_UserExistsAlreadyAdded(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
-	require.NoError(t, err)
-
-	listID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
-		WithArgs(listID).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
-
-	userID := uuid.NewV4()
-	listUserID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
-		WithArgs(listID, userID).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listUserID))
-
-	listUser, err := AddUserToList(db, userID, listID)
-	require.NoError(t, err)
-	assert.Equal(t, listUser.(models.ListUser).ID, listUserID)
-	assert.Equal(t, listUser.(models.ListUser).UserID, userID)
-}
-
 func TestInviteToListByEmail_UserExistsNotYetAdded(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
@@ -99,6 +49,57 @@ func TestInviteToListByEmail_UserExistsNotYetAdded(t *testing.T) {
 	listUser, err := InviteToListByEmail(db, listID, email)
 	require.NoError(t, err)
 	assert.Equal(t, listUser.Email, email)
+}
+
+func TestAddUserToList_UserNotFoundInList(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
+
+	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
+	listUserID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
+		WithArgs(listID, user.Email).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listUserID))
+
+	_, e := AddUserToList(db, user, listID)
+	require.Error(t, e)
+}
+
+func TestAddUserToList_Success(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
+
+	email := "test@example.com"
+	user := models.User{ID: uuid.NewV4(), Email: email}
+	listUserID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
+		WithArgs(listID, user.Email).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "email"}).AddRow(listUserID, email))
+
+	mock.ExpectBegin()
+	mock.ExpectExec("^UPDATE \"list_users\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	listUser, err := AddUserToList(db, user, listID)
+	require.NoError(t, err)
+	assert.Equal(t, listUser.(*models.ListUser).ID, listUserID)
+	assert.Equal(t, listUser.(*models.ListUser).UserID, user.ID)
+	assert.Equal(t, listUser.(*models.ListUser).Email, "")
 }
 
 func TestInviteToListByEmail_UserExistsAlreadyAdded(t *testing.T) {
