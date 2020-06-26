@@ -136,13 +136,23 @@ func init() {
 				},
 				"joinList": &graphql.Field{
 					Type:        gql.ListUserType,
-					Description: "Join a list via share link",
+					Description: "Creates a proper ListUser membership and removes the pending state",
 					Args: graphql.FieldConfigArgument{
 						"listId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},
 					Resolve: resolvers.JoinListResolver,
+				},
+				"declineListInvite": &graphql.Field{
+					Type:        gql.ListUserType,
+					Description: "Declines a list invitation for a user",
+					Args: graphql.FieldConfigArgument{
+						"listId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.DeclineListInviteResolver,
 				},
 				"deleteItem": &graphql.Field{
 					Type:        gql.ItemType,

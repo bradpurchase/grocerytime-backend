@@ -2,6 +2,7 @@ package grocerylist
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
@@ -44,6 +45,50 @@ func AddUserToList(db *gorm.DB, user models.User, listID uuid.UUID) (interface{}
 	if err := db.Save(&listUser).Error; err != nil {
 		return nil, err
 	}
+	return listUser, nil
+}
+
+// RemoveUserFromList removes a user from a list either by userID or email, whichever is present
+//
+// Used for declining a list invite, and simply removing a user from a list
+func RemoveUserFromList(db *gorm.DB, user models.User, listID uuid.UUID) (interface{}, error) {
+	list := &models.List{}
+	if err := db.Where("id = ?", listID).First(&list).Error; err != nil {
+		return nil, err
+	}
+
+	listUser := &models.ListUser{}
+	query := db.
+		Where("list_id = ?", listID).
+		Where("user_id = ?", user.ID).
+		Or("email = ?", user.Email).
+		Find(&listUser).
+		Error
+	if err := query; err != nil {
+		return nil, err
+	}
+
+	if err := db.Delete(&listUser).Error; err != nil {
+		return nil, err
+	}
+
+	// If email is present on the ListUser record, it means this is a pending list invite
+	pending := len(listUser.Email) > 0
+	if pending {
+		//TODO TEST THIS - mailer sent to list creator for declined list invite
+		creatorListUser := &models.ListUser{}
+		if err := db.Select("user_id").Where("creator = ?", true).Find(&creatorListUser).Error; err != nil {
+			return nil, err
+		}
+		user := &models.User{}
+		if err := db.Where("id = ?", creatorListUser.UserID).Find(&user).Error; err != nil {
+			return nil, err
+		}
+		mailer.SendListInviteDeclinedEmail(list.Name, listUser.Email, user.Email)
+	} else {
+		//TODO mailer sent to user removed from list
+	}
+
 	return listUser, nil
 }
 
