@@ -1,6 +1,8 @@
 package grocerylist
 
 import (
+	"errors"
+
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
 	"github.com/jinzhu/gorm"
@@ -54,7 +56,7 @@ func AddUserToList(db *gorm.DB, user models.User, listID interface{}) (interface
 func RemoveUserFromList(db *gorm.DB, user models.User, listID interface{}) (interface{}, error) {
 	list := &models.List{}
 	if err := db.Where("id = ?", listID).First(&list).Error; err != nil {
-		return nil, err
+		return nil, errors.New("list not found")
 	}
 
 	listUser := &models.ListUser{}
@@ -65,7 +67,7 @@ func RemoveUserFromList(db *gorm.DB, user models.User, listID interface{}) (inte
 		Find(&listUser).
 		Error
 	if err := query; err != nil {
-		return nil, err
+		return nil, errors.New("list user not found")
 	}
 
 	if err := db.Delete(&listUser).Error; err != nil {
@@ -83,7 +85,7 @@ func RemoveUserFromList(db *gorm.DB, user models.User, listID interface{}) (inte
 		if err := db.Where("id = ?", creatorListUser.UserID).Find(&user).Error; err != nil {
 			return nil, err
 		}
-		declinedEmail, err := mailer.SendListInviteDeclinedEmail(list.Name, listUser.Email, user.Email)
+		_, err := mailer.SendListInviteDeclinedEmail(list.Name, listUser.Email, user.Email)
 		if err != nil {
 			return nil, err
 		}
