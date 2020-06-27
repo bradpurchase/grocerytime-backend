@@ -7,7 +7,6 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
 
 	"github.com/graphql-go/graphql"
-	uuid "github.com/satori/go.uuid"
 )
 
 // JoinListResolver adds the current user to a list properly by removing
@@ -23,7 +22,7 @@ func JoinListResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	// Verify that the list with the ID provided exists
-	listID := p.Args["listId"].(uuid.UUID)
+	listID := p.Args["listId"]
 	listUser, err := grocerylist.AddUserToList(db, user.(models.User), listID)
 	if err != nil {
 		return nil, err

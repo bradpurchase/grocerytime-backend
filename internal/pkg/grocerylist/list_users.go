@@ -26,7 +26,7 @@ func InviteToListByEmail(db *gorm.DB, listID interface{}, email string) (models.
 
 // AddUserToList properly associates a user with a list by userID by removing
 // the email value and adding the userID value
-func AddUserToList(db *gorm.DB, user models.User, listID uuid.UUID) (interface{}, error) {
+func AddUserToList(db *gorm.DB, user models.User, listID interface{}) (interface{}, error) {
 	list := &models.List{}
 	if err := db.Where("id = ?", listID).First(&list).Error; err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func AddUserToList(db *gorm.DB, user models.User, listID uuid.UUID) (interface{}
 // RemoveUserFromList removes a user from a list either by userID or email, whichever is present
 //
 // Used for declining a list invite, and simply removing a user from a list
-func RemoveUserFromList(db *gorm.DB, user models.User, listID uuid.UUID) (interface{}, error) {
+func RemoveUserFromList(db *gorm.DB, user models.User, listID interface{}) (interface{}, error) {
 	list := &models.List{}
 	if err := db.Where("id = ?", listID).First(&list).Error; err != nil {
 		return nil, err
@@ -75,7 +75,6 @@ func RemoveUserFromList(db *gorm.DB, user models.User, listID uuid.UUID) (interf
 	// If email is present on the ListUser record, it means this is a pending list invite
 	pending := len(listUser.Email) > 0
 	if pending {
-		//TODO TEST THIS - mailer sent to list creator for declined list invite
 		creatorListUser := &models.ListUser{}
 		if err := db.Select("user_id").Where("creator = ?", true).Find(&creatorListUser).Error; err != nil {
 			return nil, err
@@ -84,7 +83,10 @@ func RemoveUserFromList(db *gorm.DB, user models.User, listID uuid.UUID) (interf
 		if err := db.Where("id = ?", creatorListUser.UserID).Find(&user).Error; err != nil {
 			return nil, err
 		}
-		mailer.SendListInviteDeclinedEmail(list.Name, listUser.Email, user.Email)
+		declinedEmail, err := mailer.SendListInviteDeclinedEmail(list.Name, listUser.Email, user.Email)
+		if err != nil {
+			return nil, err
+		}
 	} else {
 		//TODO mailer sent to user removed from list
 	}
