@@ -27,7 +27,7 @@ func InviteToListResolver(p graphql.ResolveParams) (interface{}, error) {
 	// Verify that the list with the ID provided exists
 	listID := p.Args["listId"]
 	invitedUserEmail := strings.TrimSpace(p.Args["email"].(string))
-	if userEmail != invitedUserEmail {
+	if userEmail == invitedUserEmail {
 		return models.ListUser{}, errors.New("cannot invite yourself to this list")
 	}
 	listUser, err := grocerylist.InviteToListByEmail(db, listID, invitedUserEmail)
