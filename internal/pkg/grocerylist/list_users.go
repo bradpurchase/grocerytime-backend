@@ -13,13 +13,13 @@ import (
 //
 // The list user will be considered pending until the invitation is accepted
 // by the user in the app, at which point they are associated by userID instead.
-func InviteToListByEmail(db *gorm.DB, listID interface{}, email string) (models.ListUser, error) {
+func InviteToListByEmail(db *gorm.DB, listID interface{}, invitedEmail string) (models.ListUser, error) {
 	list := &models.List{}
 	if err := db.Where("id = ?", listID).First(&list).Error; err != nil {
 		return models.ListUser{}, err
 	}
 
-	listUser := models.ListUser{ListID: list.ID, Email: email}
+	listUser := models.ListUser{ListID: list.ID, Email: invitedEmail}
 	if err := db.Where(listUser).FirstOrCreate(&listUser).Error; err != nil {
 		return models.ListUser{}, err
 	}
