@@ -154,6 +154,16 @@ func init() {
 					},
 					Resolve: resolvers.DeclineListInviteResolver,
 				},
+				"leaveList": &graphql.Field{
+					Type:        gql.ListUserType,
+					Description: "Deletes the current user's ListUser record for the listID",
+					Args: graphql.FieldConfigArgument{
+						"listId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.LeaveListResolver,
+				},
 				"deleteItem": &graphql.Field{
 					Type:        gql.ItemType,
 					Description: "Remove an item from a list",

@@ -74,29 +74,38 @@ func RemoveUserFromList(db *gorm.DB, user models.User, listID interface{}) (inte
 		return nil, err
 	}
 
+	// Get the list creator ListUser record and User record
+	creatorListUser := &models.ListUser{}
+	if err := db.Select("user_id").Where("list_id = ? AND creator = ?", listID, true).First(&creatorListUser).Error; err != nil {
+		return nil, err
+	}
+	creatorUser := &models.User{}
+	if err := db.Select("email").Where("id = ?", creatorListUser.UserID).First(&creatorUser).Error; err != nil {
+		return nil, err
+	}
+
 	// If email is present on the ListUser record, it means this is a pending list invite
 	pending := len(listUser.Email) > 0
 	if pending {
-		creatorListUser := &models.ListUser{}
-		if err := db.Select("user_id").Where("creator = ?", true).Find(&creatorListUser).Error; err != nil {
-			return nil, err
-		}
-		user := &models.User{}
-		if err := db.Where("id = ?", creatorListUser.UserID).Find(&user).Error; err != nil {
-			return nil, err
-		}
-		_, err := mailer.SendListInviteDeclinedEmail(list.Name, listUser.Email, user.Email)
+		_, err := mailer.SendListInviteDeclinedEmail(list.Name, listUser.Email, creatorUser.Email)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		//TODO mailer sent to user removed from list
+		listUserUser := &models.User{}
+		if err := db.Select("email").Where("id = ?", listUser.UserID).Find(&listUserUser).Error; err != nil {
+			return nil, err
+		}
+		_, err := mailer.SendUserLeftListEmail(list.Name, listUserUser.Email, creatorUser.Email)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return listUser, nil
 }
 
-// RetrieveListUsers finds all list users in a list by listID
+// RetrieveListUsers finds all list users in a list by listID5
 func RetrieveListUsers(db *gorm.DB, listID uuid.UUID) (interface{}, error) {
 	listUsers := []models.ListUser{}
 	if err := db.Where("list_id = ?", listID).Order("created_at ASC").Find(&listUsers).Error; err != nil {

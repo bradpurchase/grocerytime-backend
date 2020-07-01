@@ -120,10 +120,17 @@ func TestRemoveUserFromList_SuccessInvitedUser(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
 
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
-	listUser := models.ListUser{ID: uuid.NewV4(), Email: user.Email}
+	listUser := models.ListUser{
+		ID:     uuid.NewV4(),
+		ListID: listID,
+		Email:  user.Email,
+	}
+	rows := sqlmock.
+		NewRows([]string{"id", "email"}).
+		AddRow(listUser.ID, listUser.Email)
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
 		WithArgs(listID, user.ID, user.Email).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listUser.ID))
+		WillReturnRows(rows)
 
 	mock.ExpectBegin()
 	mock.ExpectExec("DELETE FROM \"list_users\"*").
@@ -132,14 +139,62 @@ func TestRemoveUserFromList_SuccessInvitedUser(t *testing.T) {
 	mock.ExpectCommit()
 
 	// Test querying for data to send the email about invite being declined
-	creatorUser := models.User{ID: uuid.NewV4()}
-	creatorListUser := models.ListUser{ID: uuid.NewV4(), UserID: creatorUser.ID}
+	creatorUserID := uuid.NewV4()
+	creatorUser := models.User{ID: creatorUserID, Email: "creator@example.com"}
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
-		WithArgs(true).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(creatorListUser.ID))
-	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
-		WithArgs(creatorListUser.UserID).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(user.ID))
+		WithArgs(listID, true).
+		WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(creatorUserID))
+	mock.ExpectQuery("^SELECT email FROM \"users\"*").
+		WithArgs(creatorUserID).
+		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(creatorUser.Email))
+
+	lu, err := RemoveUserFromList(db, user, listID)
+	require.NoError(t, err)
+	assert.Equal(t, lu.(*models.ListUser).ID, listUser.ID)
+}
+
+func TestRemoveUserFromList_SuccessJoinedListUser(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	listID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
+
+	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
+	listUser := models.ListUser{
+		ID:     uuid.NewV4(),
+		ListID: listID,
+		UserID: user.ID,
+	}
+	rows := sqlmock.
+		NewRows([]string{"id", "user_id"}).
+		AddRow(listUser.ID, listUser.UserID)
+	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
+		WithArgs(listID, user.ID, user.Email).
+		WillReturnRows(rows)
+
+	mock.ExpectBegin()
+	mock.ExpectExec("DELETE FROM \"list_users\"*").
+		WithArgs(listUser.ID).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	// Test querying for data to send the email about this user leaving the list
+	creatorUserID := uuid.NewV4()
+	creatorUser := models.User{ID: creatorUserID, Email: "creator@example.com"}
+	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
+		WithArgs(listID, true).
+		WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(creatorUserID))
+	mock.ExpectQuery("^SELECT email FROM \"users\"*").
+		WithArgs(creatorUserID).
+		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(creatorUser.Email))
+	mock.ExpectQuery("^SELECT email FROM \"users\"*").
+		WithArgs(listUser.UserID).
+		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(user.Email))
 
 	lu, err := RemoveUserFromList(db, user, listID)
 	require.NoError(t, err)
