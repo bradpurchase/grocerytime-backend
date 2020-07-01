@@ -11,15 +11,15 @@ import (
 // about a member of their list leaving
 func SendUserLeftListEmail(listName string, listUserEmail string, recipientEmail string) (interface{}, error) {
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
-	subject := "Someone left your " + listName + " list on GroceryTime 👋"
+	subject := "Someone left your " + listName + " list 👋"
 	to := mail.NewEmail("", recipientEmail)
 
 	plainTextContent := "The member " + listUserEmail + " has left your list " + listName + "."
 
 	htmlContent := "<p>Hello,</p>"
-	htmlContent += "<p>A member of your <strong>" + listName + "</strong> list, "
+	htmlContent += "<p>A member of your list <strong>" + listName + "</strong>, "
 	htmlContent += "<strong>" + listUserEmail + "</strong>, has left.</p>"
-	htmlContent += "<p>This user no longer has access to this list. If you still "
+	htmlContent += "<p>This person no longer has access to this list. If you still "
 	htmlContent += "want this person in your list, you are able to re-invite them by "
 	htmlContent += "  tapping \"Share List\" in the list menu.</p>"
 	htmlContent += "<p>Regards,<br />Brad from GroceryTime</p>"

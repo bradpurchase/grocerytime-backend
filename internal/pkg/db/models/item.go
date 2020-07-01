@@ -41,7 +41,7 @@ func (i *Item) AfterCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-// BeforeUpdate hook handles reordering item around an item when
+// BeforeUpdate hook handles reordering items
 func (i *Item) BeforeUpdate(tx *gorm.DB) (err error) {
 	item := &Item{}
 	if err := tx.Where("id = ?", i.ID).Find(&item).Error; err != nil {
