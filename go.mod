@@ -29,7 +29,8 @@ require (
 	github.com/stretchr/testify v1.5.1
 	github.com/trevex/graphql-go-subscription v0.0.0-20170731204342-4a0a4158754b
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2 // indirect
-	golang.org/x/crypto v0.0.0-20200302210943-78000ba7a073
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/tools v0.0.0-20200710042808-f1c4188a97a1 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/gormigrate.v1 v1.6.0
 	gopkg.in/yaml.v2 v2.2.8 // indirect
