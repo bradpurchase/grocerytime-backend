@@ -14,7 +14,7 @@ func FetchAuthenticatedUser(db *gorm.DB, header string) (interface{}, error) {
 		return nil, err
 	}
 	authToken := &models.AuthToken{}
-	if err := db.Preload("User").Where("access_token = ? AND expires_in > now()", token).Last(&authToken).Error; err != nil {
+	if err := db.Preload("User").Where("access_token = ?", token).Last(&authToken).Error; err != nil {
 		return nil, errors.New("token invalid/expired")
 	}
 	return authToken.User, nil
