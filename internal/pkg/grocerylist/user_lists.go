@@ -2,6 +2,7 @@ package grocerylist
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/jinzhu/gorm"
@@ -67,34 +68,49 @@ func RetrieveSharableList(db *gorm.DB, listID interface{}) (models.List, error) 
 	return list, nil
 }
 
-// DeleteList deletes a list, its associated items, list users,
-// and notifies the list users that the list has been deleted
+// DeleteList deletes a list, its associated trips, items, list users,
+// and finally notifies the list users that the list has been deleted
+//
+// Note: this really performs a soft delete for lists and associated models
 func DeleteList(db *gorm.DB, listID interface{}, userID uuid.UUID) (models.List, error) {
 	list := models.List{}
 	if err := db.Where("id = ? AND user_id = ?", listID, userID).First(&list).Error; err != nil {
-		return list, err
+		return list, errors.New("couldn't retrieve list")
 	}
 	if err := db.Delete(&list).Error; err != nil {
-		return list, err
+		return list, errors.New("couldn't delete list")
 	}
 
-	// Delete items, note: we can just use `.Delete` directly here because
-	// we don't need to do anything with the items after deletion.
-	// for list users we need to fetch, notify, and *then* delete
-	items := &[]models.Item{}
-	if err := db.Where("list_id = ?", listID).Delete(&items).Error; err != nil {
-		return list, err
+	// Delete items in each trip in this list, and then delete the trips themselves
+	trips := []models.GroceryTrip{}
+	if err := db.Where("list_id = ?", listID).Find(&trips).Error; err != nil {
+		return list, errors.New("couldn't find trips in list")
+	}
+	for i := range trips {
+		tripID := trips[i].ID
+
+		// Note: we can just use `.Delete` directly here because
+		// we don't need to do anything with the items after deletion.
+		// for list users we need to fetch, notify, and *then* delete
+		items := []models.Item{}
+		if err := db.Where("grocery_trip_id = ?", tripID).Delete(&items).Error; err != nil {
+			return list, errors.New("couldn't delete items in this list's trips")
+		}
+
+		trip := models.GroceryTrip{}
+		if err := db.Where("id = ?", tripID).Delete(&trip).Error; err != nil {
+			return list, fmt.Errorf("couldn't delete trip: %s", tripID)
+		}
 	}
 
-	listUsers := &[]models.ListUser{}
+	listUsers := []models.ListUser{}
 	if err := db.Where("list_id = ?", listID).Find(&listUsers).Error; err != nil {
-		return list, err
+		return list, errors.New("couldn't retrieve list users")
 	}
 
 	//TODO notify list users that list was deleted (except creator)
-
 	if err := db.Where("list_id = ?", listID).Delete(&listUsers).Error; err != nil {
-		return list, err
+		return list, errors.New("couldn't delete list users")
 	}
 
 	return list, nil

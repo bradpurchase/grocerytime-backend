@@ -19,8 +19,10 @@ type Item struct {
 	Quantity      int       `gorm:"default:1;not null"`
 	Completed     bool      `gorm:"default:false;not null"`
 	Position      int       `gorm:"default:1;not null"`
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time
 
 	// Associations
 	List List

@@ -3,6 +3,7 @@ package migration
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
@@ -172,6 +173,36 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Table("list_users").DropColumn("email").Error
+			},
+		},
+		{
+			// Add deleted_at column to lists for automatic soft-deletion
+			ID: "202007291257_add_deleted_at_to_lists",
+			Migrate: func(tx *gorm.DB) error {
+				type List struct {
+					DeletedAt time.Time
+				}
+				return tx.AutoMigrate(&models.List{}).Error
+			},
+		},
+		{
+			// Add deleted_at column to list_users for automatic soft-deletion
+			ID: "202007291258_add_deleted_at_to_list_users",
+			Migrate: func(tx *gorm.DB) error {
+				type ListUser struct {
+					DeletedAt time.Time
+				}
+				return tx.AutoMigrate(&models.ListUser{}).Error
+			},
+		},
+		{
+			// Add deleted_at column to list_users for automatic soft-deletion
+			ID: "202007291259_add_deleted_at_to_items",
+			Migrate: func(tx *gorm.DB) error {
+				type Item struct {
+					DeletedAt time.Time
+				}
+				return tx.AutoMigrate(&models.Item{}).Error
 			},
 		},
 	})
