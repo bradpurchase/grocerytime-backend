@@ -39,7 +39,7 @@ func TestInviteToListByEmail_UserExistsNotYetAdded(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
-		WithArgs(listID, "00000000-0000-0000-0000-000000000000", email, AnyTime{}, AnyTime{}).
+		WithArgs(listID, "00000000-0000-0000-0000-000000000000", email, AnyTime{}, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
 	mock.ExpectQuery("^SELECT name FROM \"lists\"*").
 		WithArgs(listID).
@@ -133,8 +133,8 @@ func TestRemoveUserFromList_SuccessInvitedUser(t *testing.T) {
 		WillReturnRows(rows)
 
 	mock.ExpectBegin()
-	mock.ExpectExec("DELETE FROM \"list_users\"*").
-		WithArgs(listUser.ID).
+	mock.ExpectExec("UPDATE \"list_users\"*").
+		WithArgs(AnyTime{}, listUser.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -178,8 +178,8 @@ func TestRemoveUserFromList_SuccessJoinedListUser(t *testing.T) {
 		WillReturnRows(rows)
 
 	mock.ExpectBegin()
-	mock.ExpectExec("DELETE FROM \"list_users\"*").
-		WithArgs(listUser.ID).
+	mock.ExpectExec("UPDATE \"list_users\"*").
+		WithArgs(AnyTime{}, listUser.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 

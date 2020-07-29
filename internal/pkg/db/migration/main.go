@@ -205,6 +205,16 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.AutoMigrate(&models.Item{}).Error
 			},
 		},
+		{
+			// Add deleted_at column to grocery_trips for automatic soft-deletion
+			ID: "202007291413_add_deleted_at_to_grocery_trips",
+			Migrate: func(tx *gorm.DB) error {
+				type GroceryTrip struct {
+					DeletedAt time.Time
+				}
+				return tx.AutoMigrate(&models.GroceryTrip{}).Error
+			},
+		},
 	})
 	return m.Migrate()
 }
