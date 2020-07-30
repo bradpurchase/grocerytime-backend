@@ -42,13 +42,13 @@ func TestCreateList_Created(t *testing.T) {
 	listID := uuid.NewV4()
 	mock.ExpectBegin()
 	mock.ExpectQuery("^INSERT INTO \"lists\" (.+)$").
-		WithArgs(userID, listName, AnyTime{}, AnyTime{}).
+		WithArgs(userID, listName, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
 	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
-		WithArgs(listID, userID, "", true, AnyTime{}, AnyTime{}).
+		WithArgs(listID, userID, "", true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(listID, "Grocery Trip 1", AnyTime{}, AnyTime{}).
+		WithArgs(listID, "Grocery Trip 1", AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	mock.ExpectCommit()
 

@@ -42,9 +42,10 @@ func TestRetrieveUserLists_HasListsCreated(t *testing.T) {
 			"name",
 			"created_at",
 			"updated_at",
+			"deleted_at",
 		}).
-		AddRow(uuid.NewV4(), user.ID, "Provigo Grocery List", time.Now(), time.Now()).
-		AddRow(uuid.NewV4(), user.ID, "Beer Store List", time.Now(), time.Now())
+		AddRow(uuid.NewV4(), user.ID, "Provigo Grocery List", time.Now(), time.Now(), nil).
+		AddRow(uuid.NewV4(), user.ID, "Beer Store List", time.Now(), time.Now(), nil)
 	mock.
 		ExpectQuery("^SELECT lists.* FROM \"lists\"*").
 		WithArgs(user.ID, user.Email).
@@ -237,7 +238,7 @@ func TestDeleteList_ListNotFound(t *testing.T) {
 
 	_, e := DeleteList(db, listID, userID)
 	require.Error(t, e)
-	assert.Equal(t, e.Error(), "record not found")
+	assert.Equal(t, e.Error(), "couldn't retrieve list")
 }
 
 func TestDeleteList_ListFound(t *testing.T) {
@@ -253,13 +254,23 @@ func TestDeleteList_ListFound(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(listID, userID))
 
 	mock.ExpectBegin()
-	mock.ExpectExec("^DELETE FROM \"lists\" (.+)$").
+	mock.ExpectExec("^UPDATE \"lists\" (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	tripID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(listID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
+
+	mock.ExpectBegin()
+	mock.ExpectExec("^UPDATE \"items\"*").
+		WithArgs(AnyTime{}, tripID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	mock.ExpectBegin()
-	mock.ExpectExec("^DELETE FROM \"items\" WHERE*").
-		WithArgs(listID).
+	mock.ExpectExec("^UPDATE \"grocery_trips\" (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
@@ -268,8 +279,8 @@ func TestDeleteList_ListFound(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
 
 	mock.ExpectBegin()
-	mock.ExpectExec("DELETE FROM \"list_users\" WHERE*").
-		WithArgs(listID).
+	mock.ExpectExec("UPDATE \"list_users\"*").
+		WithArgs(AnyTime{}, listID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
