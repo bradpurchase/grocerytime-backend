@@ -65,13 +65,13 @@ func TestCreateUser_UserCreated(t *testing.T) {
 		WithArgs(email, sqlmock.AnyArg(), "", "", AnyTime{}, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	mock.ExpectQuery("^INSERT INTO \"lists\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), listName, AnyTime{}, AnyTime{}, AnyTime{}).
+		WithArgs(sqlmock.AnyArg(), listName, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, AnyTime{}, AnyTime{}, AnyTime{}).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, AnyTime{}).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	mock.ExpectQuery("^INSERT INTO \"auth_tokens\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, AnyTime{}).
