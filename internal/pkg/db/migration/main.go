@@ -180,7 +180,7 @@ func AutoMigrateService(db *gorm.DB) error {
 			ID: "202007291257_add_deleted_at_to_lists",
 			Migrate: func(tx *gorm.DB) error {
 				type List struct {
-					DeletedAt time.Time
+					DeletedAt *time.Time
 				}
 				return tx.AutoMigrate(&models.List{}).Error
 			},
@@ -190,7 +190,7 @@ func AutoMigrateService(db *gorm.DB) error {
 			ID: "202007291258_add_deleted_at_to_list_users",
 			Migrate: func(tx *gorm.DB) error {
 				type ListUser struct {
-					DeletedAt time.Time
+					DeletedAt *time.Time
 				}
 				return tx.AutoMigrate(&models.ListUser{}).Error
 			},
@@ -200,7 +200,7 @@ func AutoMigrateService(db *gorm.DB) error {
 			ID: "202007291259_add_deleted_at_to_items",
 			Migrate: func(tx *gorm.DB) error {
 				type Item struct {
-					DeletedAt time.Time
+					DeletedAt *time.Time
 				}
 				return tx.AutoMigrate(&models.Item{}).Error
 			},
@@ -210,7 +210,7 @@ func AutoMigrateService(db *gorm.DB) error {
 			ID: "202007291413_add_deleted_at_to_grocery_trips",
 			Migrate: func(tx *gorm.DB) error {
 				type GroceryTrip struct {
-					DeletedAt time.Time
+					DeletedAt *time.Time
 				}
 				return tx.AutoMigrate(&models.GroceryTrip{}).Error
 			},
