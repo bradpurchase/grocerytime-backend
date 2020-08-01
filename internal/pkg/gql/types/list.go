@@ -1,7 +1,11 @@
 package gql
 
 import (
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
 )
 
@@ -24,8 +28,24 @@ var ListType = graphql.NewObject(
 				Resolve: resolvers.BasicUserResolver,
 			},
 			"trip": &graphql.Field{
-				Type:    GroceryTripType,
-				Resolve: resolvers.GroceryTripResolver,
+				Type: GroceryTripType,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					db := db.FetchConnection()
+					defer db.Close()
+
+					header := p.Info.RootValue.(map[string]interface{})["Authorization"]
+					user, err := auth.FetchAuthenticatedUser(db, header.(string))
+					if err != nil {
+						return nil, err
+					}
+
+					listID := p.Source.(models.List).ID
+					trip, err := trips.RetrieveCurrentTripInList(db, listID, user.(models.User))
+					if err != nil {
+						return nil, err
+					}
+					return trip, nil
+				},
 			},
 			"listUsers": &graphql.Field{
 				Type:    graphql.NewList(ListUserType),

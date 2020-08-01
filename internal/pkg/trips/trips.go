@@ -27,3 +27,13 @@ func RetrieveCurrentTripInList(db *gorm.DB, listID uuid.UUID, user models.User) 
 	}
 	return trip, nil
 }
+
+// RetrieveTrip retrieves a specific grocery trip by ID
+func RetrieveTrip(db *gorm.DB, tripID interface{}) (models.GroceryTrip, error) {
+	trip := models.GroceryTrip{}
+
+	if err := db.Where("id = ?", tripID).First(&trip).Error; err != nil {
+		return trip, errors.New("trip not found")
+	}
+	return trip, nil
+}

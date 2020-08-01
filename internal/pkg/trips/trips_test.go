@@ -67,3 +67,35 @@ func TestRetrieveCurrentTripInList_FoundResult(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, trip.(models.GroceryTrip).Name, tripName)
 }
+
+func TestRetrieveTrip_NotFound(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	tripID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(tripID).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
+	_, e := RetrieveTrip(db, tripID)
+	require.Error(t, e)
+	assert.Equal(t, e.Error(), "trip not found")
+}
+
+func TestRetrieveTrip_Found(t *testing.T) {
+	dbMock, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	db, err := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+
+	tripID := uuid.NewV4()
+	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(tripID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
+
+	trip, err := RetrieveTrip(db, tripID)
+	require.NoError(t, err)
+	assert.Equal(t, trip.ID, tripID)
+}

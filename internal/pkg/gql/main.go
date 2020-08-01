@@ -47,6 +47,16 @@ func init() {
 					},
 					Resolve: resolvers.SharableListResolver,
 				},
+				"trip": &graphql.Field{
+					Type:        gql.GroceryTripType,
+					Description: "Retrieve a specific grocery trip within a list",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.GroceryTripResolver,
+				},
 			},
 		},
 	)
