@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	// Postgres dialect for GORM
@@ -28,8 +29,16 @@ type GroceryTrip struct {
 // AfterUpdate hook is triggered after a trip is updated, such as in trips.UpdateTrip
 func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 	if g.Completed {
-		// Create the next trip for the user
-		newTrip := GroceryTrip{ListID: g.ListID, Name: "New Trip"}
+		var tripsCount int
+		if err := tx.Model(&GroceryTrip{}).Where("list_id = ?", g.ListID).Count(&tripsCount).Error; err != nil {
+			return err
+		}
+
+		// Create the next trip for the user.
+		// The new trip name is suffixed by a number that represents the number
+		// of trips in the list (i.e. "Trip 12")
+		newTripName := fmt.Sprintf("Trip %d", (tripsCount + 1))
+		newTrip := GroceryTrip{ListID: g.ListID, Name: newTripName}
 		if err := tx.Create(&newTrip).Error; err != nil {
 			return err
 		}

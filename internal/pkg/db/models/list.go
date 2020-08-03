@@ -30,7 +30,7 @@ func (l *List) AfterCreate(tx *gorm.DB) (err error) {
 		return err
 	}
 
-	trip := GroceryTrip{ListID: l.ID, Name: "Grocery Trip 1"}
+	trip := GroceryTrip{ListID: l.ID, Name: "Trip 1"}
 	if err := tx.Create(&trip).Error; err != nil {
 		return err
 	}
