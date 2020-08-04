@@ -1,6 +1,10 @@
 package gql
 
 import (
+	"errors"
+
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/graphql-go/graphql"
 )
 
@@ -26,6 +30,20 @@ var UserType = graphql.NewObject(
 			},
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
+			},
+			"token": &graphql.Field{
+				Type: AuthTokenType,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					db := db.FetchConnection()
+					defer db.Close()
+
+					userID := p.Source.(*models.User).ID
+					authToken := &models.AuthToken{}
+					if err := db.Where("user_id = ?", userID).Last(&authToken).Error; err != nil {
+						return nil, errors.New("token not found for user")
+					}
+					return authToken, nil
+				},
 			},
 		},
 	},

@@ -66,27 +66,21 @@ func init() {
 		graphql.ObjectConfig{
 			Name: "Mutation",
 			Fields: graphql.Fields{
-				"token": &graphql.Field{
-					Type:        gql.AuthTokenType,
+				"login": &graphql.Field{
+					Type:        gql.UserType,
 					Description: "Retrieve an access token",
 					Args: graphql.FieldConfigArgument{
-						"grantType": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
 						"email": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
 						"password": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
-						"refreshToken": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
 					},
-					Resolve: resolvers.TokenResolver,
+					Resolve: resolvers.LoginResolver,
 				},
 				"signup": &graphql.Field{
-					Type:        gql.AuthTokenType,
+					Type:        gql.UserType,
 					Description: "Create a new user account",
 					Args: graphql.FieldConfigArgument{
 						"email": &graphql.ArgumentConfig{

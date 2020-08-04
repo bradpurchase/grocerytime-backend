@@ -31,7 +31,5 @@ func SignupResolver(p graphql.ResolveParams) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	token := user.Tokens[0]
-
-	return token, nil
+	return user, nil
 }
