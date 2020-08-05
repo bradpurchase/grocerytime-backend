@@ -34,12 +34,12 @@ func TestInviteToListByEmail_UserExistsNotYetAdded(t *testing.T) {
 
 	email := "test@example.com"
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
-		WithArgs(listID, email).
+		WithArgs(listID, email, false).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
-		WithArgs(listID, "00000000-0000-0000-0000-000000000000", email, AnyTime{}, AnyTime{}, nil).
+		WithArgs(listID, "00000000-0000-0000-0000-000000000000", email, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
 	mock.ExpectQuery("^SELECT name FROM \"lists\"*").
 		WithArgs(listID).
@@ -49,7 +49,6 @@ func TestInviteToListByEmail_UserExistsNotYetAdded(t *testing.T) {
 	listUser, err := InviteToListByEmail(db, listID, email)
 	require.NoError(t, err)
 	assert.Equal(t, listUser.Email, email)
-	assert.Equal(t, listUser.Active, false)
 }
 
 func TestInviteToListByEmail_UserExistsAlreadyAdded(t *testing.T) {
@@ -66,7 +65,7 @@ func TestInviteToListByEmail_UserExistsAlreadyAdded(t *testing.T) {
 	email := "test@example.com"
 	listUserID := uuid.NewV4()
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
-		WithArgs(listID, email).
+		WithArgs(listID, email, false).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listUserID))
 
 	listUser, err := InviteToListByEmail(db, listID, email)
