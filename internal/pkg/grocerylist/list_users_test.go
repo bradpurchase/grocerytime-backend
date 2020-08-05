@@ -49,6 +49,7 @@ func TestInviteToListByEmail_UserExistsNotYetAdded(t *testing.T) {
 	listUser, err := InviteToListByEmail(db, listID, email)
 	require.NoError(t, err)
 	assert.Equal(t, listUser.Email, email)
+	assert.Equal(t, listUser.Active, false)
 }
 
 func TestInviteToListByEmail_UserExistsAlreadyAdded(t *testing.T) {

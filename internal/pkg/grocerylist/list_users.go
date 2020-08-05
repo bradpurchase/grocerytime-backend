@@ -19,7 +19,7 @@ func InviteToListByEmail(db *gorm.DB, listID interface{}, invitedEmail string) (
 		return models.ListUser{}, err
 	}
 
-	listUser := models.ListUser{ListID: list.ID, Email: invitedEmail}
+	listUser := models.ListUser{ListID: list.ID, Email: invitedEmail, Active: false}
 	if err := db.Where(listUser).FirstOrCreate(&listUser).Error; err != nil {
 		return models.ListUser{}, err
 	}
