@@ -25,7 +25,8 @@ type List struct {
 
 // AfterCreate hook to automatically create some associated records
 func (l *List) AfterCreate(tx *gorm.DB) (err error) {
-	listUser := ListUser{ListID: l.ID, UserID: l.UserID, Creator: true}
+	creator := true
+	listUser := ListUser{ListID: l.ID, UserID: l.UserID, Creator: &creator}
 	if err := tx.Create(&listUser).Error; err != nil {
 		return err
 	}

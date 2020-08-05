@@ -16,8 +16,8 @@ type ListUser struct {
 	ListID  uuid.UUID `gorm:"type:uuid;not null"`
 	UserID  uuid.UUID `gorm:"type:uuid"`
 	Email   string    `gorm:"type:varchar(100)"`
-	Creator bool      `gorm:"default:false;not null"`
-	Active  bool      `gorm:"default:true;not null"`
+	Creator *bool     `gorm:"default:false;not null"`
+	Active  *bool     `gorm:"default:true;not null"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
