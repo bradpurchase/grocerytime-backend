@@ -15,6 +15,8 @@ import (
 // a grantType argument which determines whether or not this is a login with a
 // username and password in exchange for an access token, or if it's a refresh
 // token being passed in exchange for a new access token.
+//
+// DEPRECATED: replaced by login mutation (LoginResolver)
 func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
