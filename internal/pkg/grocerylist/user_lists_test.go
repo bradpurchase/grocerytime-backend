@@ -124,8 +124,8 @@ func TestRetrieveListForUser_ListCreatedByUser(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(listID, "Example List"))
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
-		WithArgs(listID, userID, true).
-		WillReturnRows(sqlmock.NewRows([]string{"list_id", "user_id", "active"}).AddRow(listID, userID, true))
+		WithArgs(listID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"list_id", "user_id"}).AddRow(listID, userID))
 
 	list, err := RetrieveListForUser(db, listID, userID)
 	require.NoError(t, err)
@@ -149,7 +149,7 @@ func TestRetrieveListForUser_ListSharedToUser(t *testing.T) {
 		AddRow(listID, uuid.NewV4(), true, true).
 		AddRow(listID, userID, true, false)
 	mock.ExpectQuery("^SELECT (.+) FROM \"list_users\"*").
-		WithArgs(listID, userID, true).
+		WithArgs(listID, userID).
 		WillReturnRows(listUserRows)
 
 	list, err := RetrieveListForUser(db, listID, userID)
