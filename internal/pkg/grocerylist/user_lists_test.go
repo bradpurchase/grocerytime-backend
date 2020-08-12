@@ -20,7 +20,7 @@ func TestRetrieveUserLists_NoLists(t *testing.T) {
 
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
-		WithArgs(user.ID, user.Email).
+		WithArgs(user.ID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	userLists, err := RetrieveUserLists(db, user)
@@ -48,7 +48,7 @@ func TestRetrieveUserLists_HasListsCreated(t *testing.T) {
 		AddRow(uuid.NewV4(), user.ID, "Beer Store List", time.Now(), time.Now(), nil)
 	mock.
 		ExpectQuery("^SELECT lists.* FROM \"lists\"*").
-		WithArgs(user.ID, user.Email).
+		WithArgs(user.ID).
 		WillReturnRows(listRows)
 
 	userLists, err := RetrieveUserLists(db, user)
@@ -82,7 +82,7 @@ func TestRetrieveUserLists_HasListsCreatedAndJoined(t *testing.T) {
 		AddRow(sharedListID, sharingUserID, "Shared List", time.Now(), time.Now())
 	mock.
 		ExpectQuery("^SELECT lists.* FROM \"lists\"*").
-		WithArgs(user.ID, user.Email).
+		WithArgs(user.ID).
 		WillReturnRows(listRows)
 
 	userLists, err := RetrieveUserLists(db, user)

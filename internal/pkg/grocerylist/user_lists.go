@@ -17,7 +17,6 @@ func RetrieveUserLists(db *gorm.DB, user models.User) ([]models.List, error) {
 		Joins("INNER JOIN list_users ON list_users.list_id = lists.id").
 		Joins("LEFT OUTER JOIN grocery_trips ON grocery_trips.list_id = lists.id").
 		Where("list_users.user_id = ?", user.ID).
-		Or("list_users.email = ?", user.Email).
 		Group("lists.id").
 		Order("MAX(grocery_trips.updated_at) DESC").
 		Find(&lists).
