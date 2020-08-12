@@ -36,7 +36,7 @@ func RetrieveListForUser(db *gorm.DB, listID interface{}, userID uuid.UUID) (mod
 	}
 	// Check that the passed userID is a member of this list
 	listUser := &models.ListUser{}
-	if err := db.Where("list_id = ? AND user_id = ? AND active = ?", listID, userID, true).First(&listUser).Error; err != nil {
+	if err := db.Where("list_id = ? AND user_id = ?", listID, userID).First(&listUser).Error; err != nil {
 		return list, err
 	}
 	return list, nil
