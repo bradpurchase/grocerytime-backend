@@ -27,6 +27,25 @@ func RetrieveUserLists(db *gorm.DB, user models.User) ([]models.List, error) {
 	return lists, nil
 }
 
+// RetrieveInvitedUserLists retrieves lists that the userID has created or has been added to
+func RetrieveInvitedUserLists(db *gorm.DB, user models.User) ([]models.List, error) {
+	lists := []models.List{}
+	query := db.
+		Select("lists.*").
+		Joins("INNER JOIN list_users ON list_users.list_id = lists.id").
+		Joins("LEFT OUTER JOIN grocery_trips ON grocery_trips.list_id = lists.id").
+		Where("list_users.email = ?", user.Email).
+		Where("list_users.active = ?", false).
+		Group("lists.id").
+		Order("MAX(grocery_trips.updated_at) DESC").
+		Find(&lists).
+		Error
+	if err := query; err != nil {
+		return nil, err
+	}
+	return lists, nil
+}
+
 // RetrieveListForUser retrieves a specific list by listID and userID
 func RetrieveListForUser(db *gorm.DB, listID interface{}, userID uuid.UUID) (models.List, error) {
 	list := models.List{}
@@ -48,21 +67,6 @@ func RetrieveListForUserByName(db *gorm.DB, name string, userID uuid.UUID) (mode
 	list := models.List{}
 	if err := db.Where("name = ? AND user_id = ?", name, userID).First(&list).Error; err != nil {
 		return list, err
-	}
-	return list, nil
-}
-
-// RetrieveSharableList retrieves only publicly information about a list.
-// It is used on the share web app to display basic info about a list that someone has been invited to
-func RetrieveSharableList(db *gorm.DB, listID interface{}) (models.List, error) {
-	list := models.List{}
-	query := db.
-		Select("lists.id, lists.name, lists.user_id").
-		Where("lists.id = ?", listID).
-		Find(&list).
-		Error
-	if err := query; err != nil {
-		return list, errors.New("list not found")
 	}
 	return list, nil
 }

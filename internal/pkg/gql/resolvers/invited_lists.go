@@ -8,8 +8,9 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// ListResolver resolves the list GraphQL query by retrieving a list by ID param
-func ListResolver(p graphql.ResolveParams) (interface{}, error) {
+// InvitedListsResolver resolves the invitedLists query by retrieving lists
+// that the current user has been invited to
+func InvitedListsResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
@@ -19,9 +20,10 @@ func ListResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	list, err := grocerylist.RetrieveListForUser(db, p.Args["id"], user.(models.User).ID)
+	lists, err := grocerylist.RetrieveInvitedUserLists(db, user.(models.User))
 	if err != nil {
 		return nil, err
 	}
-	return list, nil
+
+	return lists, nil
 }

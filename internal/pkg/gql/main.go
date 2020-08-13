@@ -27,6 +27,11 @@ func init() {
 					Description: "Retrieve lists for the current user",
 					Resolve:     resolvers.ListsResolver,
 				},
+				"invitedLists": &graphql.Field{
+					Type:        graphql.NewList(gql.ListType),
+					Description: "Retrieve lists the current user has been invited to",
+					Resolve:     resolvers.InvitedListsResolver,
+				},
 				"list": &graphql.Field{
 					Type:        gql.ListType,
 					Description: "Retrieve a specific list",
@@ -36,16 +41,6 @@ func init() {
 						},
 					},
 					Resolve: resolvers.ListResolver,
-				},
-				"sharableList": &graphql.Field{
-					Type:        gql.ListType,
-					Description: "Retrieve basic info about a list for sharing",
-					Args: graphql.FieldConfigArgument{
-						"id": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.ID),
-						},
-					},
-					Resolve: resolvers.SharableListResolver,
 				},
 				"trip": &graphql.Field{
 					Type:        gql.GroceryTripType,
