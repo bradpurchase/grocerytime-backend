@@ -34,6 +34,7 @@ func RetrieveInvitedUserLists(db *gorm.DB, user models.User) ([]models.List, err
 		Select("lists.*").
 		Joins("INNER JOIN list_users ON list_users.list_id = lists.id").
 		Joins("LEFT OUTER JOIN grocery_trips ON grocery_trips.list_id = lists.id").
+		Where("list_users.deleted_at IS NULL").
 		Where("list_users.email = ?", user.Email).
 		Where("list_users.active = ?", false).
 		Group("lists.id").

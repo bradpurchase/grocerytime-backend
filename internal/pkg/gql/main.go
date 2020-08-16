@@ -28,7 +28,7 @@ func init() {
 					Resolve:     resolvers.ListsResolver,
 				},
 				"invitedLists": &graphql.Field{
-					Type:        graphql.NewList(gql.ListType),
+					Type:        graphql.NewList(gql.ListInviteType),
 					Description: "Retrieve lists the current user has been invited to",
 					Resolve:     resolvers.InvitedListsResolver,
 				},
