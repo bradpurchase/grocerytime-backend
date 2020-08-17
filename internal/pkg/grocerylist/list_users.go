@@ -49,6 +49,8 @@ func AddUserToList(db *gorm.DB, user models.User, listID interface{}) (interface
 	}
 	listUser.Email = ""
 	listUser.UserID = user.ID
+	listUserActive := true
+	listUser.Active = &listUserActive
 	if err := db.Save(&listUser).Error; err != nil {
 		return nil, err
 	}
