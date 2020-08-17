@@ -120,3 +120,22 @@ func RetrieveListUsers(db *gorm.DB, listID uuid.UUID) (interface{}, error) {
 	}
 	return listUsers, nil
 }
+
+// RetrieveListCreator returns the list user who created a given list
+func RetrieveListCreator(db *gorm.DB, listID uuid.UUID) (interface{}, error) {
+	listUser := &models.ListUser{}
+	query := db.
+		Where("list_id = ?", listID).
+		Where("creator = ?", true).
+		First(&listUser).
+		Error
+	if err := query; err != nil {
+		return nil, err
+	}
+
+	user := &models.User{}
+	if err := db.Where("id = ?", listUser.UserID).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
