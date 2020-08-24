@@ -19,7 +19,7 @@ func UpdateItem(db *gorm.DB, args map[string]interface{}) (interface{}, error) {
 	if args["completed"] != nil {
 		completed := args["completed"].(bool)
 		item.Completed = completed
-		item.Position = GetNewPosition(db, item.GroceryTripID, completed)
+		//item.Position = GetNewPosition(db, item.GroceryTripID, completed)
 	}
 	if args["quantity"] != nil {
 		item.Quantity = args["quantity"].(int)
