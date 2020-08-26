@@ -1,2 +1,2 @@
 INSERT INTO categories (name)
-        VALUES('Produce'), ('Bakery'), ('Meat'), ('Dairy'), ('Cereal'), ('Baking'), ('Dry Goods'), ('Canned Goods'), ('Frozen Foods'), ('Cleaning'), ('Stationary'), ('Beverages'), ('Candy & Snacks'), ('Condiments'), ('Personal Care');
+        VALUES('Produce'), ('Bakery'), ('Meat'), ('Seafood'), ('Dairy'), ('Cereal'), ('Baking'), ('Dry Goods'), ('Canned Goods'), ('Frozen Foods'), ('Cleaning'), ('Paper Products'), ('Beverages'), ('Candy & Snacks'), ('Condiments'), ('Personal Care'), ('Baby'), ('Alcohol');
