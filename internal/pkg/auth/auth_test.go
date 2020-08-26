@@ -39,12 +39,13 @@ func TestFetchAuthenticatedUser_TokenNotFound(t *testing.T) {
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
 
-	user, err := FetchAuthenticatedUser(db, "Bearer hello123")
 	mock.ExpectQuery("^SELECT (.+) FROM auth_tokens*").
 		WithArgs("hello123").
-		WillReturnRows(nil)
+		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	assert.Nil(t, user)
+	_, e := FetchAuthenticatedUser(db, "Bearer hello123")
+	require.Error(t, e)
+	assert.Equal(t, e.Error(), "token invalid/expired")
 }
 
 func TestFetchAuthenticatedUser_TokenFound(t *testing.T) {
