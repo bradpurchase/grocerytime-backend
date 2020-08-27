@@ -27,11 +27,4 @@ require (
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/gormigrate.v1 v1.6.0
 	gopkg.in/yaml.v2 v2.2.8 // indirect
-	""
-	""
-	""
-	""
-	""
-	""
-	""
 )
