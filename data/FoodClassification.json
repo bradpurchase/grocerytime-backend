@@ -178,8 +178,56 @@
   {
     "text": "yeast",
     "label": "Baking"
-  }
+  },
   // Beverages
+  {
+    "text": "soda",
+    "label": "Beverages"
+  },
+  {
+    "text": "pop",
+    "label": "Beverages"
+  },
+  {
+    "text": "soft drink",
+    "label": "Beverages"
+  },
+  {
+    "text": "coca cola",
+    "label": "Beverages"
+  },
+  {
+    "text": "coke",
+    "label": "Beverages"
+  },
+  {
+    "text": "pepsi",
+    "label": "Beverages"
+  },
+  {
+    "text": "dr pepper",
+    "label": "Beverages"
+  },
+  {
+    "text": "mountain dew",
+    "label": "Beverages"
+  },
+  {
+    "text": "seltzer",
+    "label": "Beverages"
+  },
+  {
+    "text": "la croix",
+    "label": "Beverages"
+  },
+  {
+    "text": "bubly",
+    "label": "Beverages"
+  },
+  {
+    "text": "water",
+    "label": "Beverages"
+  }
   // Candy & Snacks
   // Canned Goods
   // Cereal
