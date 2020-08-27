@@ -20,6 +20,10 @@ func AddItem(db *gorm.DB, userID uuid.UUID, args map[string]interface{}) (interf
 		return nil, err
 	}
 
+	// TODO: support adding an item with category attributed
+	// - Can we simply accept a categoryID?
+	// - Do we accept a categoryName and then grab the ID from there?
+
 	item := &models.Item{
 		GroceryTripID: trip.ID,
 		UserID:        userID,
