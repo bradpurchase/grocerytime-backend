@@ -1,6 +1,8 @@
 package trips
 
 import (
+	"errors"
+
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
@@ -20,18 +22,24 @@ func AddItem(db *gorm.DB, userID uuid.UUID, args map[string]interface{}) (interf
 		return nil, err
 	}
 
-	// TODO: support adding an item with category attributed
-	// - Can we simply accept a categoryID?
-	// - Do we accept a categoryName and then grab the ID from there?
-
-	item := &models.Item{
+	itemCompleted := false
+	item := models.Item{
 		GroceryTripID: trip.ID,
 		UserID:        userID,
 		Name:          args["name"].(string),
 		Quantity:      args["quantity"].(int),
 		Position:      1,
+		Completed:     &itemCompleted,
 	}
-	if err := db.Create(&item).Error; err != nil {
+
+	categoryName := args["categoryName"]
+	category := &models.Category{}
+	if err := db.Select("id").Where("name = ?", categoryName).First(&category).Error; err != nil {
+		return nil, errors.New("could not find category")
+	}
+	item.CategoryID = &category.ID
+
+	if err := db.Debug().Create(&item).Error; err != nil {
 		return nil, err
 	}
 	return item, nil
