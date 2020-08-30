@@ -37,7 +37,14 @@ func (l *List) AfterCreate(tx *gorm.DB) (err error) {
 		return err
 	}
 
-	trip := GroceryTrip{ListID: l.ID, Name: "Trip 1"}
+	// Create default store
+	store := Store{ListID: l.ID, Name: "Grocery Store"}
+	if err := tx.Create(&store).Error; err != nil {
+		return err
+	}
+
+	// Create default grocery trip
+	trip := GroceryTrip{ListID: l.ID, Name: "Trip 1", Completed: false, CopyRemainingItems: false}
 	if err := tx.Create(&trip).Error; err != nil {
 		return err
 	}

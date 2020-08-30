@@ -22,6 +22,8 @@ func migrate(db *gorm.DB) error {
 		&models.ApiClient{},
 		&models.AuthToken{},
 		&models.Category{},
+		&models.Store{},
+		&models.StoreCategory{},
 	).Error
 }
 
@@ -235,6 +237,38 @@ func AutoMigrateService(db *gorm.DB) error {
 					CategoryID uuid.UUID
 				}
 				return tx.AutoMigrate(&models.Item{}).Error
+			},
+		},
+		{
+			// Create stores table
+			ID: "202008301519_create_stores",
+			Migrate: func(tx *gorm.DB) error {
+				type Store struct {
+					ID     uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+					ListID uuid.UUID `gorm:"type:uuid;not null"`
+					Name   string    `gorm:"type:varchar(100);not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt *time.Time
+				}
+				return tx.AutoMigrate(&models.Store{}).Error
+			},
+		},
+		{
+			// Create store categories table
+			ID: "202008301519_create_store_categories",
+			Migrate: func(tx *gorm.DB) error {
+				type StoreCategory struct {
+					ID         uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+					StoreID    uuid.UUID `gorm:"type:uuid;not null"`
+					CategoryID uuid.UUID `gorm:"type:uuid;not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt *time.Time
+				}
+				return tx.AutoMigrate(&models.StoreCategory{}).Error
 			},
 		},
 	})

@@ -48,13 +48,13 @@ var ItemType = graphql.NewObject(
 				},
 			},
 			"category": &graphql.Field{
-				Type: CategoryType,
+				Type: StoreCategoryType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
 					defer db.Close()
 
 					categoryID := p.Source.(models.Item).CategoryID
-					category := &models.Category{}
+					category := &models.StoreCategory{}
 					if err := db.Where("id = ?", categoryID).First(&category).Error; err != nil && !gorm.IsRecordNotFoundError(err) {
 						return nil, err
 					}

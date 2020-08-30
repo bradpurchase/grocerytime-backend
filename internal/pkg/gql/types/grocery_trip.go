@@ -1,7 +1,9 @@
 package gql
 
 import (
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
 )
 
@@ -27,10 +29,6 @@ var GroceryTripType = graphql.NewObject(
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},
-			"itemsCount": &graphql.Field{
-				Type:    graphql.Int,
-				Resolve: resolvers.TripItemsCountResolver,
-			},
 			"items": &graphql.Field{
 				Type: graphql.NewList(ItemType),
 				Args: graphql.FieldConfigArgument{
@@ -38,7 +36,17 @@ var GroceryTripType = graphql.NewObject(
 						Type: graphql.String,
 					},
 				},
-				Resolve: resolvers.TripItemsResolver,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					db := db.FetchConnection()
+					defer db.Close()
+
+					tripID := p.Source.(models.GroceryTrip).ID
+					items, err := trips.RetrieveItems(db, tripID)
+					if err != nil {
+						return nil, err
+					}
+					return items, nil
+				},
 			},
 		},
 	},

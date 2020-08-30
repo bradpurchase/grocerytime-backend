@@ -33,8 +33,14 @@ func AddItem(db *gorm.DB, userID uuid.UUID, args map[string]interface{}) (interf
 	}
 
 	categoryName := args["categoryName"]
-	category := &models.Category{}
-	if err := db.Select("id").Where("name = ?", categoryName).First(&category).Error; err != nil {
+	category := &models.StoreCategory{}
+	query := db.
+		Select("store_categories.id").
+		Joins("INNER JOIN categories ON categories.id = store_categories.category_id").
+		Where("categories.name = ?", categoryName).
+		First(&category).
+		Error
+	if err := query; err != nil {
 		return nil, errors.New("could not find category")
 	}
 	item.CategoryID = &category.ID

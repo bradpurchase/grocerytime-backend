@@ -3,9 +3,13 @@ package gql
 import (
 	"github.com/graphql-go/graphql"
 
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/subscriptions"
 	gql "github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/types"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 )
 
 // Schema defines a graphql.Schema instance
@@ -241,7 +245,22 @@ func init() {
 							Type: graphql.Int,
 						},
 					},
-					Resolve: resolvers.AddItemResolver,
+					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+						db := db.FetchConnection()
+						defer db.Close()
+
+						header := p.Info.RootValue.(map[string]interface{})["Authorization"]
+						user, err := auth.FetchAuthenticatedUser(db, header.(string))
+						if err != nil {
+							return nil, err
+						}
+
+						item, err := trips.AddItem(db, user.(models.User).ID, p.Args)
+						if err != nil {
+							return nil, err
+						}
+						return item, nil
+					},
 				},
 				"updateTrip": &graphql.Field{
 					Type:        gql.GroceryTripType,
