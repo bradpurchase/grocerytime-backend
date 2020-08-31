@@ -1,6 +1,11 @@
 package gql
 
-import "github.com/graphql-go/graphql"
+import (
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/graphql-go/graphql"
+	"github.com/jinzhu/gorm"
+)
 
 var StoreCategoryType = graphql.NewObject(
 	graphql.ObjectConfig{
@@ -23,6 +28,20 @@ var StoreCategoryType = graphql.NewObject(
 			},
 			"deletedAt": &graphql.Field{
 				Type: graphql.DateTime,
+			},
+			"category": &graphql.Field{
+				Type: CategoryType,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					db := db.FetchConnection()
+					defer db.Close()
+
+					storeCategoryID := p.Source.(models.StoreCategory).CategoryID
+					category := &models.Category{}
+					if err := db.Where("id = ?", storeCategoryID).First(&category).Error; err != nil && !gorm.IsRecordNotFoundError(err) {
+						return nil, err
+					}
+					return category, nil
+				},
 			},
 		},
 	},

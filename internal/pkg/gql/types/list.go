@@ -6,6 +6,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
 )
@@ -35,11 +36,10 @@ var ListType = graphql.NewObject(
 					defer db.Close()
 
 					listID := p.Source.(models.List).ID
-					store := &models.Store{}
-					if err := db.Where("list_id = ?", listID).First(&store).Error; err != nil {
+					store, err := stores.RetrieveStoreForList(db, listID)
+					if err != nil {
 						return nil, err
 					}
-
 					return store, nil
 				},
 			},
