@@ -21,6 +21,9 @@ func migrate(db *gorm.DB) error {
 		&models.Item{},
 		&models.ApiClient{},
 		&models.AuthToken{},
+		&models.Category{},
+		&models.Store{},
+		&models.StoreCategory{},
 	).Error
 }
 
@@ -213,6 +216,59 @@ func AutoMigrateService(db *gorm.DB) error {
 					DeletedAt *time.Time
 				}
 				return tx.AutoMigrate(&models.GroceryTrip{}).Error
+			},
+		},
+		{
+			// Create categories table
+			ID: "202008250949_create_categories",
+			Migrate: func(tx *gorm.DB) error {
+				type Category struct {
+					ID   uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+					Name string    `gorm:"type:varchar(100);not null"`
+				}
+				return tx.AutoMigrate(&models.Category{}).Error
+			},
+		},
+		{
+			// Add category_id to items
+			ID: "202008251029_add_category_id_to_items",
+			Migrate: func(tx *gorm.DB) error {
+				type Item struct {
+					CategoryID uuid.UUID
+				}
+				return tx.AutoMigrate(&models.Item{}).Error
+			},
+		},
+		{
+			// Create stores table
+			ID: "202008301519_create_stores",
+			Migrate: func(tx *gorm.DB) error {
+				type Store struct {
+					ID     uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+					ListID uuid.UUID `gorm:"type:uuid;not null"`
+					Name   string    `gorm:"type:varchar(100);not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt *time.Time
+				}
+				return tx.AutoMigrate(&models.Store{}).Error
+			},
+		},
+		{
+			// Create store categories table
+			ID: "202008301519_create_store_categories",
+			Migrate: func(tx *gorm.DB) error {
+				type StoreCategory struct {
+					ID         uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+					StoreID    uuid.UUID `gorm:"type:uuid;not null"`
+					CategoryID uuid.UUID `gorm:"type:uuid;not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt *time.Time
+				}
+				return tx.AutoMigrate(&models.StoreCategory{}).Error
 			},
 		},
 	})

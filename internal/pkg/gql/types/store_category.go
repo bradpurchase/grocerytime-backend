@@ -3,25 +3,22 @@ package gql
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
+	"github.com/jinzhu/gorm"
 )
 
-var GroceryTripType = graphql.NewObject(
+var StoreCategoryType = graphql.NewObject(
 	graphql.ObjectConfig{
-		Name: "GroceryTrip",
+		Name: "StoreCategory",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
-			"listID": &graphql.Field{
+			"storeId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
-			"name": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.String),
-			},
-			"completed": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.Boolean),
+			"categoryId": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
@@ -29,23 +26,21 @@ var GroceryTripType = graphql.NewObject(
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},
-			"items": &graphql.Field{
-				Type: graphql.NewList(ItemType),
-				Args: graphql.FieldConfigArgument{
-					"filter": &graphql.ArgumentConfig{
-						Type: graphql.String,
-					},
-				},
+			"deletedAt": &graphql.Field{
+				Type: graphql.DateTime,
+			},
+			"category": &graphql.Field{
+				Type: CategoryType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
 					defer db.Close()
 
-					tripID := p.Source.(models.GroceryTrip).ID
-					items, err := trips.RetrieveItems(db, tripID)
-					if err != nil {
+					storeCategoryID := p.Source.(models.StoreCategory).CategoryID
+					category := &models.Category{}
+					if err := db.Where("id = ?", storeCategoryID).First(&category).Error; err != nil && !gorm.IsRecordNotFoundError(err) {
 						return nil, err
 					}
-					return items, nil
+					return category, nil
 				},
 			},
 		},

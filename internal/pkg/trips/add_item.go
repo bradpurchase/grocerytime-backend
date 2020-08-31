@@ -1,6 +1,8 @@
 package trips
 
 import (
+	"errors"
+
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
@@ -20,14 +22,30 @@ func AddItem(db *gorm.DB, userID uuid.UUID, args map[string]interface{}) (interf
 		return nil, err
 	}
 
-	item := &models.Item{
+	itemCompleted := false
+	item := models.Item{
 		GroceryTripID: trip.ID,
 		UserID:        userID,
 		Name:          args["name"].(string),
 		Quantity:      args["quantity"].(int),
 		Position:      1,
+		Completed:     &itemCompleted,
 	}
-	if err := db.Create(&item).Error; err != nil {
+
+	categoryName := args["categoryName"]
+	category := &models.StoreCategory{}
+	query := db.
+		Select("store_categories.id").
+		Joins("INNER JOIN categories ON categories.id = store_categories.category_id").
+		Where("categories.name = ?", categoryName).
+		First(&category).
+		Error
+	if err := query; err != nil {
+		return nil, errors.New("could not find category")
+	}
+	item.CategoryID = &category.ID
+
+	if err := db.Debug().Create(&item).Error; err != nil {
 		return nil, err
 	}
 	return item, nil

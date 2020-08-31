@@ -1,0 +1,522 @@
+[
+  {
+    "text": "beer",
+    "label": "alcohol"
+  },
+  {
+    "text": "booze",
+    "label": "alcohol"
+  },
+  {
+    "text": "wine",
+    "label": "alcohol"
+  },
+  {
+    "text": "liquor",
+    "label": "alcohol"
+  },
+  {
+    "text": "spirits",
+    "label": "alcohol"
+  },
+  {
+    "text": "whiskey",
+    "label": "alcohol"
+  },
+  {
+    "text": "rum",
+    "label": "alcohol"
+  },
+  {
+    "text": "brandy",
+    "label": "alcohol"
+  },
+  {
+    "text": "vodka",
+    "label": "alcohol"
+  },
+  {
+    "text": "gin",
+    "label": "alcohol"
+  },
+  {
+    "text": "tequila",
+    "label": "alcohol"
+  },
+  {
+    "text": "mezcal",
+    "label": "alcohol"
+  },
+  {
+    "text": "diapers",
+    "label": "Baby"
+  },
+  {
+    "text": "formula",
+    "label": "Baby"
+  },
+  {
+    "text": "bread",
+    "label": "Bakery"
+  },
+  {
+    "text": "bun",
+    "label": "Bakery"
+  },
+  {
+    "text": "bagel",
+    "label": "Bakery"
+  },
+  {
+    "text": "baguette",
+    "label": "Bakery"
+  },
+  {
+    "text": "croissant",
+    "label": "Bakery"
+  },
+  {
+    "text": "ciabatta",
+    "label": "Bakery"
+  },
+  {
+    "text": "focaccia",
+    "label": "Bakery"
+  },
+  {
+    "text": "cake",
+    "label": "Bakery"
+  },
+  {
+    "text": "cupcake",
+    "label": "Bakery"
+  },
+  {
+    "text": "pie",
+    "label": "Bakery"
+  },
+  {
+    "text": "pita",
+    "label": "Bakery"
+  },
+  {
+    "text": "naan",
+    "label": "Bakery"
+  },
+  {
+    "text": "wraps",
+    "label": "Bakery"
+  },
+  {
+    "text": "dough",
+    "label": "Bakery"
+  },
+  {
+    "text": "baking",
+    "label": "Baking"
+  },
+  {
+    "text": "chocolate chips",
+    "label": "Baking"
+  },
+  {
+    "text": "cocoa powder",
+    "label": "Baking"
+  },
+  {
+    "text": "coconut",
+    "label": "Baking"
+  },
+  {
+    "text": "cooking spray",
+    "label": "Baking"
+  },
+  {
+    "text": "cornmeal",
+    "label": "Baking"
+  },
+  {
+    "text": "starch",
+    "label": "Baking"
+  },
+  {
+    "text": "flour",
+    "label": "Baking"
+  },
+  {
+    "text": "molasses",
+    "label": "Baking"
+  },
+  {
+    "text": "lemon juice",
+    "label": "Baking"
+  },
+  {
+    "text": "evaporated milk",
+    "label": "Baking"
+  },
+  {
+    "text": "condensed milk",
+    "label": "Baking"
+  },
+  {
+    "text": "powdered milk",
+    "label": "Baking"
+  },
+  {
+    "text": "shortening",
+    "label": "Baking"
+  },
+  {
+    "text": "sugar",
+    "label": "Baking"
+  },
+  {
+    "text": "vanilla extract",
+    "label": "Baking"
+  },
+  {
+    "text": "yeast",
+    "label": "Baking"
+  },
+  {
+    "text": "soda",
+    "label": "Beverages"
+  },
+  {
+    "text": "pop",
+    "label": "Beverages"
+  },
+  {
+    "text": "soft drink",
+    "label": "Beverages"
+  },
+  {
+    "text": "coca cola",
+    "label": "Beverages"
+  },
+  {
+    "text": "coke",
+    "label": "Beverages"
+  },
+  {
+    "text": "pepsi",
+    "label": "Beverages"
+  },
+  {
+    "text": "dr pepper",
+    "label": "Beverages"
+  },
+  {
+    "text": "mountain dew",
+    "label": "Beverages"
+  },
+  {
+    "text": "seltzer",
+    "label": "Beverages"
+  },
+  {
+    "text": "la croix",
+    "label": "Beverages"
+  },
+  {
+    "text": "bubly",
+    "label": "Beverages"
+  },
+  {
+    "text": "water",
+    "label": "Beverages"
+  },
+  {
+    "text": "candy",
+    "label": "Candy & Snacks"
+  },
+  {
+    "text": "nuts",
+    "label": "Candy & Snacks"
+  },
+  {
+    "text": "beans",
+    "label": "Canned Goods"
+  },
+  {
+    "text": "chickpeas",
+    "label": "Canned Goods"
+  },
+  {
+    "text": "cereal",
+    "label": "Cereal"
+  },
+  {
+    "text": "granola",
+    "label": "Cereal"
+  },
+  {
+    "text": "muesli",
+    "label": "Cereal"
+  },
+  {
+    "text": "oats",
+    "label": "Cereal"
+  },
+  {
+    "text": "oatmeal",
+    "label": "Cereal"
+  },
+  {
+    "text": "cleaning",
+    "label": "Cleaning"
+  },
+  {
+    "text": "cleaner",
+    "label": "Cleaning"
+  },
+  {
+    "text": "detergent",
+    "label": "Cleaning"
+  },
+  {
+    "text": "mop",
+    "label": "Cleaning"
+  },
+  {
+    "text": "bucket",
+    "label": "Cleaning"
+  },
+  {
+    "text": "swiffer",
+    "label": "Cleaning"
+  },
+  {
+    "text": "ketchup",
+    "label": "Condiments"
+  },
+  {
+    "text": "mustard",
+    "label": "Condiments"
+  },
+  {
+    "text": "relish",
+    "label": "Condiments"
+  },
+  {
+    "text": "mayo",
+    "label": "Condiments"
+  },
+  {
+    "text": "sauce",
+    "label": "Condiments"
+  },
+  {
+    "text": "milk",
+    "label": "Dairy"
+  },
+  {
+    "text": "yogurt",
+    "label": "Dairy"
+  },
+  {
+    "text": "eggs",
+    "label": "Dairy"
+  },
+  {
+    "text": "milk",
+    "label": "Dairy"
+  },
+  {
+    "text": "butter",
+    "label": "Dairy"
+  },
+  {
+    "text": "pasta",
+    "label": "Dry Goods"
+  },
+  {
+    "text": "rice",
+    "label": "Dry Goods"
+  },
+  {
+    "text": "coffee",
+    "label": "Dry Goods"
+  },
+  {
+    "text": "spice",
+    "label": "Dry Goods"
+  },
+  {
+    "text": "cinnamon",
+    "label": "Dry Goods"
+  },
+  {
+    "text": "frozen",
+    "label": "Frozen Goods"
+  },
+  {
+    "text": "ice cream",
+    "label": "Frozen Goods"
+  },
+  {
+    "text": "popcicles",
+    "label": "Frozen Goods"
+  },
+  {
+    "text": "TV dinner",
+    "label": "Frozen Goods"
+  },
+  {
+    "text": "ice",
+    "label": "Frozen Goods"
+  },
+  {
+    "text": "chicken strips",
+    "label": "Frozen Goods"
+  },
+  {
+    "text": "nuggets",
+    "label": "Frozen Goods"
+  },
+  {
+    "text": "fries",
+    "label": "Frozen Goods"
+  },
+  {
+    "text": "hash browns",
+    "label": "Frozen Goods"
+  },
+  {
+    "text": "meat",
+    "label": "Meat"
+  },
+  {
+    "text": "chicken",
+    "label": "Meat"
+  },
+  {
+    "text": "turkey",
+    "label": "Meat"
+  },
+  {
+    "text": "beef",
+    "label": "Meat"
+  },
+  {
+    "text": "steak",
+    "label": "Meat"
+  },
+  {
+    "text": "burger",
+    "label": "Meat"
+  },
+  {
+    "text": "pork",
+    "label": "Meat"
+  },
+  {
+    "text": "veal",
+    "label": "Meat"
+  },
+  {
+    "text": "duck",
+    "label": "Meat"
+  },
+  {
+    "text": "sausage",
+    "label": "Meat"
+  },
+  {
+    "text": "deli",
+    "label": "Meat"
+  },
+  {
+    "text": "birthday",
+    "label": "Paper Products"
+  },
+  {
+    "text": "card",
+    "label": "Paper Products"
+  },
+  {
+    "text": "paper",
+    "label": "Paper Products"
+  },
+  {
+    "text": "pens",
+    "label": "Paper Products"
+  },
+  {
+    "text": "stapler",
+    "label": "Paper Products"
+  },
+  {
+    "text": "binder",
+    "label": "Paper Products"
+  },
+  {
+    "text": "soap",
+    "label": "Personal Care"
+  },
+  {
+    "text": "hand cream",
+    "label": "Personal Care"
+  },
+  {
+    "text": "shampoo",
+    "label": "Personal Care"
+  },
+  {
+    "text": "conditioner",
+    "label": "Personal Care"
+  },
+  {
+    "text": "moisturizer",
+    "label": "Personal Care"
+  },
+  {
+    "text": "makeup",
+    "label": "Personal Care"
+  },
+  {
+    "text": "vitamin",
+    "label": "Pharmacy"
+  },
+  {
+    "text": "advil",
+    "label": "Pharmacy"
+  },
+  {
+    "text": "tylenol",
+    "label": "Pharmacy"
+  },
+  {
+    "text": "prescription",
+    "label": "Pharmacy"
+  },
+  {
+    "text": "apples",
+    "label": "Produce"
+  },
+  {
+    "text": "bananas",
+    "label": "Produce"
+  },
+  {
+    "text": "carrots",
+    "label": "Produce"
+  },
+  {
+    "text": "fish",
+    "label": "Seafood"
+  },
+  {
+    "text": "salmon",
+    "label": "Seafood"
+  },
+  {
+    "text": "sushi",
+    "label": "Seafood"
+  },
+  {
+    "text": "tuna",
+    "label": "Seafood"
+  }
+]

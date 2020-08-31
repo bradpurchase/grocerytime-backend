@@ -56,7 +56,6 @@ func TestUpdateItem_NoUpdates(t *testing.T) {
 	assert.Equal(t, item.(*models.Item).UserID, userID)
 	assert.Equal(t, item.(*models.Item).Name, "Apples")
 	assert.Equal(t, item.(*models.Item).Quantity, 5)
-	assert.Equal(t, item.(*models.Item).Completed, false)
 }
 
 func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
@@ -94,7 +93,8 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	args := map[string]interface{}{"itemId": itemID, "completed": true}
+	completed := true
+	args := map[string]interface{}{"itemId": itemID, "completed": completed}
 
 	item, err := UpdateItem(db, args)
 	require.NoError(t, err)
@@ -104,7 +104,7 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 	assert.Equal(t, item.(*models.Item).UserID, userID)
 	assert.Equal(t, item.(*models.Item).Name, "Apples")
 	assert.Equal(t, item.(*models.Item).Quantity, 5)
-	assert.Equal(t, item.(*models.Item).Completed, true)
+	assert.Equal(t, item.(*models.Item).Completed, &completed)
 }
 
 func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
@@ -142,10 +142,11 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
+	completed := true
 	args := map[string]interface{}{
 		"itemId":    itemID,
 		"quantity":  10,
-		"completed": true,
+		"completed": completed,
 		"name":      "Bananas",
 	}
 
@@ -157,5 +158,5 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 	assert.Equal(t, item.(*models.Item).UserID, userID)
 	assert.Equal(t, item.(*models.Item).Name, "Bananas")
 	assert.Equal(t, item.(*models.Item).Quantity, 10)
-	assert.Equal(t, item.(*models.Item).Completed, true)
+	assert.Equal(t, item.(*models.Item).Completed, &completed)
 }

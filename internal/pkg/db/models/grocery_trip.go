@@ -46,7 +46,8 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 		// If the completed trip was configured to copy its remaining items
 		// over to the next trip, perform this operation - otherwise, mark
 		// each item in the completed trip as completed
-		columns := Item{Completed: true}
+		completed := true
+		columns := Item{Completed: &completed}
 		if g.CopyRemainingItems {
 			columns = Item{GroceryTripID: newTrip.ID}
 		}

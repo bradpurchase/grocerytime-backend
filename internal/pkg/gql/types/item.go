@@ -47,6 +47,20 @@ var ItemType = graphql.NewObject(
 					return user, nil
 				},
 			},
+			"category": &graphql.Field{
+				Type: StoreCategoryType,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					db := db.FetchConnection()
+					defer db.Close()
+
+					categoryID := p.Source.(models.Item).CategoryID
+					category := &models.StoreCategory{}
+					if err := db.Where("id = ?", categoryID).First(&category).Error; err != nil && !gorm.IsRecordNotFoundError(err) {
+						return nil, err
+					}
+					return category, nil
+				},
+			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},
