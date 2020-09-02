@@ -7,18 +7,18 @@ import (
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
-// SendListInvitationEmail sends an email to a person being invited to join a list
-func SendListInvitationEmail(listName string, email string) (interface{}, error) {
+// SendStoreInvitationEmail sends an email to a person being invited to join a list
+func SendStoreInvitationEmail(storeName string, email string) (interface{}, error) {
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
-	subject := "You've been invited to join " + listName + " on GroceryTime 🛒"
+	subject := "You've been invited to join " + storeName + " on GroceryTime 🛒"
 	to := mail.NewEmail("", email)
 
-	plainTextContent := "You've been invited to join " + listName + " on GroceryTime. "
+	plainTextContent := "You've been invited to join " + storeName + " on GroceryTime. "
 	plainTextContent += "Simply download the app and sign up with this email address to join. "
 	plainTextContent += "Click here to download GroceryTime: https://grocerytime.app/download"
 
 	htmlContent := "<p>Hello,</p>"
-	htmlContent += "<p>You've been invited to join <strong>" + listName + "</strong>, a grocery list on the app GroceryTime.</p>"
+	htmlContent += "<p>You've been invited to join <strong>" + storeName + "</strong>, a grocery list on the app GroceryTime.</p>"
 	htmlContent += "<p>When you join a list, you can work on it together and see updates in real time. "
 	htmlContent += "You can also track your separate grocery trips from week to week (or any interval you like!) and view past trips. It makes grocery time so much easier!</p>"
 	htmlContent += "<p>Simply download the app and sign up with this email address (" + email + ") to join. Click here to download GroceryTime: https://grocerytime.app/download</p>"

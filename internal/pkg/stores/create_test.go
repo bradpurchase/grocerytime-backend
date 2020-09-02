@@ -1,4 +1,4 @@
-package grocerylist
+package stores
 
 import (
 	"testing"
@@ -10,48 +10,43 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateList_DupeList(t *testing.T) {
+func TestCreateStore_DupeStore(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
 
 	userID := uuid.NewV4()
-	listName := "My Dupe List"
-	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
-		WithArgs(listName, userID).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id", "name"}).AddRow(uuid.NewV4(), userID, listName))
+	storeName := "My Dupe Store"
+	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(storeName, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id", "name"}).AddRow(uuid.NewV4(), userID, storeName))
 
-	_, e := CreateList(db, userID, listName)
+	_, e := CreateStore(db, userID, storeName)
 	require.Error(t, e)
-	assert.Equal(t, e.Error(), "You already have a list with this name")
+	assert.Equal(t, e.Error(), "You already added a store with this name")
 }
 
-func TestCreateList_Created(t *testing.T) {
+func TestCreateStore_Created(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
 
 	userID := uuid.NewV4()
-	listName := "My New List"
-	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
-		WithArgs(listName, userID).
+	storeName := "My New Store"
+	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(storeName, userID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	listID := uuid.NewV4()
-	mock.ExpectBegin()
-	mock.ExpectQuery("^INSERT INTO \"lists\" (.+)$").
-		WithArgs(userID, listName, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
-	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
-		WithArgs(listID, userID, "", true, true, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
-
 	storeID := uuid.NewV4()
+	mock.ExpectBegin()
 	mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
-		WithArgs(listID, "Grocery Store", AnyTime{}, AnyTime{}, nil).
+		WithArgs(userID, storeName, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
+	mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
+		WithArgs(storeID, userID, "", true, true, AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	categoryID := uuid.NewV4()
 	mock.ExpectQuery("^SELECT (.+) FROM \"categories\"*").
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(categoryID, "Produce"))
@@ -60,11 +55,11 @@ func TestCreateList_Created(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(listID, "Trip 1", AnyTime{}, AnyTime{}, nil).
+		WithArgs(storeID, "Trip 1", AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	mock.ExpectCommit()
 
-	list, err := CreateList(db, userID, listName)
+	store, err := CreateStore(db, userID, storeName)
 	require.NoError(t, err)
-	assert.Equal(t, list.Name, listName)
+	assert.Equal(t, store.Name, storeName)
 }

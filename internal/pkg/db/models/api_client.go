@@ -26,7 +26,7 @@ type ApiClient struct {
 // BeforeCreate hook to generate key/secret
 func (c *ApiClient) BeforeCreate(scope *gorm.Scope) (err error) {
 	rand.Seed(time.Now().UnixNano())
-	scope.SetColumn("Key", utils.RandString(16))
-	scope.SetColumn("Secret", utils.RandString(16))
+	scope.SetColumn("Key", utils.RandString(24))
+	scope.SetColumn("Secret", utils.RandString(24))
 	return nil
 }

@@ -4,12 +4,12 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
 
-// LeaveListResolver resolves the leaveList resolver by re
-func LeaveListResolver(p graphql.ResolveParams) (interface{}, error) {
+// CreateStoreResolver creates a new store for the currently authenticated user
+func CreateStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
@@ -19,11 +19,10 @@ func LeaveListResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	// Verify that the list with the ID provided exists
-	listID := p.Args["listId"]
-	listUser, err := grocerylist.RemoveUserFromList(db, user.(models.User), listID)
+	userID := user.(models.User).ID
+	list, err := stores.CreateStore(db, userID, p.Args["name"].(string))
 	if err != nil {
 		return nil, err
 	}
-	return listUser, nil
+	return list, nil
 }

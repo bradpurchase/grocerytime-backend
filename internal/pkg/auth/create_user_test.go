@@ -54,7 +54,7 @@ func TestCreateUser_UserCreated(t *testing.T) {
 	require.NoError(t, err)
 
 	email := "test@example.com"
-	listName := "My Grocery List"
+	storeName := "My Grocery Store"
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
 		WithArgs(email).
@@ -64,18 +64,14 @@ func TestCreateUser_UserCreated(t *testing.T) {
 	mock.ExpectQuery("^INSERT INTO \"users\" (.+)$").
 		WithArgs(email, sqlmock.AnyArg(), "", "", AnyTime{}, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
-	listID := uuid.NewV4()
-	mock.ExpectQuery("^INSERT INTO \"lists\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), listName, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(listID))
-	mock.ExpectQuery("^INSERT INTO \"list_users\" (.+)$").
+	storeID := uuid.NewV4()
+	mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
+		WithArgs(sqlmock.AnyArg(), storeName, AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
+	mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
-	storeID := uuid.NewV4()
-	mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
-		WithArgs(listID, "Grocery Store", AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
 	categoryID := uuid.NewV4()
 	mock.ExpectQuery("^SELECT (.+) FROM \"categories\"*").
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(categoryID, "Produce"))
@@ -95,6 +91,6 @@ func TestCreateUser_UserCreated(t *testing.T) {
 	user, err := CreateUser(db, email, "password", clientID)
 	require.NoError(t, err)
 	assert.Equal(t, user.Email, email)
-	assert.Equal(t, user.Lists[0].Name, listName)
+	assert.Equal(t, user.Stores[0].Name, storeName)
 	assert.Equal(t, user.Tokens[0].ClientID, clientID)
 }

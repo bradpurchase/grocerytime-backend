@@ -29,7 +29,7 @@ func CreateUser(db *gorm.DB, email string, password string, clientID uuid.UUID) 
 		Password:   string(passhash),
 		LastSeenAt: time.Now(),
 		Tokens:     []models.AuthToken{{ClientID: clientID}},
-		Lists:      []models.List{{Name: "My Grocery List"}},
+		Stores:     []models.Store{{Name: "My Grocery Store"}},
 	}
 	if err := db.Create(&user).Error; err != nil {
 		return nil, err

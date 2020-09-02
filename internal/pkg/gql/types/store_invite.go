@@ -3,14 +3,14 @@ package gql
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
 
-// ListInviteType defines a graphql type for List
-var ListInviteType = graphql.NewObject(
+// StoreInviteType defines a graphql type for Store
+var StoreInviteType = graphql.NewObject(
 	graphql.ObjectConfig{
-		Name: "ListInvite",
+		Name: "StoreInvite",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
@@ -31,10 +31,10 @@ var ListInviteType = graphql.NewObject(
 					db := db.FetchConnection()
 					defer db.Close()
 
-					// Return the list user who created this list, as this will always
+					// Return the store user who created this store, as this will always
 					// be the user who sent the invite
-					listID := p.Source.(models.List).ID
-					user, err := grocerylist.RetrieveListCreator(db, listID)
+					storeID := p.Source.(models.Store).ID
+					user, err := stores.RetrieveStoreCreator(db, storeID)
 					if err != nil {
 						return nil, err
 					}

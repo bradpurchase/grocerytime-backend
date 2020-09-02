@@ -26,29 +26,29 @@ func init() {
 					Description: "Retrieve the current user",
 					Resolve:     resolvers.AuthenticatedUserResolver,
 				},
-				"lists": &graphql.Field{
-					Type:        graphql.NewList(gql.ListType),
-					Description: "Retrieve lists for the current user",
-					Resolve:     resolvers.ListsResolver,
+				"stores": &graphql.Field{
+					Type:        graphql.NewList(gql.StoreType),
+					Description: "Retrieve stores for the current user",
+					Resolve:     resolvers.StoresResolver,
 				},
-				"invitedLists": &graphql.Field{
-					Type:        graphql.NewList(gql.ListInviteType),
-					Description: "Retrieve lists the current user has been invited to",
-					Resolve:     resolvers.InvitedListsResolver,
+				"invitedStores": &graphql.Field{
+					Type:        graphql.NewList(gql.StoreInviteType),
+					Description: "Retrieve stores the current user has been invited to",
+					Resolve:     resolvers.InvitedStoresResolver,
 				},
-				"list": &graphql.Field{
-					Type:        gql.ListType,
-					Description: "Retrieve a specific list",
+				"store": &graphql.Field{
+					Type:        gql.StoreType,
+					Description: "Retrieve a specific store",
 					Args: graphql.FieldConfigArgument{
 						"id": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},
-					Resolve: resolvers.ListResolver,
+					Resolve: resolvers.StoreResolver,
 				},
 				"trip": &graphql.Field{
 					Type:        gql.GroceryTripType,
-					Description: "Retrieve a specific grocery trip within a list",
+					Description: "Retrieve a specific grocery trip within a store",
 					Args: graphql.FieldConfigArgument{
 						"id": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
@@ -107,31 +107,31 @@ func init() {
 					},
 					Resolve: resolvers.SignupResolver,
 				},
-				"createList": &graphql.Field{
-					Type:        gql.ListType,
-					Description: "Create a list",
+				"createStore": &graphql.Field{
+					Type:        gql.StoreType,
+					Description: "Create a store",
 					Args: graphql.FieldConfigArgument{
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},
 					},
-					Resolve: resolvers.CreateListResolver,
+					Resolve: resolvers.CreateStoreResolver,
 				},
-				"deleteList": &graphql.Field{
-					Type:        gql.ListType,
-					Description: "Delete a list",
+				"deleteStore": &graphql.Field{
+					Type:        gql.StoreType,
+					Description: "Delete a store",
 					Args: graphql.FieldConfigArgument{
-						"listId": &graphql.ArgumentConfig{
+						"storeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},
-					Resolve: resolvers.DeleteListResolver,
+					Resolve: resolvers.DeleteStoreResolver,
 				},
-				"updateList": &graphql.Field{
-					Type:        gql.ListType,
-					Description: "Update a list",
+				"updateStore": &graphql.Field{
+					Type:        gql.StoreType,
+					Description: "Update a store",
 					Args: graphql.FieldConfigArgument{
-						"listId": &graphql.ArgumentConfig{
+						"storeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 						"name": &graphql.ArgumentConfig{
@@ -140,52 +140,52 @@ func init() {
 					},
 					Resolve: resolvers.UpdateListResolver,
 				},
-				"inviteToList": &graphql.Field{
-					Type:        gql.ListUserType,
-					Description: "Invite to a list via email",
+				"inviteToStore": &graphql.Field{
+					Type:        gql.StoreUserType,
+					Description: "Invite to a store via email",
 					Args: graphql.FieldConfigArgument{
-						"listId": &graphql.ArgumentConfig{
+						"storeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 						"email": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},
 					},
-					Resolve: resolvers.InviteToListResolver,
+					Resolve: resolvers.InviteToStoreResolver,
 				},
-				"joinList": &graphql.Field{
-					Type:        gql.ListUserType,
-					Description: "Creates a proper ListUser membership and removes the pending state",
+				"joinStore": &graphql.Field{
+					Type:        gql.StoreUserType,
+					Description: "Removes the pending state from a pending store user",
 					Args: graphql.FieldConfigArgument{
-						"listId": &graphql.ArgumentConfig{
+						"storeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},
-					Resolve: resolvers.JoinListResolver,
+					Resolve: resolvers.JoinStoreResolver,
 				},
-				"declineListInvite": &graphql.Field{
-					Type:        gql.ListUserType,
-					Description: "Declines a list invitation for a user",
+				"declineStoreInvite": &graphql.Field{
+					Type:        gql.StoreUserType,
+					Description: "Declines a store invitation for a user",
 					Args: graphql.FieldConfigArgument{
-						"listId": &graphql.ArgumentConfig{
+						"storeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},
 					Resolve: resolvers.DeclineListInviteResolver,
 				},
-				"leaveList": &graphql.Field{
-					Type:        gql.ListUserType,
-					Description: "Deletes the current user's ListUser record for the listID",
+				"leaveStore": &graphql.Field{
+					Type:        gql.StoreUserType,
+					Description: "Deletes the current user's store user record for the given storeID",
 					Args: graphql.FieldConfigArgument{
-						"listId": &graphql.ArgumentConfig{
+						"storeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},
-					Resolve: resolvers.LeaveListResolver,
+					Resolve: resolvers.LeaveStoreResolver,
 				},
 				"deleteItem": &graphql.Field{
 					Type:        gql.ItemType,
-					Description: "Remove an item from a list",
+					Description: "Remove an item from a trip",
 					Args: graphql.FieldConfigArgument{
 						"itemId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
@@ -195,7 +195,7 @@ func init() {
 				},
 				"updateItem": &graphql.Field{
 					Type:        gql.ItemType,
-					Description: "Updates the properties of an item in a list",
+					Description: "Updates the properties of an item",
 					Args: graphql.FieldConfigArgument{
 						"itemId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
@@ -217,7 +217,7 @@ func init() {
 				},
 				"reorderItem": &graphql.Field{
 					Type:        gql.GroceryTripType,
-					Description: "Updates the order of an item in a list",
+					Description: "Updates the order of an item in a trip",
 					Args: graphql.FieldConfigArgument{
 						"itemId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),

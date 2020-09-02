@@ -26,7 +26,7 @@ type Item struct {
 	DeletedAt *time.Time
 
 	// Associations
-	List List
+	GroceryTrip GroceryTrip
 }
 
 func (i *Item) BeforeCreate(tx *gorm.DB) (err error) {

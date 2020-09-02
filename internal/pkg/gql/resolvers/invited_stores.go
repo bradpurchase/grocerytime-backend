@@ -4,12 +4,13 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
 
-// ListResolver resolves the list GraphQL query by retrieving a list by ID param
-func ListResolver(p graphql.ResolveParams) (interface{}, error) {
+// InvitedStoresResolver resolves the invitedStores query by retrieving stores
+// that the current user has been invited to
+func InvitedStoresResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
@@ -19,9 +20,10 @@ func ListResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	list, err := grocerylist.RetrieveListForUser(db, p.Args["id"], user.(models.User).ID)
+	invites, err := stores.RetrieveInvitedUserStores(db, user.(models.User))
 	if err != nil {
 		return nil, err
 	}
-	return list, nil
+
+	return invites, nil
 }

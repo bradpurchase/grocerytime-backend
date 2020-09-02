@@ -7,8 +7,8 @@ import (
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
-// SendListRenamedEmail sends an email to a list user about a list being renamed
-func SendListRenamedEmail(oldName string, newName string, email string) (interface{}, error) {
+// SendStoreRenamedEmail sends an email to a list user about a list being renamed
+func SendStoreRenamedEmail(oldName string, newName string, email string) (interface{}, error) {
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
 	subject := "Your shared list was renamed 📝"
 	to := mail.NewEmail("", email)

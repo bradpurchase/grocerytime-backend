@@ -3,10 +3,8 @@ package migration
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/jinzhu/gorm"
-	uuid "github.com/satori/go.uuid"
 	"gopkg.in/gormigrate.v1"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -14,16 +12,15 @@ import (
 
 func migrate(db *gorm.DB) error {
 	return db.AutoMigrate(
-		&models.User{},
-		&models.List{},
-		&models.ListUser{},
-		&models.GroceryTrip{},
-		&models.Item{},
 		&models.ApiClient{},
 		&models.AuthToken{},
 		&models.Category{},
+		&models.GroceryTrip{},
+		&models.Item{},
 		&models.Store{},
+		&models.StoreUser{},
 		&models.StoreCategory{},
+		&models.User{},
 	).Error
 }
 
@@ -55,220 +52,6 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Where("name = ?", "Test").Delete(&models.ApiClient{}).Error
-			},
-		},
-		{
-			// Add completed to items
-			ID: "202004290846_add_completed_to_items",
-			Migrate: func(tx *gorm.DB) error {
-				type Item struct {
-					Completed bool
-				}
-				return tx.AutoMigrate(&models.Item{}).Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("items").DropColumn("completed").Error
-			},
-		},
-		{
-			// Add sort_order to items
-			ID: "202005301245_add_position_to_items",
-			Migrate: func(tx *gorm.DB) error {
-				type Item struct {
-					Position int
-				}
-				return tx.AutoMigrate(&models.Item{}).Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("items").DropColumn("position").Error
-			},
-		},
-		{
-			// Add index idx_items_grocery_trip_id
-			ID: "202006021110_add_idx_items_grocery_trip_id",
-			Migrate: func(tx *gorm.DB) error {
-				return tx.Table("items").AddIndex("idx_items_list_id", "grocery_trip_id").Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("items").RemoveIndex("idx_items_grocery_trip_id").Error
-			},
-		},
-		{
-			// Add index idx_list_users_list_id
-			ID: "202006021117_add_idx_list_users_list_id",
-			Migrate: func(tx *gorm.DB) error {
-				return tx.Table("list_users").AddIndex("idx_list_users_list_id", "list_id").Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("list_users").RemoveIndex("idx_list_users_list_id").Error
-			},
-		},
-		{
-			// Add index idx_list_users_user_id
-			ID: "202006021118_add_idx_items_user_id",
-			Migrate: func(tx *gorm.DB) error {
-				return tx.Table("list_users").AddIndex("idx_list_users_user_id", "user_id").Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("list_users").RemoveIndex("idx_list_users_user_id").Error
-			},
-		},
-		{
-			// Add list_id to grocery_trips
-			ID: "202006040726_add_list_id_to_grocery_trips",
-			Migrate: func(tx *gorm.DB) error {
-				type GroceryTrip struct {
-					ListID uuid.UUID
-				}
-				return tx.AutoMigrate(&models.GroceryTrip{}).Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("grocery_trips").DropColumn("list_id").Error
-			},
-		},
-		{
-			// Add completed to grocery_trips
-			ID: "202006040732_add_completed_to_grocery_trips",
-			Migrate: func(tx *gorm.DB) error {
-				type GroceryTrip struct {
-					Completed bool
-				}
-				return tx.AutoMigrate(&models.GroceryTrip{}).Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("grocery_trips").DropColumn("completed").Error
-			},
-		},
-		{
-			// Add grocery_trip_id to items
-			ID: "202006040733_add_grocery_trip_id_to_items",
-			Migrate: func(tx *gorm.DB) error {
-				type Item struct {
-					GroceryTripID uuid.UUID
-				}
-				return tx.AutoMigrate(&models.Item{}).Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("items").DropColumn("grocery_trip_id").Error
-			},
-		},
-		{
-			// Add copy_remaining_items to grocery_trips
-			ID: "202006071147_add_copy_remaining_items_to_grocery_trips",
-			Migrate: func(tx *gorm.DB) error {
-				type GroceryTrip struct {
-					CopyRemainingItems bool
-				}
-				return tx.AutoMigrate(&models.GroceryTrip{}).Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("grocery_trips").DropColumn("copy_remaining_items").Error
-			},
-		},
-		{
-			// Add email to list_users
-			ID: "202006131236_remove_list_id_from_items",
-			Migrate: func(tx *gorm.DB) error {
-				type ListUser struct {
-					Email string
-				}
-				return tx.AutoMigrate(&models.ListUser{}).Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("list_users").DropColumn("email").Error
-			},
-		},
-		{
-			// Add deleted_at column to lists for automatic soft-deletion
-			ID: "202007291257_add_deleted_at_to_lists",
-			Migrate: func(tx *gorm.DB) error {
-				type List struct {
-					DeletedAt *time.Time
-				}
-				return tx.AutoMigrate(&models.List{}).Error
-			},
-		},
-		{
-			// Add deleted_at column to list_users for automatic soft-deletion
-			ID: "202007291258_add_deleted_at_to_list_users",
-			Migrate: func(tx *gorm.DB) error {
-				type ListUser struct {
-					DeletedAt *time.Time
-				}
-				return tx.AutoMigrate(&models.ListUser{}).Error
-			},
-		},
-		{
-			// Add deleted_at column to list_users for automatic soft-deletion
-			ID: "202007291259_add_deleted_at_to_items",
-			Migrate: func(tx *gorm.DB) error {
-				type Item struct {
-					DeletedAt *time.Time
-				}
-				return tx.AutoMigrate(&models.Item{}).Error
-			},
-		},
-		{
-			// Add deleted_at column to grocery_trips for automatic soft-deletion
-			ID: "202007291413_add_deleted_at_to_grocery_trips",
-			Migrate: func(tx *gorm.DB) error {
-				type GroceryTrip struct {
-					DeletedAt *time.Time
-				}
-				return tx.AutoMigrate(&models.GroceryTrip{}).Error
-			},
-		},
-		{
-			// Create categories table
-			ID: "202008250949_create_categories",
-			Migrate: func(tx *gorm.DB) error {
-				type Category struct {
-					ID   uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
-					Name string    `gorm:"type:varchar(100);not null"`
-				}
-				return tx.AutoMigrate(&models.Category{}).Error
-			},
-		},
-		{
-			// Add category_id to items
-			ID: "202008251029_add_category_id_to_items",
-			Migrate: func(tx *gorm.DB) error {
-				type Item struct {
-					CategoryID uuid.UUID
-				}
-				return tx.AutoMigrate(&models.Item{}).Error
-			},
-		},
-		{
-			// Create stores table
-			ID: "202008301519_create_stores",
-			Migrate: func(tx *gorm.DB) error {
-				type Store struct {
-					ID     uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
-					ListID uuid.UUID `gorm:"type:uuid;not null"`
-					Name   string    `gorm:"type:varchar(100);not null"`
-
-					CreatedAt time.Time
-					UpdatedAt time.Time
-					DeletedAt *time.Time
-				}
-				return tx.AutoMigrate(&models.Store{}).Error
-			},
-		},
-		{
-			// Create store categories table
-			ID: "202008301519_create_store_categories",
-			Migrate: func(tx *gorm.DB) error {
-				type StoreCategory struct {
-					ID         uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
-					StoreID    uuid.UUID `gorm:"type:uuid;not null"`
-					CategoryID uuid.UUID `gorm:"type:uuid;not null"`
-
-					CreatedAt time.Time
-					UpdatedAt time.Time
-					DeletedAt *time.Time
-				}
-				return tx.AutoMigrate(&models.StoreCategory{}).Error
 			},
 		},
 	})

@@ -7,13 +7,13 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
 
-// InviteToListResolver resolves the inviteToList mutation by creating a pending
+// InviteToStoreResolver resolves the inviteToStore mutation by creating a pending
 // list_users record for the given listId and email
-func InviteToListResolver(p graphql.ResolveParams) (interface{}, error) {
+func InviteToStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
@@ -28,9 +28,9 @@ func InviteToListResolver(p graphql.ResolveParams) (interface{}, error) {
 	listID := p.Args["listId"]
 	invitedUserEmail := strings.TrimSpace(p.Args["email"].(string))
 	if userEmail == invitedUserEmail {
-		return models.ListUser{}, errors.New("cannot invite yourself to this list")
+		return models.StoreUser{}, errors.New("cannot invite yourself to a store")
 	}
-	listUser, err := grocerylist.InviteToListByEmail(db, listID, invitedUserEmail)
+	listUser, err := stores.InviteToStoreByEmail(db, listID, invitedUserEmail)
 	if err != nil {
 		return nil, err
 	}

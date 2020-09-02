@@ -74,12 +74,12 @@ func TestUpdateTrip_MarkCompleted(t *testing.T) {
 	require.NoError(t, err)
 
 	tripID := uuid.NewV4()
-	listID := uuid.NewV4()
+	storeID := uuid.NewV4()
 	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(tripID).
 		WillReturnRows(sqlmock.
-			NewRows([]string{"id", "list_id", "name"}).
-			AddRow(tripID, listID, "My First Trip"))
+			NewRows([]string{"id", "store_id", "name"}).
+			AddRow(tripID, storeID, "My First Trip"))
 
 	args := map[string]interface{}{
 		"tripId":    tripID,
@@ -91,11 +91,11 @@ func TestUpdateTrip_MarkCompleted(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	mock.ExpectQuery("^SELECT count*").
-		WithArgs(listID).
+		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(listID, "Trip 2", AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
+		WithArgs(storeID, "Trip 2", AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
@@ -113,12 +113,12 @@ func TestUpdateTrip_MarkCompletedAndCopyRemainingItems(t *testing.T) {
 	require.NoError(t, err)
 
 	tripID := uuid.NewV4()
-	listID := uuid.NewV4()
+	storeID := uuid.NewV4()
 	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(tripID).
 		WillReturnRows(sqlmock.
-			NewRows([]string{"id", "list_id", "name"}).
-			AddRow(tripID, listID, "Trip 1"))
+			NewRows([]string{"id", "store_id", "name"}).
+			AddRow(tripID, storeID, "Trip 1"))
 
 	args := map[string]interface{}{
 		"tripId":             tripID,
@@ -131,11 +131,11 @@ func TestUpdateTrip_MarkCompletedAndCopyRemainingItems(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	mock.ExpectQuery("^SELECT count*").
-		WithArgs(listID).
+		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(listID, "Trip 2", AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"list_id"}).AddRow(listID))
+		WithArgs(storeID, "Trip 2", AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()

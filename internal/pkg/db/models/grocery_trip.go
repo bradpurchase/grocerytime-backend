@@ -13,7 +13,7 @@ import (
 
 type GroceryTrip struct {
 	ID                 uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
-	ListID             uuid.UUID `gorm:"type:uuid;not null"`
+	StoreID            uuid.UUID `gorm:"type:uuid;not null"`
 	Name               string    `gorm:"type:varchar(100);not null"`
 	Completed          bool      `gorm:"default:false;not null"`
 	CopyRemainingItems bool      `gorm:"default:false;not null"`
@@ -23,14 +23,14 @@ type GroceryTrip struct {
 	DeletedAt *time.Time
 
 	// Associations
-	List List
+	Store Store
 }
 
 // AfterUpdate hook is triggered after a trip is updated, such as in trips.UpdateTrip
 func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 	if g.Completed {
 		var tripsCount int
-		if err := tx.Model(&GroceryTrip{}).Where("list_id = ?", g.ListID).Count(&tripsCount).Error; err != nil {
+		if err := tx.Model(&GroceryTrip{}).Where("store_id = ?", g.StoreID).Count(&tripsCount).Error; err != nil {
 			return err
 		}
 
@@ -38,7 +38,7 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 		// The new trip name is suffixed by a number that represents the number
 		// of trips in the list (i.e. "Trip 12")
 		newTripName := fmt.Sprintf("Trip %d", (tripsCount + 1))
-		newTrip := GroceryTrip{ListID: g.ListID, Name: newTripName}
+		newTrip := GroceryTrip{StoreID: g.StoreID, Name: newTripName}
 		if err := tx.Create(&newTrip).Error; err != nil {
 			return err
 		}

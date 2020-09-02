@@ -4,12 +4,12 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
 
 // DeclineListInviteResolver resolves the declineListInvite resolver by calling
-// grocerylist.RemoveUserFromList function which handles removing the ListUser record
+// stores.RemoveUserFromList function which handles removing the ListUser record
 // and emailing the list creator about the invite being declined
 func DeclineListInviteResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
@@ -21,10 +21,10 @@ func DeclineListInviteResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	listID := p.Args["listId"]
-	listUser, err := grocerylist.RemoveUserFromList(db, user.(models.User), listID)
+	storeID := p.Args["storeId"]
+	storeUser, err := stores.RemoveUserFromStore(db, user.(models.User), storeID)
 	if err != nil {
 		return nil, err
 	}
-	return listUser, nil
+	return storeUser, nil
 }
