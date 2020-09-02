@@ -11,9 +11,9 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-type ListUser struct {
+type StoreUser struct {
 	ID      uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
-	ListID  uuid.UUID `gorm:"type:uuid;not null"`
+	StoreID uuid.UUID `gorm:"type:uuid;not null"`
 	UserID  uuid.UUID `gorm:"type:uuid"`
 	Email   string    `gorm:"type:varchar(100)"`
 	Creator *bool     `gorm:"default:false;not null"`
@@ -24,20 +24,20 @@ type ListUser struct {
 	DeletedAt *time.Time
 
 	// Associations
-	List      List
-	User      User
-	ListUsers []ListUser
+	Store      Store
+	User       User
+	StoreUsers []StoreUser
 }
 
-// AfterCreate hook to handle sending an invite email to a new ListUser if the
-// email column is not empty (i.e. list invitation by another user)
-func (lu *ListUser) AfterCreate(tx *gorm.DB) (err error) {
+// AfterCreate hook to handle sending an invite email to a new StoreUser if the
+// email column is not empty (i.e. store invitation by another user)
+func (lu *StoreUser) AfterCreate(tx *gorm.DB) (err error) {
 	if len(lu.Email) > 0 {
-		list := List{}
-		if err := tx.Select("name").Where("id = ?", lu.ListID).First(&list).Error; err != nil {
+		store := Store{}
+		if err := tx.Select("name").Where("id = ?", lu.StoreID).First(&store).Error; err != nil {
 			return err
 		}
-		_, err := mailer.SendListInvitationEmail(list.Name, lu.Email)
+		_, err := mailer.SendStoreInvitationEmail(store.Name, lu.Email)
 		if err != nil {
 			return err
 		}

@@ -17,8 +17,8 @@ func AddItem(db *gorm.DB, userID uuid.UUID, args map[string]interface{}) (interf
 	}
 
 	// Verify that the current user belongs in this list
-	listUser := &models.ListUser{}
-	if err := db.Where("list_id = ? AND user_id = ?", trip.ListID, userID).First(&listUser).Error; err != nil {
+	storeUser := &models.StoreUser{}
+	if err := db.Where("store_id = ? AND user_id = ?", trip.StoreID, userID).First(&storeUser).Error; err != nil {
 		return nil, err
 	}
 

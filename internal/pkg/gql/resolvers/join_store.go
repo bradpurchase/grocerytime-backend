@@ -4,13 +4,14 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
+
 	"github.com/graphql-go/graphql"
 )
 
-// InvitedListsResolver resolves the invitedLists query by retrieving lists
-// that the current user has been invited to
-func InvitedListsResolver(p graphql.ResolveParams) (interface{}, error) {
+// JoinStoreResolver adds the current user to a list properly by removing
+// the email and replacing it with the user ID
+func JoinStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
@@ -20,10 +21,11 @@ func InvitedListsResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	lists, err := grocerylist.RetrieveInvitedUserLists(db, user.(models.User))
+	// Verify that the list with the ID provided exists
+	storeID := p.Args["storeId"]
+	storeUser, err := stores.AddUserToStore(db, user.(models.User), storeID)
 	if err != nil {
 		return nil, err
 	}
-
-	return lists, nil
+	return storeUser, nil
 }

@@ -9,21 +9,21 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// RetrieveCurrentTripInList retrieves the currently active grocery trip in a
-// list by listID if the userID has access to to the list
-func RetrieveCurrentTripInList(db *gorm.DB, listID uuid.UUID, user models.User) (interface{}, error) {
+// RetrieveCurrentStoreTrip retrieves the currently active grocery trip in a
+// store by storeID if the userID has access to to the list
+func RetrieveCurrentStoreTrip(db *gorm.DB, storeID uuid.UUID, user models.User) (interface{}, error) {
 	query := db.
-		Where("list_id = ?", listID).
+		Where("store_id = ?", storeID).
 		Where("user_id = ? OR email = ?", user.ID, user.Email).
-		Find(&models.ListUser{}).
+		Find(&models.StoreUser{}).
 		Error
 	if err := query; err != nil {
-		return nil, errors.New("user is not a member of this list")
+		return nil, errors.New("user is not a member of this store")
 	}
 
 	trip := models.GroceryTrip{}
-	if err := db.Where("list_id = ? AND completed = ?", listID, false).Order("created_at DESC").Find(&trip).Error; err != nil {
-		return nil, errors.New("could not find trip associated with this list")
+	if err := db.Where("store_id = ? AND completed = ?", storeID, false).Order("created_at DESC").Find(&trip).Error; err != nil {
+		return nil, errors.New("could not find trip associated with this store")
 	}
 	return trip, nil
 }

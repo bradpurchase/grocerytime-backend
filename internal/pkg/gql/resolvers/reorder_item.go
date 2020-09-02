@@ -3,7 +3,7 @@ package resolvers
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
 )
 
@@ -20,7 +20,7 @@ func ReorderItemResolver(p graphql.ResolveParams) (interface{}, error) {
 
 	itemID := p.Args["itemId"]
 	position := p.Args["position"].(int)
-	trip, err := grocerylist.ReorderItem(db, itemID, position)
+	trip, err := trips.ReorderItem(db, itemID, position)
 	if err != nil {
 		return nil, err
 	}

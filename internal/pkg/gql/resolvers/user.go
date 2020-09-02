@@ -22,14 +22,14 @@ func AuthenticatedUserResolver(p graphql.ResolveParams) (interface{}, error) {
 	return user, nil
 }
 
-// BasicUserResolver resolves the creator field in the ListType by retrieving
+// BasicUserResolver resolves the creator field in the StoreType by retrieving
 // basic information about a user (email, first name, last name)
 func BasicUserResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
 	user := &models.User{}
-	if err := db.Where("id = ?", p.Source.(models.List).UserID).Find(&user).Error; err != nil {
+	if err := db.Where("id = ?", p.Source.(models.Store).UserID).Find(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil

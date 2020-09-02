@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRetrieveCurrentTripInList_UserNotAMemberOfList(t *testing.T) {
+func TestRetrieveCurrentStoreTrip_UserNotAMemberOfList(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
@@ -23,12 +23,12 @@ func TestRetrieveCurrentTripInList_UserNotAMemberOfList(t *testing.T) {
 		WithArgs(listID, user.ID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	_, e := RetrieveCurrentTripInList(db, listID, user)
+	_, e := RetrieveCurrentStoreTrip(db, listID, user)
 	require.Error(t, e)
 	assert.Equal(t, e.Error(), "user is not a member of this list")
 }
 
-func TestRetrieveCurrentTripInList_TripNotAssociatedWithList(t *testing.T) {
+func TestRetrieveCurrentStoreTrip_TripNotAssociatedWithList(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
@@ -40,12 +40,12 @@ func TestRetrieveCurrentTripInList_TripNotAssociatedWithList(t *testing.T) {
 		WithArgs(listID, user.ID, user.Email).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
-	_, e := RetrieveCurrentTripInList(db, listID, user)
+	_, e := RetrieveCurrentStoreTrip(db, listID, user)
 	require.Error(t, e)
 	assert.Equal(t, e.Error(), "could not find trip associated with this list")
 }
 
-func TestRetrieveCurrentTripInList_FoundResult(t *testing.T) {
+func TestRetrieveCurrentStoreTrip_FoundResult(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
@@ -63,7 +63,7 @@ func TestRetrieveCurrentTripInList_FoundResult(t *testing.T) {
 		WithArgs(listID, false).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(tripID, tripName))
 
-	trip, err := RetrieveCurrentTripInList(db, listID, user)
+	trip, err := RetrieveCurrentStoreTrip(db, listID, user)
 	require.NoError(t, err)
 	assert.Equal(t, trip.(models.GroceryTrip).Name, tripName)
 }

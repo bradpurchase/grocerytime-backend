@@ -7,15 +7,15 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// ListUserType defines a graphql type for ListUser
-var ListUserType = graphql.NewObject(
+// StoreUserType defines a graphql type for StoreUser
+var StoreUserType = graphql.NewObject(
 	graphql.ObjectConfig{
-		Name: "ListUser",
+		Name: "StoreUser",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
-			"listId": &graphql.Field{
+			"storeId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"userId": &graphql.Field{
@@ -42,7 +42,7 @@ var ListUserType = graphql.NewObject(
 					db := db.FetchConnection()
 					defer db.Close()
 
-					userID := p.Source.(models.ListUser).UserID
+					userID := p.Source.(models.StoreUser).UserID
 					user := &models.User{}
 					if err := db.Where("id = ?", userID).First(&user).Error; err != nil && !gorm.IsRecordNotFoundError(err) {
 						return nil, err

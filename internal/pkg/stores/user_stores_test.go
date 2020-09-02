@@ -1,4 +1,4 @@
-package grocerylist
+package stores
 
 import (
 	"testing"
@@ -205,7 +205,7 @@ func TestRetrieveListForUser_ListSharedToUser(t *testing.T) {
 	assert.Equal(t, list.Name, "Example List")
 }
 
-func TestRetrieveListForUserByName_NotFound(t *testing.T) {
+func TestRetrieveStoreForUserByName_NotFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
@@ -217,12 +217,12 @@ func TestRetrieveListForUserByName_NotFound(t *testing.T) {
 		WithArgs(listName, userID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	_, e := RetrieveListForUserByName(db, listName, userID)
+	_, e := RetrieveStoreForUserByName(db, listName, userID)
 	require.Error(t, e)
 	assert.Equal(t, e.Error(), "record not found")
 }
 
-func TestRetrieveListForUserByName_Found(t *testing.T) {
+func TestRetrieveStoreForUserByName_Found(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
@@ -234,7 +234,7 @@ func TestRetrieveListForUserByName_Found(t *testing.T) {
 		WithArgs(listName, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"name", "user_id"}).AddRow(listName, userID))
 
-	list, err := RetrieveListForUserByName(db, listName, userID)
+	list, err := RetrieveStoreForUserByName(db, listName, userID)
 	require.NoError(t, err)
 	assert.Equal(t, list.Name, listName)
 }

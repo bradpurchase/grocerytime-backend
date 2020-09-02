@@ -18,4 +18,5 @@ type StoreCategory struct {
 	// Associations
 	Store    Store
 	Category Category
+	Items    []Item
 }

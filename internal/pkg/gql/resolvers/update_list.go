@@ -4,7 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/grocerylist"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
 
@@ -19,7 +19,7 @@ func UpdateListResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	list, err := grocerylist.UpdateListForUser(db, user.(models.User).ID, p.Args)
+	list, err := stores.UpdateStoreForUser(db, user.(models.User).ID, p.Args)
 	if err != nil {
 		return nil, err
 	}

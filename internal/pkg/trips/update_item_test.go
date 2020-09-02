@@ -1,4 +1,4 @@
-package grocerylist
+package trips
 
 import (
 	"testing"

@@ -1,4 +1,4 @@
-package grocerylist
+package stores
 
 import (
 	"database/sql/driver"

@@ -20,6 +20,6 @@ type User struct {
 	UpdatedAt  time.Time
 
 	// Associations
-	Lists  []List
+	Stores []Store
 	Tokens []AuthToken
 }
