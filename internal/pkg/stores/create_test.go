@@ -24,7 +24,7 @@ func TestCreateStore_DupeStore(t *testing.T) {
 
 	_, e := CreateStore(db, userID, storeName)
 	require.Error(t, e)
-	assert.Equal(t, e.Error(), "You already have a store with this name")
+	assert.Equal(t, e.Error(), "You already added a store with this name")
 }
 
 func TestCreateStore_Created(t *testing.T) {
@@ -47,11 +47,6 @@ func TestCreateStore_Created(t *testing.T) {
 	mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
 		WithArgs(storeID, userID, "", true, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
-
-	storeID := uuid.NewV4()
-	mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
-		WithArgs(storeID, "Grocery Store", AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
 	categoryID := uuid.NewV4()
 	mock.ExpectQuery("^SELECT (.+) FROM \"categories\"*").
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(categoryID, "Produce"))

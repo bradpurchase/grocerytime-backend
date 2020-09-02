@@ -11,76 +11,76 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUpdateListForUser_NoUpdates(t *testing.T) {
+func TestUpdateStoreForUser_NoUpdates(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
 
-	listID := uuid.NewV4()
+	storeID := uuid.NewV4()
 	userID := uuid.NewV4()
-	listRows := sqlmock.
+	storeRows := sqlmock.
 		NewRows([]string{
 			"id",
 			"user_id",
 			"name",
 		}).
-		AddRow(listID, userID, "My Original List")
+		AddRow(storeID, userID, "My Original Store")
 
-	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
-		WithArgs(listID, userID).
-		WillReturnRows(listRows)
+	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(storeID, userID).
+		WillReturnRows(storeRows)
 
 	mock.ExpectBegin()
-	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
+	mock.ExpectExec("^UPDATE \"stores\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	mock.ExpectQuery("^SELECT u.email FROM list_users AS lu*").
-		WithArgs(listID, false).
+	mock.ExpectQuery("^SELECT u.email FROM store_users AS su*").
+		WithArgs(storeID, false).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	args := map[string]interface{}{"listId": listID}
-	list, err := UpdateListForUser(db, userID, args)
+	args := map[string]interface{}{"storeId": storeID}
+	store, err := UpdateStoreForUser(db, userID, args)
 	require.NoError(t, err)
 	// Assert no changes
-	assert.Equal(t, list.(*models.List).ID, listID)
-	assert.Equal(t, list.(*models.List).Name, "My Original List")
+	assert.Equal(t, store.(*models.Store).ID, storeID)
+	assert.Equal(t, store.(*models.Store).Name, "My Original Store")
 }
 
-func TestUpdateListForUser_UpdateSingleColumn(t *testing.T) {
+func TestUpdateStoreForUser_UpdateSingleColumn(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
 	db, err := gorm.Open("postgres", dbMock)
 	require.NoError(t, err)
 
-	listID := uuid.NewV4()
+	storeID := uuid.NewV4()
 	userID := uuid.NewV4()
-	listRows := sqlmock.
+	storeRows := sqlmock.
 		NewRows([]string{
 			"id",
 			"user_id",
 		}).
-		AddRow(listID, userID)
+		AddRow(storeID, userID)
 
-	mock.ExpectQuery("^SELECT (.+) FROM \"lists\"*").
-		WithArgs(listID, userID).
-		WillReturnRows(listRows)
+	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(storeID, userID).
+		WillReturnRows(storeRows)
 
 	mock.ExpectBegin()
-	mock.ExpectExec("^UPDATE \"lists\" SET (.+)$").
+	mock.ExpectExec("^UPDATE \"stores\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	mock.ExpectQuery("^SELECT u.email FROM list_users AS lu*").
-		WithArgs(listID, false).
+	mock.ExpectQuery("^SELECT u.email FROM store_users AS su*").
+		WithArgs(storeID, false).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	args := map[string]interface{}{"listId": listID, "name": "My Renamed List"}
-	list, err := UpdateListForUser(db, userID, args)
+	args := map[string]interface{}{"storeId": storeID, "name": "My Renamed Store"}
+	store, err := UpdateStoreForUser(db, userID, args)
 	require.NoError(t, err)
 	// Assert only completed state changed
-	assert.Equal(t, list.(*models.List).ID, listID)
-	assert.Equal(t, list.(*models.List).UserID, userID)
-	assert.Equal(t, list.(*models.List).Name, "My Renamed List")
+	assert.Equal(t, store.(*models.Store).ID, storeID)
+	assert.Equal(t, store.(*models.Store).UserID, userID)
+	assert.Equal(t, store.(*models.Store).Name, "My Renamed Store")
 }
