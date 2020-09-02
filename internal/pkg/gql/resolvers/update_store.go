@@ -8,8 +8,8 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// UpdateListResolver resolves the updateList mutation by updating the properties of a list
-func UpdateListResolver(p graphql.ResolveParams) (interface{}, error) {
+// UpdateStoreResolver resolves the updateStore mutation by updating the properties of a store
+func UpdateStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 
@@ -19,10 +19,10 @@ func UpdateListResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	list, err := stores.UpdateStoreForUser(db, user.(models.User).ID, p.Args)
+	store, err := stores.UpdateStoreForUser(db, user.(models.User).ID, p.Args)
 	if err != nil {
 		return nil, err
 	}
 
-	return list, nil
+	return store, nil
 }

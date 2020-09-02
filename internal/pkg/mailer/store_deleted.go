@@ -7,15 +7,15 @@ import (
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
-// SendListDeletedEmail sends an email to a list user about a list being deleted
-func SendListDeletedEmail(listName string, userEmail string) (interface{}, error) {
+// SendStoreDeletedEmail sends an email to a store user about a store being deleted
+func SendStoreDeletedEmail(storeName string, userEmail string) (interface{}, error) {
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
-	subject := "Your list " + listName + " has been deleted"
+	subject := "Your list " + storeName + " has been deleted"
 	to := mail.NewEmail("", userEmail)
 
-	plainTextContent := "The list " + listName + " has been deleted by the creator."
+	plainTextContent := "The list " + storeName + " has been deleted by the creator."
 	htmlContent := "<p>Hello,</p>"
-	htmlContent += "<p>This is to inform you that the list " + listName + " has been deleted. You can no longer access this list or its items.</p>"
+	htmlContent += "<p>This is to inform you that the list " + storeName + " has been deleted. You can no longer access this list or its items.</p>"
 	htmlContent += "<p>Thanks,<br />Brad from GroceryTime</p>"
 	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"
 

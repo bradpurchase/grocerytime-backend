@@ -10,7 +10,7 @@ import (
 )
 
 // RetrieveCurrentStoreTrip retrieves the currently active grocery trip in a
-// store by storeID if the userID has access to to the list
+// store by storeID if the userID has access to to the store
 func RetrieveCurrentStoreTrip(db *gorm.DB, storeID uuid.UUID, user models.User) (interface{}, error) {
 	query := db.
 		Where("store_id = ?", storeID).

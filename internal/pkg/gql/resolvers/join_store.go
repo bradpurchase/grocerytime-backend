@@ -9,7 +9,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// JoinStoreResolver adds the current user to a list properly by removing
+// JoinStoreResolver adds the current user to a store properly by removing
 // the email and replacing it with the user ID
 func JoinStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
@@ -21,7 +21,7 @@ func JoinStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	// Verify that the list with the ID provided exists
+	// Verify that the store with the ID provided exists
 	storeID := p.Args["storeId"]
 	storeUser, err := stores.AddUserToStore(db, user.(models.User), storeID)
 	if err != nil {

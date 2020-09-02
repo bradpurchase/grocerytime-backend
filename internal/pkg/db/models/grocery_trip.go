@@ -36,7 +36,7 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 
 		// Create the next trip for the user.
 		// The new trip name is suffixed by a number that represents the number
-		// of trips in the list (i.e. "Trip 12")
+		// of trips the user has made to the store (i.e. "Trip 12")
 		newTripName := fmt.Sprintf("Trip %d", (tripsCount + 1))
 		newTrip := GroceryTrip{StoreID: g.StoreID, Name: newTripName}
 		if err := tx.Create(&newTrip).Error; err != nil {

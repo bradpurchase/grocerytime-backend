@@ -50,7 +50,7 @@ var UserType = graphql.NewObject(
 )
 
 // BasicUserType is similar to UserType except it does not include fields for anything
-// except basic user info. Used in sharableList query
+// except basic user info. Used in sharableStore query
 var BasicUserType = graphql.NewObject(
 	graphql.ObjectConfig{
 		Name: "BasicUser",

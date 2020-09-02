@@ -8,10 +8,10 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// DeclineListInviteResolver resolves the declineListInvite resolver by calling
-// stores.RemoveUserFromList function which handles removing the ListUser record
-// and emailing the list creator about the invite being declined
-func DeclineListInviteResolver(p graphql.ResolveParams) (interface{}, error) {
+// DeclineStoreInviteResolver resolves the declineStoreResolver resolver by calling
+// stores.RemoveUserFromStore function which handles removing the StoreUser record
+// and emailing the store creator about the invite being declined
+func DeclineStoreInviteResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
 

@@ -12,7 +12,7 @@ import (
 )
 
 // InviteToStoreResolver resolves the inviteToStore mutation by creating a pending
-// list_users record for the given listId and email
+// store_users record for the given storeId and email
 func InviteToStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
@@ -24,15 +24,15 @@ func InviteToStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 	userEmail := user.(models.User).Email
 
-	// Verify that the list with the ID provided exists
-	listID := p.Args["listId"]
+	// Verify that the store with the ID provided exists
+	storeID := p.Args["storeId"]
 	invitedUserEmail := strings.TrimSpace(p.Args["email"].(string))
 	if userEmail == invitedUserEmail {
 		return models.StoreUser{}, errors.New("cannot invite yourself to a store")
 	}
-	listUser, err := stores.InviteToStoreByEmail(db, listID, invitedUserEmail)
+	storeUser, err := stores.InviteToStoreByEmail(db, storeID, invitedUserEmail)
 	if err != nil {
 		return nil, err
 	}
-	return listUser, nil
+	return storeUser, nil
 }

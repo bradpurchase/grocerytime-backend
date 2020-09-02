@@ -14,7 +14,7 @@ var GroceryTripType = graphql.NewObject(
 			"id": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
-			"listID": &graphql.Field{
+			"storeID": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"name": &graphql.Field{

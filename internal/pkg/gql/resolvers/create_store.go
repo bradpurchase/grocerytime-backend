@@ -20,9 +20,9 @@ func CreateStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	userID := user.(models.User).ID
-	list, err := stores.CreateStore(db, userID, p.Args["name"].(string))
+	store, err := stores.CreateStore(db, userID, p.Args["name"].(string))
 	if err != nil {
 		return nil, err
 	}
-	return list, nil
+	return store, nil
 }

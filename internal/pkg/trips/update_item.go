@@ -41,7 +41,7 @@ func UpdateItem(db *gorm.DB, args map[string]interface{}) (interface{}, error) {
 func GetNewPosition(db *gorm.DB, tripID uuid.UUID, completed bool) int {
 	newPosition := 1
 	if completed {
-		// If the item was marked completed, move to the bottom of the list
+		// If the item was marked completed, move to the bottom of the store
 		// The BeforeUpdate hook on items will handle reordering the items around it
 		bottomItem := &models.Item{}
 		db.

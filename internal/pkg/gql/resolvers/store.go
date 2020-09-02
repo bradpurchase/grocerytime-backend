@@ -8,7 +8,7 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// StoreResolver resolves the list GraphQL query by retrieving a list by ID param
+// StoreResolver resolves the store GraphQL query by retrieving a store by ID param
 func StoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()

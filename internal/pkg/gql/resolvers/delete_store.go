@@ -8,8 +8,8 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// DeleteStoreResolver resolves the deleteStore mutation by deleting a list
-// and its associated list users and items
+// DeleteStoreResolver resolves the deleteStore mutation by deleting a store
+// and its associated store users and items
 func DeleteStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
 	defer db.Close()
@@ -20,10 +20,10 @@ func DeleteStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	list, err := stores.DeleteStore(db, p.Args["storeId"], user.(models.User).ID)
+	store, err := stores.DeleteStore(db, p.Args["storeId"], user.(models.User).ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return list, nil
+	return store, nil
 }

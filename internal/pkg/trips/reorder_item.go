@@ -5,8 +5,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// ReorderItem handles the reordering of an item in the list by taking the
-// item ID and the new position. It returns he reordered list.
+// ReorderItem handles the reordering of an item by taking the
+// item ID and the new position. It returns the reordered trip object.
 func ReorderItem(db *gorm.DB, itemID interface{}, position int) (*models.GroceryTrip, error) {
 	trip := &models.GroceryTrip{}
 	item := &models.Item{}

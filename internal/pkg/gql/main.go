@@ -138,7 +138,7 @@ func init() {
 							Type: graphql.String,
 						},
 					},
-					Resolve: resolvers.UpdateListResolver,
+					Resolve: resolvers.UpdateStoreResolver,
 				},
 				"inviteToStore": &graphql.Field{
 					Type:        gql.StoreUserType,
@@ -171,7 +171,7 @@ func init() {
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},
-					Resolve: resolvers.DeclineListInviteResolver,
+					Resolve: resolvers.DeclineStoreInviteResolver,
 				},
 				"leaveStore": &graphql.Field{
 					Type:        gql.StoreUserType,
