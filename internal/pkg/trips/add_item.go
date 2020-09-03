@@ -45,7 +45,7 @@ func AddItem(db *gorm.DB, userID uuid.UUID, args map[string]interface{}) (interf
 	}
 	item.CategoryID = &category.ID
 
-	if err := db.Debug().Create(&item).Error; err != nil {
+	if err := db.Create(&item).Error; err != nil {
 		return nil, err
 	}
 	return item, nil
