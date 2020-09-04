@@ -3,7 +3,6 @@ package gql
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
 )
 
@@ -29,23 +28,18 @@ var GroceryTripType = graphql.NewObject(
 			"updatedAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},
-			"items": &graphql.Field{
-				Type: graphql.NewList(ItemType),
-				Args: graphql.FieldConfigArgument{
-					"filter": &graphql.ArgumentConfig{
-						Type: graphql.String,
-					},
-				},
+			"categories": &graphql.Field{
+				Type: graphql.NewList(GroceryTripCategoryType),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
 					defer db.Close()
 
 					tripID := p.Source.(models.GroceryTrip).ID
-					items, err := trips.RetrieveItems(db, tripID)
-					if err != nil {
+					categories := []models.GroceryTripCategory{}
+					if err := db.Where("grocery_trip_id = ?", tripID).Order("created_at DESC").Find(&categories).Error; err != nil {
 						return nil, err
 					}
-					return items, nil
+					return categories, nil
 				},
 			},
 		},

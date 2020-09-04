@@ -7,16 +7,14 @@ import (
 )
 
 type StoreCategory struct {
-	ID         uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
-	StoreID    uuid.UUID `gorm:"type:uuid;not null"`
-	CategoryID uuid.UUID `gorm:"type:uuid;not null"`
+	ID      uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	StoreID uuid.UUID `gorm:"type:uuid;not null"`
+	Name    string    `gorm:"type:varchar(100);not null"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time
 
 	// Associations
-	Store    Store
-	Category Category
-	Items    []Item
+	Store Store
 }

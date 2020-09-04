@@ -14,8 +14,8 @@ func migrate(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&models.ApiClient{},
 		&models.AuthToken{},
-		&models.Category{},
 		&models.GroceryTrip{},
+		&models.GroceryTripCategory{},
 		&models.Item{},
 		&models.Store{},
 		&models.StoreUser{},

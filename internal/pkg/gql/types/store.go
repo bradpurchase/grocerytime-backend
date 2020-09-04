@@ -48,20 +48,6 @@ var StoreType = graphql.NewObject(
 					return trip, nil
 				},
 			},
-			"categories": &graphql.Field{
-				Type: graphql.NewList(StoreCategoryType),
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					db := db.FetchConnection()
-					defer db.Close()
-
-					storeID := p.Source.(models.Store).ID
-					categories := []models.StoreCategory{}
-					if err := db.Where("store_id = ?", storeID).Order("created_at DESC").Find(&categories).Error; err != nil {
-						return nil, err
-					}
-					return categories, nil
-				},
-			},
 			"users": &graphql.Field{
 				Type: graphql.NewList(StoreUserType),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {

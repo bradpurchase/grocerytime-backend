@@ -47,12 +47,13 @@ func TestCreateStore_Created(t *testing.T) {
 	mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
 		WithArgs(storeID, userID, "", true, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
-	categoryID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"categories\"*").
-		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(categoryID, "Produce"))
-	mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
-		WithArgs(storeID, categoryID, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
+
+	categories := fetchCategories()
+	for i := range categories {
+		mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
+			WithArgs(storeID, categories[i], AnyTime{}, AnyTime{}, nil).
+			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
+	}
 
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(storeID, "Trip 1", AnyTime{}, AnyTime{}, nil).
@@ -62,4 +63,31 @@ func TestCreateStore_Created(t *testing.T) {
 	store, err := CreateStore(db, userID, storeName)
 	require.NoError(t, err)
 	assert.Equal(t, store.Name, storeName)
+}
+
+// TODO: duplicated code with the model... DRY this up
+func fetchCategories() [20]string {
+	categories := [20]string{
+		"Produce",
+		"Bakery",
+		"Meat",
+		"Seafood",
+		"Dairy",
+		"Cereal",
+		"Baking",
+		"Dry Goods",
+		"Canned Goods",
+		"Frozen Foods",
+		"Cleaning",
+		"Paper Products",
+		"Beverages",
+		"Candy & Snacks",
+		"Condiments",
+		"Personal Care",
+		"Baby",
+		"Alcohol",
+		"Pharmacy",
+		"Misc.",
+	}
+	return categories
 }
