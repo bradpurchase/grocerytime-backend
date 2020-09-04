@@ -72,12 +72,12 @@ func TestCreateUser_UserCreated(t *testing.T) {
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
-	categoryID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"categories\"*").
-		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(categoryID, "Produce"))
-	mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
-		WithArgs(storeID, categoryID, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
+	categories := fetchCategories()
+	for i := range categories {
+		mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
+			WithArgs(storeID, categories[i], AnyTime{}, AnyTime{}, nil).
+			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
+	}
 
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, nil).
@@ -93,4 +93,31 @@ func TestCreateUser_UserCreated(t *testing.T) {
 	assert.Equal(t, user.Email, email)
 	assert.Equal(t, user.Stores[0].Name, storeName)
 	assert.Equal(t, user.Tokens[0].ClientID, clientID)
+}
+
+// TODO: duplicated code with the store model... DRY this up
+func fetchCategories() [20]string {
+	categories := [20]string{
+		"Produce",
+		"Bakery",
+		"Meat",
+		"Seafood",
+		"Dairy",
+		"Cereal",
+		"Baking",
+		"Dry Goods",
+		"Canned Goods",
+		"Frozen Foods",
+		"Cleaning",
+		"Paper Products",
+		"Beverages",
+		"Candy & Snacks",
+		"Condiments",
+		"Personal Care",
+		"Baby",
+		"Alcohol",
+		"Pharmacy",
+		"Misc.",
+	}
+	return categories
 }
