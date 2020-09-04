@@ -37,8 +37,6 @@ func (s *Store) AfterCreate(tx *gorm.DB) (err error) {
 		return err
 	}
 
-	// TODO: Create categories for the default store
-	// - Create the default array of categories (in a const?)
 	categories := fetchCategories()
 	for i := range categories {
 		storeCategory := &StoreCategory{StoreID: s.ID, Name: categories[i]}
