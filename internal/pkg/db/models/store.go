@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -19,7 +18,7 @@ type Store struct {
 
 	// Associations
 	StoreUsers   []StoreUser
-	Item         []Item
+	Items        []Item
 	GroceryTrips []GroceryTrip
 }
 
@@ -38,14 +37,11 @@ func (s *Store) AfterCreate(tx *gorm.DB) (err error) {
 		return err
 	}
 
-	// Create categories for the default store
-	categories := []Category{}
-	if err := tx.Find(&categories).Error; err != nil {
-		return err
-	}
-
+	// TODO: Create categories for the default store
+	// - Create the default array of categories (in a const?)
+	categories := fetchCategories()
 	for i := range categories {
-		storeCategory := &StoreCategory{StoreID: s.ID, CategoryID: categories[i].ID}
+		storeCategory := &StoreCategory{StoreID: s.ID, Name: categories[i]}
 		if err := tx.Create(&storeCategory).Error; err != nil {
 			return err
 		}
@@ -63,4 +59,30 @@ func (s *Store) AfterCreate(tx *gorm.DB) (err error) {
 	}
 
 	return nil
+}
+
+func fetchCategories() [20]string {
+	categories := [20]string{
+		"Produce",
+		"Bakery",
+		"Meat",
+		"Seafood",
+		"Dairy",
+		"Cereal",
+		"Baking",
+		"Dry Goods",
+		"Canned Goods",
+		"Frozen Foods",
+		"Cleaning",
+		"Paper Products",
+		"Beverages",
+		"Candy & Snacks",
+		"Condiments",
+		"Personal Care",
+		"Baby",
+		"Alcohol",
+		"Pharmacy",
+		"Misc.",
+	}
+	return categories
 }
