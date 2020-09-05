@@ -65,7 +65,7 @@ func TestCreateStore_Created(t *testing.T) {
 	assert.Equal(t, store.Name, storeName)
 }
 
-// TODO: duplicated code with the model... DRY this up
+// TODO: duplicated code with the store model... DRY this up
 func fetchCategories() [20]string {
 	categories := [20]string{
 		"Produce",

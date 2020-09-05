@@ -19,3 +19,18 @@ func RetrieveItems(db *gorm.DB, tripID uuid.UUID) (interface{}, error) {
 	}
 	return items, nil
 }
+
+// RetrieveItemsInCategory finds all items in a grocery trip by category
+func RetrieveItemsInCategory(db *gorm.DB, tripID uuid.UUID, categoryID uuid.UUID) (interface{}, error) {
+	items := []models.Item{}
+	query := db.
+		Where("grocery_trip_id = ?", tripID).
+		Where("category_id = ?", categoryID).
+		Order("position ASC").
+		Find(&items).
+		Error
+	if err := query; err != nil {
+		return nil, err
+	}
+	return items, nil
+}

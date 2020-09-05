@@ -43,7 +43,8 @@ var GroceryTripCategoryType = graphql.NewObject(
 					defer db.Close()
 
 					tripID := p.Source.(models.GroceryTripCategory).GroceryTripID
-					items, err := trips.RetrieveItems(db, tripID)
+					categoryID := p.Source.(models.GroceryTripCategory).ID
+					items, err := trips.RetrieveItemsInCategory(db, tripID, categoryID)
 					if err != nil {
 						return nil, err
 					}
