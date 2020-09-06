@@ -17,19 +17,8 @@ var GroceryTripCategoryType = graphql.NewObject(
 			"storeCategoryId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
-			"storeCategory": &graphql.Field{
-				Type: StoreCategoryType,
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					db := db.FetchConnection()
-					defer db.Close()
-
-					categoryID := p.Source.(models.GroceryTripCategory).StoreCategoryID
-					category := models.StoreCategory{}
-					if err := db.Where("id = ?", categoryID).Order("created_at DESC").Find(&category).Error; err != nil {
-						return nil, err
-					}
-					return category, nil
-				},
+			"storeCategoryName": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.String),
 			},
 			"items": &graphql.Field{
 				Type: graphql.NewList(ItemType),
