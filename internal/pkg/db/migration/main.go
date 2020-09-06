@@ -55,33 +55,33 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 		},
 		{
-			// Add index idx_items_grocery_trip_id
-			ID: "202006021110_add_idx_items_grocery_trip_id",
+			// Add index idx_items_grocery_trip_id_category_id
+			ID: "202006021110_add_idx_items_grocery_trip_id_category_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Table("items").AddIndex("idx_items_grocery_trip_id", "grocery_trip_id").Error
+				return tx.Table("items").AddIndex("idx_items_grocery_trip_id_category_id", "grocery_trip_id", "category_id").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("items").RemoveIndex("idx_items_grocery_trip_id").Error
+				return tx.Table("items").RemoveIndex("idx_items_grocery_trip_id_category_id").Error
 			},
 		},
 		{
 			// Add index idx_store_users_store_id
-			ID: "202006021117_add_idx_store_users_list_id",
+			ID: "202006021117_add_idx_store_users_store_id_user_id",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Table("store_users").AddIndex("idx_store_users_store_id_user_id", "store_id", "user_id").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Table("store_users").RemoveIndex("idx_store_users_store_id_user_id").Error
+			},
+		},
+		{
+			// Add index idx_store_users_user_id
+			ID: "202006021118_add_idx_store_users_store_id",
 			Migrate: func(tx *gorm.DB) error {
 				return tx.Table("store_users").AddIndex("idx_store_users_store_id", "store_id").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Table("store_users").RemoveIndex("idx_store_users_store_id").Error
-			},
-		},
-		{
-			// Add index idx_store_users_user_id
-			ID: "202006021118_add_idx_store_users_user_id",
-			Migrate: func(tx *gorm.DB) error {
-				return tx.Table("store_users").AddIndex("idx_store_users_user_id", "user_id").Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Table("store_users").RemoveIndex("idx_store_users_user_id").Error
 			},
 		},
 		{
