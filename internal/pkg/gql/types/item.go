@@ -18,6 +18,9 @@ var ItemType = graphql.NewObject(
 			"groceryTripId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
+			"categoryId": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.ID),
+			},
 			"userId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
