@@ -3,7 +3,7 @@ package resolvers
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
 )
 
@@ -18,12 +18,9 @@ func DeleteItemResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	item := &models.Item{}
-	if err := db.Where("id = ?", p.Args["itemId"]).First(&item).Error; err != nil {
-		return nil, err
-	}
-
-	if err := db.Delete(&item).Error; err != nil {
+	itemID := p.Args["itemId"]
+	item, err := trips.DeleteItem(db, itemID)
+	if err != nil {
 		return nil, err
 	}
 	return item, err
