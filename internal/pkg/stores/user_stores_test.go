@@ -279,26 +279,21 @@ func TestDeleteStore_StoreFound(t *testing.T) {
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
 
-	mock.ExpectBegin()
 	mock.ExpectExec("^UPDATE \"items\"*").
 		WithArgs(AnyTime{}, tripID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
 
-	mock.ExpectBegin()
 	mock.ExpectExec("^UPDATE \"grocery_trips\" (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
 
+	storeUsersID := uuid.NewV4()
 	mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeUsersID))
 
-	mock.ExpectBegin()
 	mock.ExpectExec("UPDATE \"store_users\"*").
-		WithArgs(AnyTime{}, storeID).
+		WithArgs(AnyTime{}, storeID, storeUsersID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
 
 	store, err := DeleteStore(db, storeID, userID)
 	require.NoError(t, err)

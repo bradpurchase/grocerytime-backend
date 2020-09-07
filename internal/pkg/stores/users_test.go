@@ -38,14 +38,12 @@ func TestInviteToStoreByEmail_UserExistsNotYetAdded(t *testing.T) {
 		WithArgs(storeID, email, false).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	mock.ExpectBegin()
 	mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
-		WithArgs(storeID, "00000000-0000-0000-0000-000000000000", email, false, AnyTime{}, AnyTime{}, nil).
+		WithArgs(storeID, sqlmock.AnyArg(), email, false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
-	mock.ExpectQuery("^SELECT name FROM \"stores\"*").
+	mock.ExpectQuery("^SELECT \"name\" FROM \"stores\"*").
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
-	mock.ExpectCommit()
 
 	storeUser, err := InviteToStoreByEmail(db, storeID, email)
 	require.NoError(t, err)
@@ -145,7 +143,7 @@ func TestRemoveUserFromStore_SuccessInvitedUser(t *testing.T) {
 	mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, true).
 		WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(creatorUserID))
-	mock.ExpectQuery("^SELECT email FROM \"users\"*").
+	mock.ExpectQuery("^SELECT \"email\" FROM \"users\"*").
 		WithArgs(creatorUserID).
 		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(creatorUser.Email))
 
@@ -190,10 +188,10 @@ func TestRemoveUserFromStore_SuccessJoinedStoreUser(t *testing.T) {
 	mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, true).
 		WillReturnRows(sqlmock.NewRows([]string{"user_id"}).AddRow(creatorUserID))
-	mock.ExpectQuery("^SELECT email FROM \"users\"*").
+	mock.ExpectQuery("^SELECT \"email\" FROM \"users\"*").
 		WithArgs(creatorUserID).
 		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(creatorUser.Email))
-	mock.ExpectQuery("^SELECT email FROM \"users\"*").
+	mock.ExpectQuery("^SELECT \"email\" FROM \"users\"*").
 		WithArgs(storeUser.UserID).
 		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(user.Email))
 
