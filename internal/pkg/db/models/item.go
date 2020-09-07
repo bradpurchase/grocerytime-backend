@@ -9,7 +9,7 @@ import (
 
 // Item defines the model for items
 type Item struct {
-	ID            uuid.UUID  `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	ID            uuid.UUID  `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	GroceryTripID uuid.UUID  `gorm:"type:uuid;not null"`
 	CategoryID    *uuid.UUID `gorm:"type:uuid;not null"`
 	UserID        uuid.UUID  `gorm:"type:uuid;not null"`

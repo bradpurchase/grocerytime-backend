@@ -10,7 +10,7 @@ import (
 )
 
 type StoreUser struct {
-	ID      uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	StoreID uuid.UUID `gorm:"type:uuid;not null"`
 	UserID  uuid.UUID `gorm:"type:uuid"`
 	Email   string    `gorm:"type:varchar(100)"`

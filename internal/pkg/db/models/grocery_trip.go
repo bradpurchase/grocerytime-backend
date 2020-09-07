@@ -9,7 +9,7 @@ import (
 )
 
 type GroceryTrip struct {
-	ID                 uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	ID                 uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	StoreID            uuid.UUID `gorm:"type:uuid;not null"`
 	Name               string    `gorm:"type:varchar(100);not null"`
 	Completed          bool      `gorm:"default:false;not null"`

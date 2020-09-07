@@ -8,7 +8,7 @@ import (
 )
 
 type Store struct {
-	ID     uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	ID     uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	UserID uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();not null"`
 	Name   string    `gorm:"type:varchar(100);not null"`
 
