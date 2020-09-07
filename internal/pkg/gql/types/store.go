@@ -32,7 +32,6 @@ var StoreType = graphql.NewObject(
 				Type: GroceryTripType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
-					defer db.Close()
 
 					header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 					user, err := auth.FetchAuthenticatedUser(db, header.(string))
@@ -52,7 +51,6 @@ var StoreType = graphql.NewObject(
 				Type: graphql.NewList(StoreUserType),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
-					defer db.Close()
 
 					storeID := p.Source.(models.Store).ID
 					storeUsers, err := stores.RetrieveStoreUsers(db, storeID)

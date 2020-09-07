@@ -11,7 +11,6 @@ import (
 // StoresResolver returns Store records for the current user
 func StoresResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(db, header.(string))

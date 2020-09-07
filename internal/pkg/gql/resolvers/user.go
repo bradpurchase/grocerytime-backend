@@ -12,7 +12,6 @@ import (
 // authenticated user, or an error if no authenticated user exists
 func AuthenticatedUserResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(db, header.(string))
@@ -26,7 +25,6 @@ func AuthenticatedUserResolver(p graphql.ResolveParams) (interface{}, error) {
 // basic information about a user (email, first name, last name)
 func BasicUserResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	user := &models.User{}
 	if err := db.Where("id = ?", p.Source.(models.Store).UserID).Find(&user).Error; err != nil {

@@ -3,8 +3,8 @@ package models
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 type Store struct {
@@ -14,11 +14,10 @@ type Store struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt *time.Time
+	DeletedAt gorm.DeletedAt
 
 	// Associations
 	StoreUsers   []StoreUser
-	Items        []Item
 	GroceryTrips []GroceryTrip
 }
 

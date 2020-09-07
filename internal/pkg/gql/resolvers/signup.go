@@ -11,7 +11,6 @@ import (
 // SignupResolver creates a new user account and assigns it a
 func SignupResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	// Retrieve API client for the key/secret provided
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]

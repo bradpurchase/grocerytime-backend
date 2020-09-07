@@ -18,7 +18,6 @@ var GroceryTripCategoryType = graphql.NewObject(
 				Type: StoreCategoryType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
-					defer db.Close()
 
 					storeCategoryID := p.Source.(models.GroceryTripCategory).StoreCategoryID
 					storeCategory := models.StoreCategory{}
@@ -37,7 +36,6 @@ var GroceryTripCategoryType = graphql.NewObject(
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
-					defer db.Close()
 
 					tripID := p.Source.(models.GroceryTripCategory).GroceryTripID
 					categoryID := p.Source.(models.GroceryTripCategory).ID

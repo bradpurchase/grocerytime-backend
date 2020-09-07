@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 // CreateStore creates a store for a user if it does not already exist by name

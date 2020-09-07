@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 // AddItem adds an item to a trip and handles things like permission checks
@@ -58,7 +58,7 @@ func FetchGroceryTripCategory(db *gorm.DB, tripID uuid.UUID, name string) (model
 		Where("store_categories.name = ?", name).
 		First(&category).
 		Error
-	if err := query; gorm.IsRecordNotFoundError(err) {
+	if err := query; errors.Is(err, gorm.ErrRecordNotFound) {
 		newCategory, err := CreateGroceryTripCategory(db, tripID, name)
 		if err != nil {
 			return models.GroceryTripCategory{}, errors.New("could not find or create grocery trip category")

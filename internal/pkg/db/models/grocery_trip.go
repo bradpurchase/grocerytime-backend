@@ -4,11 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	// Postgres dialect for GORM
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 type GroceryTrip struct {
@@ -20,7 +17,7 @@ type GroceryTrip struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt *time.Time
+	DeletedAt gorm.DeletedAt
 
 	// Associations
 	Store Store
@@ -29,7 +26,7 @@ type GroceryTrip struct {
 // AfterUpdate hook is triggered after a trip is updated, such as in trips.UpdateTrip
 func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 	if g.Completed {
-		var tripsCount int
+		var tripsCount int64
 		if err := tx.Model(&GroceryTrip{}).Where("store_id = ?", g.StoreID).Count(&tripsCount).Error; err != nil {
 			return err
 		}

@@ -15,7 +15,6 @@ import (
 // store_users record for the given storeId and email
 func InviteToStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(db, header.(string))

@@ -11,7 +11,6 @@ import (
 // UpdateStoreResolver resolves the updateStore mutation by updating the properties of a store
 func UpdateStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(db, header.(string))

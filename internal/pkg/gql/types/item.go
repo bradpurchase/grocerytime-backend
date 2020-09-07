@@ -1,10 +1,13 @@
 package gql
 
 import (
+	"errors"
+
+	"gorm.io/gorm"
+
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/graphql-go/graphql"
-	"github.com/jinzhu/gorm"
 )
 
 // ItemType defines a graphql type for Item
@@ -40,11 +43,10 @@ var ItemType = graphql.NewObject(
 				Type: UserType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
-					defer db.Close()
 
 					userID := p.Source.(models.Item).UserID
 					user := &models.User{}
-					if err := db.Where("id = ?", userID).First(&user).Error; err != nil && !gorm.IsRecordNotFoundError(err) {
+					if err := db.Where("id = ?", userID).First(&user).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 						return nil, err
 					}
 					return user, nil

@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 // RetrieveUserStores retrieves stores that the userID has created or has been added to

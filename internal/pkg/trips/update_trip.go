@@ -2,7 +2,7 @@ package trips
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // UpdateTrip updates a grocery trip with the given args by tripID

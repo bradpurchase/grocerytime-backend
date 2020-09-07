@@ -3,9 +3,9 @@ package db
 import (
 	"testing"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	// Import postgres dialect for gorm
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "gorm.io/gorm/dialects/postgres"
 
 	"github.com/DATA-DOG/go-sqlmock"
 )

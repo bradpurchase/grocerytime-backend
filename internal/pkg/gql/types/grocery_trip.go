@@ -32,7 +32,6 @@ var GroceryTripType = graphql.NewObject(
 				Type: graphql.NewList(GroceryTripCategoryType),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
-					defer db.Close()
 
 					tripID := p.Source.(models.GroceryTrip).ID
 					categories := []models.GroceryTripCategory{}

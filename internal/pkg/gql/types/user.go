@@ -35,7 +35,6 @@ var UserType = graphql.NewObject(
 				Type: AuthTokenType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
-					defer db.Close()
 
 					userID := p.Source.(*models.User).ID
 					authToken := &models.AuthToken{}

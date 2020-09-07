@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // DeleteItem deletes an item from a trip and handles trip category cleanup
@@ -21,7 +21,7 @@ func DeleteItem(db *gorm.DB, itemID interface{}) (interface{}, error) {
 	}
 
 	// If this was the last item in this trip category, delete the trip category too
-	remainingItemsCount := 0
+	var remainingItemsCount int64
 	if err := db.Model(&models.Item{}).Where("category_id = ?", categoryID).Count(&remainingItemsCount).Error; err != nil {
 		return nil, err
 	}

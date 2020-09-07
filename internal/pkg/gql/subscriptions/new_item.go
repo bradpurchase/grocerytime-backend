@@ -13,7 +13,6 @@ func NewItem(p graphql.ResolveParams) (interface{}, error) {
 	fmt.Println("Processing subscription NewItem...")
 
 	db := db.FetchConnection()
-	defer db.Close()
 
 	rootValue := p.Info.RootValue.(map[string]interface{})
 	payload := rootValue["addItemToTrip"].(map[string]interface{})
