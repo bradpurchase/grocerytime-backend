@@ -1,3 +1,5 @@
+// +heroku goVersion 1.15
+
 module github.com/bradpurchase/grocerytime-backend
 
 go 1.15

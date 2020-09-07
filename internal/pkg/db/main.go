@@ -25,12 +25,6 @@ func FetchConnection() *gorm.DB {
 	if err != nil {
 		log.Panic("[db] Database connection err: ", err)
 	}
-	// Enable/disable logging mode
-	// logMode, err := strconv.ParseBool(os.Getenv("DB_LOGMODE"))
-	// if err != nil {
-	// 	log.Fatal("[db] Could not parse DB_LOGMODE environment variable; must be true or false")
-	// }
-	// db.LogMode(logMode)
 	return db
 }
 
