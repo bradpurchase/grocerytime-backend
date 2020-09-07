@@ -10,6 +10,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -24,7 +25,7 @@ func (a AnyTime) Match(v driver.Value) bool {
 func TestInviteToStoreByEmail_UserExistsNotYetAdded(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -54,7 +55,7 @@ func TestInviteToStoreByEmail_UserExistsNotYetAdded(t *testing.T) {
 func TestInviteToStoreByEmail_UserExistsAlreadyAdded(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -77,7 +78,7 @@ func TestInviteToStoreByEmail_UserExistsAlreadyAdded(t *testing.T) {
 func TestRemoveUserFromStore_StoreNotFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -94,7 +95,7 @@ func TestRemoveUserFromStore_StoreNotFound(t *testing.T) {
 func TestRemoveUserFromStore_StoreUserNotFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -111,7 +112,7 @@ func TestRemoveUserFromStore_StoreUserNotFound(t *testing.T) {
 func TestRemoveUserFromStore_SuccessInvitedUser(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -156,7 +157,7 @@ func TestRemoveUserFromStore_SuccessInvitedUser(t *testing.T) {
 func TestRemoveUserFromStore_SuccessJoinedStoreUser(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -204,7 +205,7 @@ func TestRemoveUserFromStore_SuccessJoinedStoreUser(t *testing.T) {
 func TestAddUserToStore_UserNotFoundInStore(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -225,7 +226,7 @@ func TestAddUserToStore_UserNotFoundInStore(t *testing.T) {
 func TestAddUserToStore_Success(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -255,7 +256,7 @@ func TestAddUserToStore_Success(t *testing.T) {
 func TestRetrieveStoreUsers_HasStoreUsers(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -291,7 +292,7 @@ func TestRetrieveStoreUsers_HasStoreUsers(t *testing.T) {
 func TestRetrieveStoreCreator_StoreUserNotFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -315,7 +316,7 @@ func TestRetrieveStoreCreator_StoreUserNotFound(t *testing.T) {
 func TestRetrieveStoreCreator_UserNotFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -352,7 +353,7 @@ func TestRetrieveStoreCreator_UserNotFound(t *testing.T) {
 func TestRetrieveStoreCreator_Found(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()

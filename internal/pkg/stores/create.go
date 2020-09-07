@@ -15,7 +15,7 @@ func CreateStore(db *gorm.DB, userID uuid.UUID, name string) (models.Store, erro
 		return models.Store{}, errors.New("You already added a store with this name")
 	}
 	store := models.Store{UserID: userID, Name: name}
-	if err := db.Create(&store).Error; err != nil {
+	if err := db.Debug().Create(&store).Error; err != nil {
 		return models.Store{}, err
 	}
 	return store, nil

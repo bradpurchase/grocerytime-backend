@@ -10,6 +10,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -24,7 +25,7 @@ func (a AnyTime) Match(v driver.Value) bool {
 func TestUpdateTrip_TripNotFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	tripID := uuid.NewV4()
@@ -44,7 +45,7 @@ func TestUpdateTrip_TripNotFound(t *testing.T) {
 func TestUpdateTrip_NameUpdate(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	tripID := uuid.NewV4()
@@ -70,7 +71,7 @@ func TestUpdateTrip_NameUpdate(t *testing.T) {
 func TestUpdateTrip_MarkCompleted(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	tripID := uuid.NewV4()
@@ -94,7 +95,7 @@ func TestUpdateTrip_MarkCompleted(t *testing.T) {
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(storeID, "Trip 2", AnyTime{}, AnyTime{}, nil).
+		WithArgs(storeID, "Trip 2", false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -109,7 +110,7 @@ func TestUpdateTrip_MarkCompleted(t *testing.T) {
 func TestUpdateTrip_MarkCompletedAndCopyRemainingItems(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	tripID := uuid.NewV4()
@@ -134,7 +135,7 @@ func TestUpdateTrip_MarkCompletedAndCopyRemainingItems(t *testing.T) {
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(storeID, "Trip 2", AnyTime{}, AnyTime{}, nil).
+		WithArgs(storeID, "Trip 2", false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
 	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))

@@ -7,15 +7,15 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func TestFetchAuthenticatedUser_NoAuthHeader(t *testing.T) {
 	dbMock, _, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	db, _ := gorm.Open("postgres", dbMock)
+	require.NoError(t, err)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
+	require.NoError(t, err)
 
 	user, err := FetchAuthenticatedUser(db, "")
 	assert.Equal(t, err.Error(), "no authorization header provided")
@@ -25,7 +25,7 @@ func TestFetchAuthenticatedUser_NoAuthHeader(t *testing.T) {
 func TestFetchAuthenticatedUser_MalformedAuthHeader(t *testing.T) {
 	dbMock, _, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	user, err := FetchAuthenticatedUser(db, "hello123")
@@ -36,7 +36,7 @@ func TestFetchAuthenticatedUser_MalformedAuthHeader(t *testing.T) {
 func TestFetchAuthenticatedUser_TokenNotFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	mock.ExpectQuery("^SELECT (.+) FROM auth_tokens*").
@@ -51,7 +51,7 @@ func TestFetchAuthenticatedUser_TokenNotFound(t *testing.T) {
 func TestFetchAuthenticatedUser_TokenFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	testID := "12345678-123a-456b-789c-1a234bcde567"
