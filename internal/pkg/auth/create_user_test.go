@@ -67,8 +67,8 @@ func TestCreateUser_UserCreated(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userID))
 
 	clientID := uuid.NewV4()
-	mock.ExpectQuery("INSERT INTO \"auth_tokens\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, AnyTime{}, clientID, userID).
+	mock.ExpectQuery("^INSERT INTO \"auth_tokens\" (.+)$").
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, AnyTime{}, sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "client_id", "user_id"}).AddRow(uuid.NewV4(), clientID, userID))
 
 	storeID := uuid.NewV4()
@@ -93,6 +93,7 @@ func TestCreateUser_UserCreated(t *testing.T) {
 	user, err := CreateUser(db, email, "password", clientID)
 	require.NoError(t, err)
 	assert.Equal(t, user.Email, email)
+	assert.Equal(t, user.Tokens[0].ClientID, clientID)
 }
 
 // TODO: duplicated code with the store model... DRY this up
