@@ -73,17 +73,17 @@ func TestCreateUser_UserCreated(t *testing.T) {
 
 	storeID := uuid.NewV4()
 	mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
-		WithArgs(storeName, AnyTime{}, AnyTime{}, nil, sqlmock.AnyArg()).
+		WithArgs(storeName, AnyTime{}, AnyTime{}, nil, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(storeID, userID))
 	mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, true, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
 	categories := fetchCategories()
 	for i := range categories {
 		mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
 			WithArgs(storeID, categories[i], AnyTime{}, AnyTime{}, nil).
-			WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
+			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	}
 
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
@@ -93,7 +93,7 @@ func TestCreateUser_UserCreated(t *testing.T) {
 	user, err := CreateUser(db, email, "password", clientID)
 	require.NoError(t, err)
 	assert.Equal(t, user.Email, email)
-	assert.Equal(t, user.Tokens[0].ClientID, clientID)
+	assert.NotNil(t, user.Tokens)
 }
 
 // TODO: duplicated code with the store model... DRY this up
