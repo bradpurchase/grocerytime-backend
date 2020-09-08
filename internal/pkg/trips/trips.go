@@ -5,8 +5,8 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 // RetrieveCurrentStoreTrip retrieves the currently active grocery trip in a

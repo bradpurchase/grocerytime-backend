@@ -10,7 +10,6 @@ import (
 // ReorderItemResolver updates the position of an item with the provided params
 func ReorderItemResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	_, err := auth.FetchAuthenticatedUser(db, header.(string))

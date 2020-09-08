@@ -1,9 +1,10 @@
 package subscriptions
 
 import (
+	"errors"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -15,14 +16,17 @@ func DeletedItem(p graphql.ResolveParams) (interface{}, error) {
 	fmt.Println("Processing subscription DeletedItem...")
 
 	db := db.FetchConnection()
-	defer db.Close()
 
 	rootValue := p.Info.RootValue.(map[string]interface{})
 	payload := rootValue["deleteItem"].(map[string]interface{})
 
 	tripID := p.Args["tripId"]
 	item := &models.Item{}
-	if err := db.Where("id = ? AND grocery_trip_id = ?", payload["id"], tripID).First(&item).Error; err != nil && !gorm.IsRecordNotFoundError(err) {
+	query := db.
+		Where("id = ? AND grocery_trip_id = ?", payload["id"], tripID).
+		First(&item).
+		Error
+	if err := query; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return item, err // note: we return item here so that the subscriber gets _some_ result
 	}
 

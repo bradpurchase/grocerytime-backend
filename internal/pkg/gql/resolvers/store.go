@@ -11,7 +11,6 @@ import (
 // StoreResolver resolves the store GraphQL query by retrieving a store by ID param
 func StoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(db, header.(string))

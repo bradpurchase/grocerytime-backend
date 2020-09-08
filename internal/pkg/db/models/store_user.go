@@ -3,16 +3,14 @@ package models
 import (
 	"time"
 
-	// Postgres dialect for GORM
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"gorm.io/gorm"
 
 	uuid "github.com/satori/go.uuid"
 )
 
 type StoreUser struct {
-	ID      uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	StoreID uuid.UUID `gorm:"type:uuid;not null"`
 	UserID  uuid.UUID `gorm:"type:uuid"`
 	Email   string    `gorm:"type:varchar(100)"`
@@ -21,12 +19,11 @@ type StoreUser struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt *time.Time
+	DeletedAt gorm.DeletedAt
 
 	// Associations
-	Store      Store
-	User       User
-	StoreUsers []StoreUser
+	Store Store
+	User  User
 }
 
 // AfterCreate hook to handle sending an invite email to a new StoreUser if the

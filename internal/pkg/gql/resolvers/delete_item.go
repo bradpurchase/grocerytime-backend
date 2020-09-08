@@ -10,7 +10,6 @@ import (
 // DeleteItemResolver deletes an item by itemId param
 func DeleteItemResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	_, err := auth.FetchAuthenticatedUser(db, header.(string))

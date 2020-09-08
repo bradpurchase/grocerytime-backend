@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // FetchAuthenticatedUser retrieves the user to satisfy AuthenticatedUserResolver

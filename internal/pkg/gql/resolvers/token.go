@@ -19,7 +19,6 @@ import (
 // DEPRECATED: replaced by login mutation (LoginResolver)
 func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	creds, err := auth.RetrieveClientCredentials(header.(string))

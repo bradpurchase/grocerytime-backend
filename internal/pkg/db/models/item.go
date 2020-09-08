@@ -3,16 +3,13 @@ package models
 import (
 	"time"
 
-	// Postgres dialect for GORM
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 // Item defines the model for items
 type Item struct {
-	ID            uuid.UUID  `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	ID            uuid.UUID  `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	GroceryTripID uuid.UUID  `gorm:"type:uuid;not null"`
 	CategoryID    *uuid.UUID `gorm:"type:uuid;not null"`
 	UserID        uuid.UUID  `gorm:"type:uuid;not null"`
@@ -23,7 +20,7 @@ type Item struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt *time.Time
+	DeletedAt gorm.DeletedAt
 
 	// Associations
 	GroceryTrip GroceryTrip

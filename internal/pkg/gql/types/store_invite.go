@@ -29,7 +29,6 @@ var StoreInviteType = graphql.NewObject(
 				Description: "Returns the user who sent the invite",
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					db := db.FetchConnection()
-					defer db.Close()
 
 					// Return the store user who created this store, as this will always
 					// be the user who sent the invite

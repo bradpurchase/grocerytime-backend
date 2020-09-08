@@ -20,8 +20,7 @@ import (
 
 func main() {
 	// Establish a DB factory so we can automatically run migrations etc on load
-	orm := db.Factory()
-	defer orm.DB.Close()
+	db.Factory()
 
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", heartbeat)

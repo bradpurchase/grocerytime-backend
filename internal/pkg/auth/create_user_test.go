@@ -6,10 +6,11 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type AnyTime struct{}
@@ -23,7 +24,7 @@ func (a AnyTime) Match(v driver.Value) bool {
 func TestCreateUser_InvalidPassword(t *testing.T) {
 	dbMock, _, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	email := "test@example.com"
@@ -34,7 +35,7 @@ func TestCreateUser_InvalidPassword(t *testing.T) {
 func TestCreateUser_DuplicateEmail(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	email := "test@example.com"
@@ -50,7 +51,7 @@ func TestCreateUser_DuplicateEmail(t *testing.T) {
 func TestCreateUser_UserCreated(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	email := "test@example.com"
@@ -60,14 +61,20 @@ func TestCreateUser_UserCreated(t *testing.T) {
 		WithArgs(email).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	mock.ExpectBegin()
+	userID := uuid.NewV4()
 	mock.ExpectQuery("^INSERT INTO \"users\" (.+)$").
 		WithArgs(email, sqlmock.AnyArg(), "", "", AnyTime{}, AnyTime{}, AnyTime{}).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userID))
+
+	clientID := uuid.NewV4()
+	mock.ExpectQuery("^INSERT INTO \"auth_tokens\" (.+)$").
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, AnyTime{}, sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "client_id", "user_id"}).AddRow(uuid.NewV4(), clientID, userID))
+
 	storeID := uuid.NewV4()
 	mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), storeName, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
+		WithArgs(storeName, AnyTime{}, AnyTime{}, nil, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(storeID, userID))
 	mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
@@ -75,24 +82,18 @@ func TestCreateUser_UserCreated(t *testing.T) {
 	categories := fetchCategories()
 	for i := range categories {
 		mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
-			WithArgs(storeID, categories[i], AnyTime{}, AnyTime{}, nil).
+			WithArgs(sqlmock.AnyArg(), categories[i], AnyTime{}, AnyTime{}, nil).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	}
 
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, nil).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
-	mock.ExpectQuery("^INSERT INTO \"auth_tokens\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, AnyTime{}).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
-	mock.ExpectCommit()
 
-	clientID := uuid.NewV4()
 	user, err := CreateUser(db, email, "password", clientID)
 	require.NoError(t, err)
 	assert.Equal(t, user.Email, email)
-	assert.Equal(t, user.Stores[0].Name, storeName)
-	assert.Equal(t, user.Tokens[0].ClientID, clientID)
+	assert.NotNil(t, user.Tokens)
 }
 
 // TODO: duplicated code with the store model... DRY this up

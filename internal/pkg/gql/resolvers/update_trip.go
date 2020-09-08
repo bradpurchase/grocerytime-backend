@@ -10,7 +10,6 @@ import (
 // UpdateTripResolver updates the properties of a trip with the provided params
 func UpdateTripResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	_, err := auth.FetchAuthenticatedUser(db, header.(string))

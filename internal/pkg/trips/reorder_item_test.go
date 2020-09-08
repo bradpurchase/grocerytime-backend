@@ -2,43 +2,27 @@ package trips
 
 import (
 	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func TestReorder_ReorderItemPosition(t *testing.T) {
+func TestReorderItem_ReorderItemPosition(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	itemID := uuid.NewV4()
 	tripID := uuid.NewV4()
-	userID := uuid.NewV4()
-	itemRows := sqlmock.
-		NewRows([]string{
-			"id",
-			"grocery_trip_id",
-			"user_id",
-			"name",
-			"quantity",
-			"completed",
-			"position",
-			"created_at",
-			"updated_at",
-		}).
-		AddRow(uuid.NewV4(), tripID, userID, "Apples", 5, false, 1, time.Now(), time.Now()).
-		AddRow(uuid.NewV4(), tripID, userID, "Bananas", 10, false, 2, time.Now(), time.Now()).
-		AddRow(itemID, tripID, userID, "Oranges", 1, false, 3, time.Now(), time.Now())
 
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
-		WillReturnRows(itemRows)
+		WillReturnRows(sqlmock.NewRows([]string{"id", "grocery_trip_id"}).AddRow(itemID, tripID))
 
 	mock.ExpectBegin()
 	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").

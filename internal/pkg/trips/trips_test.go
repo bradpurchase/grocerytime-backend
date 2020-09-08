@@ -5,16 +5,17 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func TestRetrieveCurrentStoreTrip_UserNotAMemberOfStore(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -31,7 +32,7 @@ func TestRetrieveCurrentStoreTrip_UserNotAMemberOfStore(t *testing.T) {
 func TestRetrieveCurrentStoreTrip_TripNotAssociatedWithStore(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -48,7 +49,7 @@ func TestRetrieveCurrentStoreTrip_TripNotAssociatedWithStore(t *testing.T) {
 func TestRetrieveCurrentStoreTrip_FoundResult(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	storeID := uuid.NewV4()
@@ -71,7 +72,7 @@ func TestRetrieveCurrentStoreTrip_FoundResult(t *testing.T) {
 func TestRetrieveTrip_NotFound(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	tripID := uuid.NewV4()
@@ -87,7 +88,7 @@ func TestRetrieveTrip_NotFound(t *testing.T) {
 func TestRetrieveTrip_Found(t *testing.T) {
 	dbMock, mock, err := sqlmock.New()
 	require.NoError(t, err)
-	db, err := gorm.Open("postgres", dbMock)
+	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
 	require.NoError(t, err)
 
 	tripID := uuid.NewV4()

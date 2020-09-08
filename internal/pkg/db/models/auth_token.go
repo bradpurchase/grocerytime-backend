@@ -4,15 +4,15 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 
 	// Random string generation for key/secret
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/utils"
 )
 
 type AuthToken struct {
-	ID           uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	ID           uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	ClientID     uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();not null"`
 	UserID       uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();not null"`
 	AccessToken  string    `gorm:"type:varchar(100);not null"`
@@ -28,11 +28,10 @@ type AuthToken struct {
 
 // BeforeCreate generates the AccessToken and RefreshToken, and sets
 // ExpiresIn to 10 minutes from creation time so that access tokens frequently expire
-func (c *AuthToken) BeforeCreate(scope *gorm.Scope) (err error) {
+func (c *AuthToken) BeforeCreate(tx *gorm.DB) (err error) {
 	rand.Seed(time.Now().UnixNano())
-	scope.SetColumn("AccessToken", utils.RandString(20))
-	scope.SetColumn("RefreshToken", utils.RandString(20))
-	scope.SetColumn("ExpiresIn", time.Now().Add(time.Minute*10))
-
-	return nil
+	c.AccessToken = utils.RandString(20)
+	c.RefreshToken = utils.RandString(20)
+	c.ExpiresIn = time.Now().Add(time.Minute * 10)
+	return
 }

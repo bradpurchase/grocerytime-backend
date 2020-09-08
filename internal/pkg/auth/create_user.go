@@ -6,9 +6,9 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
-	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // CreateUser creates a user account with an email and password
@@ -20,7 +20,7 @@ func CreateUser(db *gorm.DB, email string, password string, clientID uuid.UUID) 
 
 	// Handle dupe email
 	dupeUser := &models.User{}
-	if err := db.Where("email = ?", email).First(&dupeUser).Error; !gorm.IsRecordNotFoundError(err) {
+	if err := db.Where("email = ?", email).First(&dupeUser).Error; !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.New("An account with this email address already exists")
 	}
 
@@ -29,7 +29,6 @@ func CreateUser(db *gorm.DB, email string, password string, clientID uuid.UUID) 
 		Password:   string(passhash),
 		LastSeenAt: time.Now(),
 		Tokens:     []models.AuthToken{{ClientID: clientID}},
-		Stores:     []models.Store{{Name: "My Grocery Store"}},
 	}
 	if err := db.Create(&user).Error; err != nil {
 		return nil, err

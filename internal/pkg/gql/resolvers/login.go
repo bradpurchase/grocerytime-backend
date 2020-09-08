@@ -14,7 +14,6 @@ import (
 // LoginResolver fetches a token for an user authentication session
 func LoginResolver(p graphql.ResolveParams) (interface{}, error) {
 	db := db.FetchConnection()
-	defer db.Close()
 
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	creds, err := auth.RetrieveClientCredentials(header.(string))

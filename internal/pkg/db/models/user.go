@@ -3,13 +3,12 @@ package models
 import (
 	"time"
 
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        uuid.UUID `gorm:"primary_key;type:uuid;default:gen_random_uuid()"`
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	Email     string    `gorm:"type:varchar(100);unique_index;not null"`
 	Password  string    `gorm:"not null"`
 	FirstName string    `gorm:"type:varchar(100)"`
@@ -22,4 +21,15 @@ type User struct {
 	// Associations
 	Stores []Store
 	Tokens []AuthToken
+}
+
+// AfterCreate hook to automatically create some associated records
+func (u *User) AfterCreate(tx *gorm.DB) (err error) {
+	// Create default store
+	store := Store{UserID: u.ID, Name: "My Grocery Store"}
+	if err := tx.Create(&store).Error; err != nil {
+		return err
+	}
+
+	return
 }
