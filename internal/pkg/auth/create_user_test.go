@@ -28,7 +28,7 @@ func TestCreateUser_InvalidPassword(t *testing.T) {
 	require.NoError(t, err)
 
 	email := "test@example.com"
-	_, e := CreateUser(db, email, "")
+	_, e := CreateUser(db, email, "", uuid.NewV4())
 	require.Error(t, e)
 }
 
@@ -43,7 +43,7 @@ func TestCreateUser_DuplicateEmail(t *testing.T) {
 		WithArgs(email).
 		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(email))
 
-	_, e := CreateUser(db, email, "password")
+	_, e := CreateUser(db, email, "password", uuid.NewV4())
 	require.Error(t, e)
 	assert.Equal(t, e.Error(), "An account with this email address already exists")
 }
@@ -67,10 +67,7 @@ func TestCreateUser_UserCreated(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userID))
 
 	clientID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT \"id\" FROM \"api_clients\"*").
-		WithArgs().
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(clientID))
-	mock.ExpectQuery("INSERT INTO \"auth_tokens\" (\"access_token\",\"refresh_token\",\"expires_in\",\"created_at\",\"updated_at\",\"client_id\",\"user_id\")*").
+	mock.ExpectQuery("INSERT INTO \"auth_tokens\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, AnyTime{}, clientID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "client_id", "user_id"}).AddRow(uuid.NewV4(), clientID, userID))
 
@@ -86,14 +83,14 @@ func TestCreateUser_UserCreated(t *testing.T) {
 	for i := range categories {
 		mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
 			WithArgs(storeID, categories[i], AnyTime{}, AnyTime{}, nil).
-			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
+			WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
 	}
 
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
-	user, err := CreateUser(db, email, "password")
+	user, err := CreateUser(db, email, "password", clientID)
 	require.NoError(t, err)
 	assert.Equal(t, user.Email, email)
 }
