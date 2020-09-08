@@ -82,7 +82,7 @@ func TestCreateUser_UserCreated(t *testing.T) {
 	categories := fetchCategories()
 	for i := range categories {
 		mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
-			WithArgs(storeID, categories[i], AnyTime{}, AnyTime{}, nil).
+			WithArgs(sqlmock.AnyArg(), categories[i], AnyTime{}, AnyTime{}, nil).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	}
 
