@@ -46,18 +46,18 @@ func TestCreateStore_Created(t *testing.T) {
 		WithArgs(storeName, AnyTime{}, AnyTime{}, nil, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(storeID, userID))
 	mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
-		WithArgs(storeID, userID, "", true, true, AnyTime{}, AnyTime{}, nil).
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
 	categories := fetchCategories()
 	for i := range categories {
 		mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
-			WithArgs(storeID, categories[i], AnyTime{}, AnyTime{}, nil).
+			WithArgs(sqlmock.AnyArg(), categories[i], AnyTime{}, AnyTime{}, nil).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	}
 
 	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(storeID, "Trip 1", false, false, AnyTime{}, AnyTime{}, nil).
+		WithArgs(sqlmock.AnyArg(), "Trip 1", false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	mock.ExpectCommit()
 
