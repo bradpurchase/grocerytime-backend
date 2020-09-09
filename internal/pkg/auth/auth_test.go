@@ -1,62 +1,82 @@
 package auth
 
 import (
+	"database/sql"
+	"database/sql/driver"
 	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
+	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func TestFetchAuthenticatedUser_NoAuthHeader(t *testing.T) {
-	dbMock, _, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
+type AnyTime struct{}
 
-	user, err := FetchAuthenticatedUser(db, "")
-	assert.Equal(t, err.Error(), "no authorization header provided")
-	assert.Nil(t, user)
+// Match satisfies sqlmock.Argument interface
+func (a AnyTime) Match(v driver.Value) bool {
+	_, ok := v.(time.Time)
+	return ok
 }
 
-func TestFetchAuthenticatedUser_MalformedAuthHeader(t *testing.T) {
-	dbMock, _, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
+type Suite struct {
+	suite.Suite
 
-	user, err := FetchAuthenticatedUser(db, "hello123")
-	assert.Equal(t, err.Error(), "no bearer token provided")
-	assert.Nil(t, user)
+	DB   *gorm.DB
+	mock sqlmock.Sqlmock
 }
 
-func TestFetchAuthenticatedUser_TokenNotFound(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
+func (s *Suite) SetupSuite() {
+	var (
+		dbMock *sql.DB
+		err    error
+	)
 
-	mock.ExpectQuery("^SELECT (.+) FROM auth_tokens*").
+	dbMock, s.mock, err = sqlmock.New()
+	require.NoError(s.T(), err)
+	s.DB, err = gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
+	require.NoError(s.T(), err)
+
+	db.Manager = s.DB
+}
+
+func (s *Suite) AfterTest(_, _ string) {
+	//require.NoError(s.T(), s.mock.ExpectationsWereMet())
+}
+
+func TestSuite(t *testing.T) {
+	suite.Run(t, new(Suite))
+}
+
+func (s *Suite) TestFetchAuthenticatedUser_NoAuthHeader() {
+	user, err := FetchAuthenticatedUser("")
+	assert.Equal(s.T(), err.Error(), "no authorization header provided")
+	assert.Nil(s.T(), user)
+}
+
+func (s *Suite) TestFetchAuthenticatedUser_MalformedAuthHeader() {
+	user, err := FetchAuthenticatedUser("hello123")
+	assert.Equal(s.T(), err.Error(), "no bearer token provided")
+	assert.Nil(s.T(), user)
+}
+
+func (s *Suite) TestFetchAuthenticatedUser_TokenNotFound() {
+	s.mock.ExpectQuery("^SELECT (.+) FROM auth_tokens*").
 		WithArgs("hello123").
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	_, e := FetchAuthenticatedUser(db, "Bearer hello123")
-	require.Error(t, e)
-	assert.Equal(t, e.Error(), "token invalid/expired")
+	_, e := FetchAuthenticatedUser("Bearer hello123")
+	s.Equal(e.Error(), "token invalid/expired")
 }
 
-func TestFetchAuthenticatedUser_TokenFound(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
-	testID := "12345678-123a-456b-789c-1a234bcde567"
-
-	authTokenRows := sqlmock.
+func (s *Suite) TestFetchAuthenticatedUser_TokenFound() {
+	testID := uuid.NewV4()
+	authTokenRows := s.mock.
 		NewRows([]string{
 			"id",
 			"client_id",
@@ -68,7 +88,7 @@ func TestFetchAuthenticatedUser_TokenFound(t *testing.T) {
 			"updated_at",
 		}).
 		AddRow(testID, testID, testID, "hello123", "world456", time.Now().Add(time.Hour*1), time.Now(), time.Now())
-	userRows := sqlmock.
+	userRows := s.mock.
 		NewRows([]string{
 			"id",
 			"email",
@@ -80,14 +100,14 @@ func TestFetchAuthenticatedUser_TokenFound(t *testing.T) {
 			"updated_at",
 		}).
 		AddRow(testID, "test@example.com", "password", "John", "Doe", time.Now(), time.Now(), time.Now())
-	mock.ExpectQuery("^SELECT (.+) FROM \"auth_tokens\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"auth_tokens\"*").
 		WithArgs("hello123").
 		WillReturnRows(authTokenRows)
-	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
 		WithArgs(testID).
 		WillReturnRows(userRows)
 
-	user, err := FetchAuthenticatedUser(db, "Bearer hello123")
-	require.NoError(t, err)
-	assert.NotNil(t, user)
+	user, err := FetchAuthenticatedUser("Bearer hello123")
+	require.NoError(s.T(), err)
+	assert.NotNil(s.T(), user)
 }

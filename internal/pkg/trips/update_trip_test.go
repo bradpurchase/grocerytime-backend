@@ -1,84 +1,56 @@
 package trips
 
 import (
-	"database/sql/driver"
-	"testing"
-	"time"
-
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
-type AnyTime struct{}
-
-// Match satisfies sqlmock.Argument interface
-func (a AnyTime) Match(v driver.Value) bool {
-	_, ok := v.(time.Time)
-	return ok
-}
-
-func TestUpdateTrip_TripNotFound(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestUpdateTrip_TripNotFound() {
 	tripID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(tripID).
-		WillReturnRows(sqlmock.NewRows([]string{}))
+		WillReturnRows(s.mock.NewRows([]string{}))
 
 	args := map[string]interface{}{
 		"tripId": tripID,
 	}
 
-	_, e := UpdateTrip(db, args)
-	require.Error(t, e)
-	assert.Equal(t, e.Error(), "record not found")
+	result, e := UpdateTrip(args)
+	require.Error(s.T(), e)
+	assert.Nil(s.T(), result)
+	assert.Equal(s.T(), e.Error(), "record not found")
 }
 
-func TestUpdateTrip_NameUpdate(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestUpdateTrip_NameUpdate() {
 	tripID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(tripID).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(tripID, "My First Trip"))
+		WillReturnRows(s.mock.NewRows([]string{"id", "name"}).AddRow(tripID, "My First Trip"))
 
 	args := map[string]interface{}{
 		"tripId": tripID,
 		"name":   "My Second Trip",
 	}
 
-	mock.ExpectBegin()
-	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	s.mock.ExpectCommit()
 
-	trip, err := UpdateTrip(db, args)
-	require.NoError(t, err)
-	assert.Equal(t, trip.(models.GroceryTrip).Name, "My Second Trip")
+	trip, err := UpdateTrip(args)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), trip.(models.GroceryTrip).Name, "My Second Trip")
 }
 
-func TestUpdateTrip_MarkCompleted(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestUpdateTrip_MarkCompleted() {
 	tripID := uuid.NewV4()
 	storeID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(tripID).
-		WillReturnRows(sqlmock.
+		WillReturnRows(s.mock.
 			NewRows([]string{"id", "store_id", "name"}).
 			AddRow(tripID, storeID, "My First Trip"))
 
@@ -87,37 +59,32 @@ func TestUpdateTrip_MarkCompleted(t *testing.T) {
 		"completed": true,
 	}
 
-	mock.ExpectBegin()
-	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	mock.ExpectQuery("^SELECT count*").
+	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(storeID).
-		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
-	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
+		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
+	s.mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(storeID, "Trip 2", false, false, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
-	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnRows(s.mock.NewRows([]string{"store_id"}).AddRow(storeID))
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	s.mock.ExpectCommit()
 
-	trip, err := UpdateTrip(db, args)
-	require.NoError(t, err)
-	assert.Equal(t, trip.(models.GroceryTrip).Completed, true)
-	assert.Equal(t, trip.(models.GroceryTrip).CopyRemainingItems, false)
+	trip, err := UpdateTrip(args)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), trip.(models.GroceryTrip).Completed, true)
+	assert.Equal(s.T(), trip.(models.GroceryTrip).CopyRemainingItems, false)
 }
 
-func TestUpdateTrip_MarkCompletedAndCopyRemainingItems(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 	tripID := uuid.NewV4()
 	storeID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(tripID).
-		WillReturnRows(sqlmock.
+		WillReturnRows(s.mock.
 			NewRows([]string{"id", "store_id", "name"}).
 			AddRow(tripID, storeID, "Trip 1"))
 
@@ -127,22 +94,22 @@ func TestUpdateTrip_MarkCompletedAndCopyRemainingItems(t *testing.T) {
 		"copyRemainingItems": true,
 	}
 
-	mock.ExpectBegin()
-	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	mock.ExpectQuery("^SELECT count*").
+	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(storeID).
-		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
-	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
+		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
+	s.mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(storeID, "Trip 2", false, false, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
-	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnRows(s.mock.NewRows([]string{"store_id"}).AddRow(storeID))
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	s.mock.ExpectCommit()
 
-	trip, err := UpdateTrip(db, args)
-	require.NoError(t, err)
-	assert.Equal(t, trip.(models.GroceryTrip).Completed, true)
-	assert.Equal(t, trip.(models.GroceryTrip).CopyRemainingItems, true)
+	trip, err := UpdateTrip(args)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), trip.(models.GroceryTrip).Completed, true)
+	assert.Equal(s.T(), trip.(models.GroceryTrip).CopyRemainingItems, true)
 }

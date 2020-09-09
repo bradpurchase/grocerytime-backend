@@ -31,11 +31,9 @@ var GroceryTripType = graphql.NewObject(
 			"categories": &graphql.Field{
 				Type: graphql.NewList(GroceryTripCategoryType),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					db := db.FetchConnection()
-
 					tripID := p.Source.(models.GroceryTrip).ID
 					categories := []models.GroceryTripCategory{}
-					query := db.
+					query := db.Manager.
 						Joins("INNER JOIN store_categories ON store_categories.id = grocery_trip_categories.store_category_id").
 						Where("grocery_trip_categories.grocery_trip_id = ?", tripID).
 						Order("grocery_trip_categories.created_at DESC").

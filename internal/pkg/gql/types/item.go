@@ -27,15 +27,13 @@ var ItemType = graphql.NewObject(
 			"categoryName": &graphql.Field{
 				Type: graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					db := db.FetchConnection()
-
 					groceryTripCategoryID := p.Source.(models.Item).CategoryID
 					groceryTripCategory := &models.GroceryTripCategory{}
-					if err := db.Select("store_category_id").Where("id = ?", groceryTripCategoryID).First(&groceryTripCategory).Error; err != nil {
+					if err := db.Manager.Select("store_category_id").Where("id = ?", groceryTripCategoryID).First(&groceryTripCategory).Error; err != nil {
 						return nil, err
 					}
 					storeCategory := &models.StoreCategory{}
-					if err := db.Select("name").Where("id = ?", groceryTripCategory.StoreCategoryID).First(&storeCategory).Error; err != nil {
+					if err := db.Manager.Select("name").Where("id = ?", groceryTripCategory.StoreCategoryID).First(&storeCategory).Error; err != nil {
 						return nil, err
 					}
 
@@ -60,11 +58,9 @@ var ItemType = graphql.NewObject(
 			"user": &graphql.Field{
 				Type: UserType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					db := db.FetchConnection()
-
 					userID := p.Source.(models.Item).UserID
 					user := &models.User{}
-					if err := db.Where("id = ?", userID).First(&user).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+					if err := db.Manager.Where("id = ?", userID).First(&user).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 						return nil, err
 					}
 					return user, nil

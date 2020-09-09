@@ -1,7 +1,6 @@
 package gql
 
 import (
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
@@ -28,12 +27,10 @@ var StoreInviteType = graphql.NewObject(
 				Type:        UserType,
 				Description: "Returns the user who sent the invite",
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					db := db.FetchConnection()
-
-					// Return the store user who created this store, as this will always
-					// be the user who sent the invite
+					// Return the store user who created this store,
+					// as this will always be the user who sent the invite
 					storeID := p.Source.(models.Store).ID
-					user, err := stores.RetrieveStoreCreator(db, storeID)
+					user, err := stores.RetrieveStoreCreator(storeID)
 					if err != nil {
 						return nil, err
 					}
