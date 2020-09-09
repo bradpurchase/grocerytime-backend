@@ -2,9 +2,15 @@ package trips
 
 import (
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"path/filepath"
+	"strings"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
+	"github.com/tidwall/gjson"
 	"gorm.io/gorm"
 )
 
@@ -23,16 +29,26 @@ func AddItem(db *gorm.DB, userID uuid.UUID, args map[string]interface{}) (interf
 	}
 
 	itemCompleted := false
+	itemName := args["name"].(string)
+	quantity := args["quantity"].(int)
 	item := models.Item{
 		GroceryTripID: trip.ID,
 		UserID:        userID,
-		Name:          args["name"].(string),
-		Quantity:      args["quantity"].(int),
+		Name:          itemName,
+		Quantity:      quantity,
 		Position:      1,
 		Completed:     &itemCompleted,
 	}
 
-	categoryName := args["categoryName"].(string)
+	// If categoryName is explicily provided in the arguments, use it,
+	// otherwise we need to determine it automagically ✨
+	var categoryName string
+	if args["categoryName"] != nil {
+		categoryName = args["categoryName"].(string)
+	} else {
+		categoryName = DetermineCategoryName(itemName)
+	}
+
 	category, err := FetchGroceryTripCategory(db, trip.ID, categoryName)
 	if err != nil {
 		return nil, err
@@ -83,4 +99,25 @@ func CreateGroceryTripCategory(db *gorm.DB, tripID uuid.UUID, name string) (mode
 		return models.GroceryTripCategory{}, err
 	}
 	return newCategory, nil
+}
+
+// DetermineCategoryName opens the FoodClassification.json file and
+// scans it for the classification associated with the food item very quickly using gson
+func DetermineCategoryName(name string) string {
+	properName := strings.ToLower(name)
+
+	absPath, _ := filepath.Abs("internal/pkg/trips/data/FoodClassification.json")
+	json, err := ioutil.ReadFile(absPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	jsonString := string(json)
+
+	search := fmt.Sprintf("foods.#(text%%\"%s*\").label", properName)
+	value := gjson.Get(jsonString, search)
+	foundCategory := value.String()
+	if len(foundCategory) > 0 {
+		return foundCategory
+	}
+	return "Misc."
 }

@@ -238,11 +238,11 @@ func init() {
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},
-						"categoryName": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
 						"quantity": &graphql.ArgumentConfig{
 							Type: graphql.Int,
+						},
+						"categoryName": &graphql.ArgumentConfig{
+							Type: graphql.String,
 						},
 					},
 					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
