@@ -39,7 +39,7 @@ func main() {
 	router.Handle("/graphql", corsHandler(handlers.GraphQLHandler()))
 
 	port := os.Getenv("PORT")
-	log.Println("[main] ...Listening on port " + port)
+	log.Println("[main] ⚡️...Listening on port " + port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 

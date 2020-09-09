@@ -22,6 +22,7 @@ require (
 	github.com/sendgrid/rest v2.6.1+incompatible // indirect
 	github.com/sendgrid/sendgrid-go v3.6.2+incompatible
 	github.com/stretchr/testify v1.6.1
+	github.com/tidwall/gjson v1.6.1
 	github.com/trevex/graphql-go-subscription v0.0.0-20170731204342-4a0a4158754b
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
