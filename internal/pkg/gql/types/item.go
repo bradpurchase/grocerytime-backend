@@ -24,6 +24,24 @@ var ItemType = graphql.NewObject(
 			"categoryId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
+			"categoryName": &graphql.Field{
+				Type: graphql.String,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					db := db.FetchConnection()
+
+					groceryTripCategoryID := p.Source.(models.Item).CategoryID
+					groceryTripCategory := &models.GroceryTripCategory{}
+					if err := db.Select("store_category_id").Where("id = ?", groceryTripCategoryID).First(&groceryTripCategory).Error; err != nil {
+						return nil, err
+					}
+					storeCategory := &models.StoreCategory{}
+					if err := db.Select("name").Where("id = ?", groceryTripCategory.StoreCategoryID).First(&storeCategory).Error; err != nil {
+						return nil, err
+					}
+
+					return storeCategory.Name, nil
+				},
+			},
 			"userId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
