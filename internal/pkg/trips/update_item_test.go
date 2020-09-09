@@ -1,7 +1,6 @@
 package trips
 
 import (
-	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -9,21 +8,14 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
-func TestUpdateItem_NoUpdates(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestUpdateItem_NoUpdates() {
 	itemID := uuid.NewV4()
 	tripID := uuid.NewV4()
 	userID := uuid.NewV4()
 
-	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
 		WillReturnRows(sqlmock.
 			NewRows([]string{
@@ -38,38 +30,33 @@ func TestUpdateItem_NoUpdates(t *testing.T) {
 			}).
 			AddRow(itemID, tripID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
-	mock.ExpectBegin()
-	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
-	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	s.mock.ExpectCommit()
 
 	args := map[string]interface{}{"itemId": itemID}
-	item, err := UpdateItem(db, args)
-	require.NoError(t, err)
+	item, err := UpdateItem(args)
+	require.NoError(s.T(), err)
 	// Assert no changes
-	assert.Equal(t, item.(*models.Item).ID, itemID)
-	assert.Equal(t, item.(*models.Item).GroceryTripID, tripID)
-	assert.Equal(t, item.(*models.Item).UserID, userID)
-	assert.Equal(t, item.(*models.Item).Name, "Apples")
-	assert.Equal(t, item.(*models.Item).Quantity, 5)
+	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
+	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
+	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
+	assert.Equal(s.T(), item.(*models.Item).Name, "Apples")
+	assert.Equal(s.T(), item.(*models.Item).Quantity, 5)
 }
 
-func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestUpdateItem_UpdateSingleColumn() {
 	itemID := uuid.NewV4()
 	tripID := uuid.NewV4()
 	userID := uuid.NewV4()
 
-	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
 		WillReturnRows(sqlmock.
 			NewRows([]string{
@@ -84,41 +71,36 @@ func TestUpdateItem_UpdateSingleColumn(t *testing.T) {
 			}).
 			AddRow(itemID, tripID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
-	mock.ExpectBegin()
-	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
-	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	s.mock.ExpectCommit()
 
 	completed := true
 	args := map[string]interface{}{"itemId": itemID, "completed": completed}
 
-	item, err := UpdateItem(db, args)
-	require.NoError(t, err)
+	item, err := UpdateItem(args)
+	require.NoError(s.T(), err)
 	// Assert only completed state changed
-	assert.Equal(t, item.(*models.Item).ID, itemID)
-	assert.Equal(t, item.(*models.Item).GroceryTripID, tripID)
-	assert.Equal(t, item.(*models.Item).UserID, userID)
-	assert.Equal(t, item.(*models.Item).Name, "Apples")
-	assert.Equal(t, item.(*models.Item).Quantity, 5)
-	assert.Equal(t, item.(*models.Item).Completed, &completed)
+	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
+	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
+	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
+	assert.Equal(s.T(), item.(*models.Item).Name, "Apples")
+	assert.Equal(s.T(), item.(*models.Item).Quantity, 5)
+	assert.Equal(s.T(), item.(*models.Item).Completed, &completed)
 }
 
-func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestUpdateItem_UpdateMultiColumn() {
 	itemID := uuid.NewV4()
 	tripID := uuid.NewV4()
 	userID := uuid.NewV4()
 
-	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
 		WillReturnRows(sqlmock.
 			NewRows([]string{
@@ -133,15 +115,15 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 			}).
 			AddRow(itemID, tripID, userID, "Apples", 5, false, time.Now(), time.Now()))
 
-	mock.ExpectBegin()
-	mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
-	mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	s.mock.ExpectCommit()
 
 	completed := true
 	args := map[string]interface{}{
@@ -151,13 +133,13 @@ func TestUpdateItem_UpdateMultiColumn(t *testing.T) {
 		"name":      "Bananas",
 	}
 
-	item, err := UpdateItem(db, args)
-	require.NoError(t, err)
+	item, err := UpdateItem(args)
+	require.NoError(s.T(), err)
 	// Assert only quantity and completed states changed
-	assert.Equal(t, item.(*models.Item).ID, itemID)
-	assert.Equal(t, item.(*models.Item).GroceryTripID, tripID)
-	assert.Equal(t, item.(*models.Item).UserID, userID)
-	assert.Equal(t, item.(*models.Item).Name, "Bananas")
-	assert.Equal(t, item.(*models.Item).Quantity, 10)
-	assert.Equal(t, item.(*models.Item).Completed, &completed)
+	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
+	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
+	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
+	assert.Equal(s.T(), item.(*models.Item).Name, "Bananas")
+	assert.Equal(s.T(), item.(*models.Item).Quantity, 10)
+	assert.Equal(s.T(), item.(*models.Item).Completed, &completed)
 }

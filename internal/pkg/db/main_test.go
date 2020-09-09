@@ -17,7 +17,3 @@ func TestFetchConnection(t *testing.T) {
 		t.Fatalf("main_test.go: TestDBConnection error %v", err)
 	}
 }
-
-// func TestFactory(t *testing.T) {
-// 	db := TestFetchConnection(t)
-// }

@@ -10,7 +10,6 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/handlers"
 
 	// Autoload env variables from .env
-
 	_ "github.com/joho/godotenv/autoload"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
@@ -19,7 +18,6 @@ import (
 )
 
 func main() {
-	// Establish a DB factory so we can automatically run migrations etc on load
 	db.Factory()
 
 	router := mux.NewRouter().StrictSlash(true)

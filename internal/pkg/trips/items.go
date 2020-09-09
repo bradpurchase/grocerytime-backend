@@ -1,15 +1,15 @@
 package trips
 
 import (
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
-	"gorm.io/gorm"
 )
 
 // RetrieveItems finds all items in a grocery trip by tripID
-func RetrieveItems(db *gorm.DB, tripID uuid.UUID) (interface{}, error) {
+func RetrieveItems(tripID uuid.UUID) (interface{}, error) {
 	items := []models.Item{}
-	query := db.
+	query := db.Manager.
 		Where("grocery_trip_id = ?", tripID).
 		Order("position ASC").
 		Find(&items).
@@ -21,9 +21,9 @@ func RetrieveItems(db *gorm.DB, tripID uuid.UUID) (interface{}, error) {
 }
 
 // RetrieveItemsInCategory finds all items in a grocery trip by category
-func RetrieveItemsInCategory(db *gorm.DB, tripID uuid.UUID, categoryID uuid.UUID) (interface{}, error) {
+func RetrieveItemsInCategory(tripID uuid.UUID, categoryID uuid.UUID) (interface{}, error) {
 	items := []models.Item{}
-	query := db.
+	query := db.Manager.
 		Where("grocery_trip_id = ?", tripID).
 		Where("category_id = ?", categoryID).
 		Order("position ASC").

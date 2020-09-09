@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
@@ -11,15 +10,13 @@ import (
 // DeleteStoreResolver resolves the deleteStore mutation by deleting a store
 // and its associated store users and items
 func DeleteStoreResolver(p graphql.ResolveParams) (interface{}, error) {
-	db := db.FetchConnection()
-
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
-	user, err := auth.FetchAuthenticatedUser(db, header.(string))
+	user, err := auth.FetchAuthenticatedUser(header.(string))
 	if err != nil {
 		return nil, err
 	}
 
-	store, err := stores.DeleteStore(db, p.Args["storeId"], user.(models.User).ID)
+	store, err := stores.DeleteStore(p.Args["storeId"], user.(models.User).ID)
 	if err != nil {
 		return nil, err
 	}

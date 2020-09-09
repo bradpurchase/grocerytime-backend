@@ -18,15 +18,13 @@ import (
 //
 // DEPRECATED: replaced by login mutation (LoginResolver)
 func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
-	db := db.FetchConnection()
-
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	creds, err := auth.RetrieveClientCredentials(header.(string))
 	if err != nil {
 		return nil, err
 	}
 	apiClient := &models.ApiClient{}
-	if err := db.Where("key = ? AND secret = ?", creds[0], creds[1]).First(&apiClient).Error; err != nil {
+	if err := db.Manager.Where("key = ? AND secret = ?", creds[0], creds[1]).First(&apiClient).Error; err != nil {
 		return nil, err
 	}
 
@@ -44,7 +42,7 @@ func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
 		//TODO i18n
 		wrongCredsMsg := "Could not log you in with those details. Please try again!"
 		user := &models.User{}
-		if err := db.Where("email = ?", email.(string)).First(&user).Error; err != nil {
+		if err := db.Manager.Where("email = ?", email.(string)).First(&user).Error; err != nil {
 			return nil, errors.New(wrongCredsMsg)
 		}
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password.(string))); err != nil {
@@ -52,10 +50,10 @@ func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
 		}
 
 		authToken := &models.AuthToken{UserID: user.ID, ClientID: apiClient.ID}
-		if err := db.Where("user_id = ? AND client_id = ?", user.ID, apiClient.ID).Delete(&authToken).Error; err != nil {
+		if err := db.Manager.Where("user_id = ? AND client_id = ?", user.ID, apiClient.ID).Delete(&authToken).Error; err != nil {
 			return nil, errors.New(wrongCredsMsg)
 		}
-		if err := db.Create(&authToken).Error; err != nil {
+		if err := db.Manager.Create(&authToken).Error; err != nil {
 			return nil, errors.New(wrongCredsMsg)
 		}
 
@@ -71,16 +69,16 @@ func TokenResolver(p graphql.ResolveParams) (interface{}, error) {
 		}
 
 		authToken := &models.AuthToken{}
-		if err := db.Where("refresh_token = ? AND created_at >= now() - interval '1 year'", refreshToken.(string)).Last(&authToken).Error; err != nil {
+		if err := db.Manager.Where("refresh_token = ? AND created_at >= now() - interval '1 year'", refreshToken.(string)).Last(&authToken).Error; err != nil {
 			return nil, err
 		}
 		userID := authToken.UserID
-		if err := db.Delete(&authToken).Error; err != nil {
+		if err := db.Manager.Delete(&authToken).Error; err != nil {
 			return nil, err
 		}
 
 		newAuthToken := &models.AuthToken{UserID: userID, ClientID: apiClient.ID}
-		if err := db.Create(&newAuthToken).Error; err != nil {
+		if err := db.Manager.Create(&newAuthToken).Error; err != nil {
 			return nil, err
 		}
 

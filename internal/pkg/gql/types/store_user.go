@@ -41,11 +41,9 @@ var StoreUserType = graphql.NewObject(
 			"user": &graphql.Field{
 				Type: UserType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					db := db.FetchConnection()
-
 					userID := p.Source.(models.StoreUser).UserID
 					user := &models.User{}
-					if err := db.Where("id = ?", userID).First(&user).Error; err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+					if err := db.Manager.Where("id = ?", userID).First(&user).Error; err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 						return nil, err
 					}
 					return user, nil

@@ -13,10 +13,12 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/migration"
 )
 
-// ORM struct holds the gorm pointer to DB
-type ORM struct {
-	DB *gorm.DB
+// DatabaseManager variable holds the gorm pointer to DB
+type DatabaseManager struct {
+	db *gorm.DB
 }
+
+var Manager *gorm.DB
 
 // FetchConnection establishes a database connection
 func FetchConnection() *gorm.DB {
@@ -28,17 +30,13 @@ func FetchConnection() *gorm.DB {
 	return db
 }
 
-// Factory fetches a database connection, and runs some config (i.e. auto migrations)
-func Factory() *ORM {
-	db := FetchConnection()
-	orm := &ORM{DB: db}
+func Factory() {
+	Manager = FetchConnection()
 
 	// Automigrate on init
 	log.Println("[db] Performing migrations...")
-	if err := migration.AutoMigrateService(orm.DB); err != nil {
+	if err := migration.AutoMigrateService(Manager); err != nil {
 		log.Fatal("[db] Couldn't perform migrations! ", err)
 	}
 	log.Println("[db] Database connection initialized")
-
-	return orm
 }

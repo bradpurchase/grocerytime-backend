@@ -1,99 +1,70 @@
 package auth
 
 import (
-	"database/sql/driver"
-	"testing"
-	"time"
-
 	"github.com/DATA-DOG/go-sqlmock"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
-type AnyTime struct{}
-
-// Match satisfies sqlmock.Argument interface
-func (a AnyTime) Match(v driver.Value) bool {
-	_, ok := v.(time.Time)
-	return ok
+func (s *Suite) TestCreateUser_InvalidPassword() {
+	email := "test@example.com"
+	_, e := CreateUser(email, "", uuid.NewV4())
+	require.Error(s.T(), e)
 }
 
-func TestCreateUser_InvalidPassword(t *testing.T) {
-	dbMock, _, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestCreateUser_DuplicateEmail() {
 	email := "test@example.com"
-	_, e := CreateUser(db, email, "", uuid.NewV4())
-	require.Error(t, e)
-}
-
-func TestCreateUser_DuplicateEmail(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
-	email := "test@example.com"
-	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
 		WithArgs(email).
 		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(email))
 
-	_, e := CreateUser(db, email, "password", uuid.NewV4())
-	require.Error(t, e)
-	assert.Equal(t, e.Error(), "An account with this email address already exists")
+	_, e := CreateUser(email, "password", uuid.NewV4())
+	require.Error(s.T(), e)
+	assert.Equal(s.T(), e.Error(), "An account with this email address already exists")
 }
 
-func TestCreateUser_UserCreated(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestCreateUser_UserCreated() {
 	email := "test@example.com"
 	storeName := "My Grocery Store"
 
-	mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
 		WithArgs(email).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	userID := uuid.NewV4()
-	mock.ExpectQuery("^INSERT INTO \"users\" (.+)$").
+	s.mock.ExpectQuery("^INSERT INTO \"users\" (.+)$").
 		WithArgs(email, sqlmock.AnyArg(), "", "", AnyTime{}, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userID))
 
 	clientID := uuid.NewV4()
-	mock.ExpectQuery("^INSERT INTO \"auth_tokens\" (.+)$").
+	s.mock.ExpectQuery("^INSERT INTO \"auth_tokens\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, AnyTime{}, sqlmock.AnyArg(), sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "client_id", "user_id"}).AddRow(uuid.NewV4(), clientID, userID))
 
 	storeID := uuid.NewV4()
-	mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
+	s.mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
 		WithArgs(storeName, AnyTime{}, AnyTime{}, nil, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(storeID, userID))
-	mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
+	s.mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
 	categories := fetchCategories()
 	for i := range categories {
-		mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
+		s.mock.ExpectQuery("^INSERT INTO \"store_categories\" (.+)$").
 			WithArgs(sqlmock.AnyArg(), categories[i], AnyTime{}, AnyTime{}, nil).
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	}
 
-	mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
+	s.mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
-	user, err := CreateUser(db, email, "password", clientID)
-	require.NoError(t, err)
-	assert.Equal(t, user.Email, email)
-	assert.NotNil(t, user.Tokens)
+	user, err := CreateUser(email, "password", clientID)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), user.Email, email)
+	assert.NotNil(s.T(), user.Tokens)
 }
 
 // TODO: duplicated code with the store model... DRY this up

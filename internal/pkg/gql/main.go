@@ -4,7 +4,6 @@ import (
 	"github.com/graphql-go/graphql"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/subscriptions"
@@ -246,15 +245,13 @@ func init() {
 						},
 					},
 					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-						db := db.FetchConnection()
-
 						header := p.Info.RootValue.(map[string]interface{})["Authorization"]
-						user, err := auth.FetchAuthenticatedUser(db, header.(string))
+						user, err := auth.FetchAuthenticatedUser(header.(string))
 						if err != nil {
 							return nil, err
 						}
 
-						item, err := trips.AddItem(db, user.(models.User).ID, p.Args)
+						item, err := trips.AddItem(user.(models.User).ID, p.Args)
 						if err != nil {
 							return nil, err
 						}

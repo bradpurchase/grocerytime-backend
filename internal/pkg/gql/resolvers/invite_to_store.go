@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
@@ -14,10 +13,8 @@ import (
 // InviteToStoreResolver resolves the inviteToStore mutation by creating a pending
 // store_users record for the given storeId and email
 func InviteToStoreResolver(p graphql.ResolveParams) (interface{}, error) {
-	db := db.FetchConnection()
-
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
-	user, err := auth.FetchAuthenticatedUser(db, header.(string))
+	user, err := auth.FetchAuthenticatedUser(header.(string))
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +26,7 @@ func InviteToStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	if userEmail == invitedUserEmail {
 		return models.StoreUser{}, errors.New("cannot invite yourself to a store")
 	}
-	storeUser, err := stores.InviteToStoreByEmail(db, storeID, invitedUserEmail)
+	storeUser, err := stores.InviteToStoreByEmail(storeID, invitedUserEmail)
 	if err != nil {
 		return nil, err
 	}

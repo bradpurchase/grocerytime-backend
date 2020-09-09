@@ -1,7 +1,6 @@
 package stores
 
 import (
-	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -9,32 +8,20 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
-func TestRetrieveUserStores_NoStores(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveUserStores_NoStores() {
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
-	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(user.ID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	userStores, err := RetrieveUserStores(db, user)
-	require.NoError(t, err)
-	assert.Equal(t, userStores, []models.Store{})
+	userStores, err := RetrieveUserStores(user)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), userStores, []models.Store{})
 }
 
-func TestRetrieveUserStores_HasStoresCreated(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveUserStores_HasStoresCreated() {
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	storeRows := sqlmock.
 		NewRows([]string{
@@ -47,26 +34,21 @@ func TestRetrieveUserStores_HasStoresCreated(t *testing.T) {
 		}).
 		AddRow(uuid.NewV4(), user.ID, "Provigo Grocery Store", time.Now(), time.Now(), nil).
 		AddRow(uuid.NewV4(), user.ID, "Beer Store Store", time.Now(), time.Now(), nil)
-	mock.
+	s.mock.
 		ExpectQuery("^SELECT stores.* FROM \"stores\"*").
 		WithArgs(user.ID).
 		WillReturnRows(storeRows)
 
-	userStores, err := RetrieveUserStores(db, user)
-	require.NoError(t, err)
-	assert.Len(t, userStores, 2)
-	assert.Equal(t, userStores[0].Name, "Provigo Grocery Store")
-	assert.Equal(t, userStores[0].UserID, user.ID)
-	assert.Equal(t, userStores[1].Name, "Beer Store Store")
-	assert.Equal(t, userStores[1].UserID, user.ID)
+	userStores, err := RetrieveUserStores(user)
+	require.NoError(s.T(), err)
+	assert.Len(s.T(), userStores, 2)
+	assert.Equal(s.T(), userStores[0].Name, "Provigo Grocery Store")
+	assert.Equal(s.T(), userStores[0].UserID, user.ID)
+	assert.Equal(s.T(), userStores[1].Name, "Beer Store Store")
+	assert.Equal(s.T(), userStores[1].UserID, user.ID)
 }
 
-func TestRetrieveUserStores_HasStoresCreatedAndJoined(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveUserStores_HasStoresCreatedAndJoined() {
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	sharingUserID := uuid.NewV4()
 	sharedStoreID := uuid.NewV4()
@@ -81,43 +63,33 @@ func TestRetrieveUserStores_HasStoresCreatedAndJoined(t *testing.T) {
 		AddRow(uuid.NewV4(), user.ID, "Provigo Grocery Store", time.Now(), time.Now()).
 		AddRow(uuid.NewV4(), user.ID, "Beer Store Store", time.Now(), time.Now()).
 		AddRow(sharedStoreID, sharingUserID, "Shared Store", time.Now(), time.Now())
-	mock.
+	s.mock.
 		ExpectQuery("^SELECT stores.* FROM \"stores\"*").
 		WithArgs(user.ID).
 		WillReturnRows(storeRows)
 
-	userStores, err := RetrieveUserStores(db, user)
-	require.NoError(t, err)
-	assert.Len(t, userStores, 3)
-	assert.Equal(t, userStores[0].Name, "Provigo Grocery Store")
-	assert.Equal(t, userStores[0].UserID, user.ID)
-	assert.Equal(t, userStores[1].Name, "Beer Store Store")
-	assert.Equal(t, userStores[2].Name, "Shared Store")
-	assert.Equal(t, userStores[2].UserID, sharingUserID)
+	userStores, err := RetrieveUserStores(user)
+	require.NoError(s.T(), err)
+	assert.Len(s.T(), userStores, 3)
+	assert.Equal(s.T(), userStores[0].Name, "Provigo Grocery Store")
+	assert.Equal(s.T(), userStores[0].UserID, user.ID)
+	assert.Equal(s.T(), userStores[1].Name, "Beer Store Store")
+	assert.Equal(s.T(), userStores[2].Name, "Shared Store")
+	assert.Equal(s.T(), userStores[2].UserID, sharingUserID)
 }
 
-func TestRetrieveInvitedUserStores_NoneFound(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveInvitedUserStores_NoneFound() {
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
-	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(user.Email, false).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	userStores, err := RetrieveInvitedUserStores(db, user)
-	require.NoError(t, err)
-	assert.Equal(t, userStores, []models.Store{})
+	userStores, err := RetrieveInvitedUserStores(user)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), userStores, []models.Store{})
 }
 
-func TestRetrieveInvitedUserStores_ResultsFound(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveInvitedUserStores_ResultsFound() {
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	storeRows := sqlmock.
 		NewRows([]string{
@@ -130,66 +102,51 @@ func TestRetrieveInvitedUserStores_ResultsFound(t *testing.T) {
 		}).
 		AddRow(uuid.NewV4(), user.ID, "Provigo Grocery Store", time.Now(), time.Now(), nil).
 		AddRow(uuid.NewV4(), user.ID, "Beer Store Store", time.Now(), time.Now(), nil)
-	mock.
+	s.mock.
 		ExpectQuery("^SELECT stores.* FROM \"stores\"*").
 		WithArgs(user.Email, false).
 		WillReturnRows(storeRows)
 
-	userStores, err := RetrieveInvitedUserStores(db, user)
-	require.NoError(t, err)
-	assert.Len(t, userStores, 2)
-	assert.Equal(t, userStores[0].Name, "Provigo Grocery Store")
-	assert.Equal(t, userStores[0].UserID, user.ID)
-	assert.Equal(t, userStores[1].Name, "Beer Store Store")
-	assert.Equal(t, userStores[1].UserID, user.ID)
+	userStores, err := RetrieveInvitedUserStores(user)
+	require.NoError(s.T(), err)
+	assert.Len(s.T(), userStores, 2)
+	assert.Equal(s.T(), userStores[0].Name, "Provigo Grocery Store")
+	assert.Equal(s.T(), userStores[0].UserID, user.ID)
+	assert.Equal(s.T(), userStores[1].Name, "Beer Store Store")
+	assert.Equal(s.T(), userStores[1].UserID, user.ID)
 }
 
-func TestRetrieveStoreForUser_NotFound(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveStoreForUser_NotFound() {
 	storeID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	_, e := RetrieveStoreForUser(db, storeID, uuid.NewV4())
-	require.Error(t, e)
-	assert.Equal(t, e.Error(), "record not found")
+	_, e := RetrieveStoreForUser(storeID, uuid.NewV4())
+	require.Error(s.T(), e)
+	assert.Equal(s.T(), e.Error(), "record not found")
 }
 
-func TestRetrieveStoreForUser_StoreCreatedByUser(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveStoreForUser_StoreCreatedByUser() {
 	storeID := uuid.NewV4()
 	userID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(storeID, "Example Store"))
 
-	mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"store_id", "user_id"}).AddRow(storeID, userID))
 
-	store, err := RetrieveStoreForUser(db, storeID, userID)
-	require.NoError(t, err)
-	assert.Equal(t, store.Name, "Example Store")
+	store, err := RetrieveStoreForUser(storeID, userID)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), store.Name, "Example Store")
 }
 
-func TestRetrieveStoreForUser_StoreSharedToUser(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveStoreForUser_StoreSharedToUser() {
 	storeID := uuid.NewV4()
 	userID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(storeID, "Example Store"))
 
@@ -197,105 +154,85 @@ func TestRetrieveStoreForUser_StoreSharedToUser(t *testing.T) {
 		NewRows([]string{"store_id", "user_id", "active", "creator"}).
 		AddRow(storeID, uuid.NewV4(), true, true).
 		AddRow(storeID, userID, true, false)
-	mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, userID).
 		WillReturnRows(storeUserRows)
 
-	store, err := RetrieveStoreForUser(db, storeID, userID)
-	require.NoError(t, err)
-	assert.Equal(t, store.Name, "Example Store")
+	store, err := RetrieveStoreForUser(storeID, userID)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), store.Name, "Example Store")
 }
 
-func TestRetrieveStoreForUserByName_NotFound(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveStoreForUserByName_NotFound() {
 	storeName := "Example Store"
 	userID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(storeName, userID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	_, e := RetrieveStoreForUserByName(db, storeName, userID)
-	require.Error(t, e)
-	assert.Equal(t, e.Error(), "record not found")
+	_, e := RetrieveStoreForUserByName(storeName, userID)
+	require.Error(s.T(), e)
+	assert.Equal(s.T(), e.Error(), "record not found")
 }
 
-func TestRetrieveStoreForUserByName_Found(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestRetrieveStoreForUserByName_Found() {
 	storeName := "Example Store"
 	userID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(storeName, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"name", "user_id"}).AddRow(storeName, userID))
 
-	store, err := RetrieveStoreForUserByName(db, storeName, userID)
-	require.NoError(t, err)
-	assert.Equal(t, store.Name, storeName)
+	store, err := RetrieveStoreForUserByName(storeName, userID)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), store.Name, storeName)
 }
 
-func TestDeleteStore_StoreNotFound(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestDeleteStore_StoreNotFound() {
 	storeID := uuid.NewV4()
 	userID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(storeID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	_, e := DeleteStore(db, storeID, userID)
-	require.Error(t, e)
-	assert.Equal(t, e.Error(), "couldn't retrieve store")
+	_, e := DeleteStore(storeID, userID)
+	require.Error(s.T(), e)
+	assert.Equal(s.T(), e.Error(), "couldn't retrieve store")
 }
 
-func TestDeleteStore_StoreFound(t *testing.T) {
-	dbMock, mock, err := sqlmock.New()
-	require.NoError(t, err)
-	db, err := gorm.Open(postgres.New(postgres.Config{Conn: dbMock}), &gorm.Config{})
-	require.NoError(t, err)
-
+func (s *Suite) TestDeleteStore_StoreFound() {
 	storeID := uuid.NewV4()
 	userID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(storeID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(storeID, userID))
 
-	mock.ExpectBegin()
-	mock.ExpectExec("^UPDATE \"stores\" (.+)$").
+	s.mock.ExpectBegin()
+	s.mock.ExpectExec("^UPDATE \"stores\" (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	s.mock.ExpectCommit()
 
 	tripID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
 
-	mock.ExpectExec("^UPDATE \"items\"*").
+	s.mock.ExpectExec("^UPDATE \"items\"*").
 		WithArgs(AnyTime{}, tripID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	mock.ExpectExec("^UPDATE \"grocery_trips\" (.+)$").
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	storeUsersID := uuid.NewV4()
-	mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeUsersID))
 
-	mock.ExpectExec("UPDATE \"store_users\"*").
+	s.mock.ExpectExec("UPDATE \"store_users\"*").
 		WithArgs(AnyTime{}, storeID, storeUsersID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	store, err := DeleteStore(db, storeID, userID)
-	require.NoError(t, err)
-	assert.Equal(t, store.ID, storeID)
+	store, err := DeleteStore(storeID, userID)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), store.ID, storeID)
 }

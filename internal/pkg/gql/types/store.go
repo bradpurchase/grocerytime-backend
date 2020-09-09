@@ -2,7 +2,6 @@ package gql
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
@@ -31,16 +30,14 @@ var StoreType = graphql.NewObject(
 			"trip": &graphql.Field{
 				Type: GroceryTripType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					db := db.FetchConnection()
-
 					header := p.Info.RootValue.(map[string]interface{})["Authorization"]
-					user, err := auth.FetchAuthenticatedUser(db, header.(string))
+					user, err := auth.FetchAuthenticatedUser(header.(string))
 					if err != nil {
 						return nil, err
 					}
 
 					storeID := p.Source.(models.Store).ID
-					trip, err := trips.RetrieveCurrentStoreTrip(db, storeID, user.(models.User))
+					trip, err := trips.RetrieveCurrentStoreTrip(storeID, user.(models.User))
 					if err != nil {
 						return nil, err
 					}
@@ -50,10 +47,8 @@ var StoreType = graphql.NewObject(
 			"users": &graphql.Field{
 				Type: graphql.NewList(StoreUserType),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					db := db.FetchConnection()
-
 					storeID := p.Source.(models.Store).ID
-					storeUsers, err := stores.RetrieveStoreUsers(db, storeID)
+					storeUsers, err := stores.RetrieveStoreUsers(storeID)
 					if err != nil {
 						return nil, err
 					}

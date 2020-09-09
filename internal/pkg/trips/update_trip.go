@@ -1,14 +1,14 @@
 package trips
 
 import (
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"gorm.io/gorm"
 )
 
 // UpdateTrip updates a grocery trip with the given args by tripID
-func UpdateTrip(db *gorm.DB, args map[string]interface{}) (interface{}, error) {
+func UpdateTrip(args map[string]interface{}) (interface{}, error) {
 	trip := models.GroceryTrip{}
-	if err := db.Where("id = ?", args["tripId"]).First(&trip).Error; err != nil {
+	if err := db.Manager.Where("id = ?", args["tripId"]).First(&trip).Error; err != nil {
 		return nil, err
 	}
 	if args["name"] != nil {
@@ -20,7 +20,7 @@ func UpdateTrip(db *gorm.DB, args map[string]interface{}) (interface{}, error) {
 	if args["copyRemainingItems"] != nil {
 		trip.CopyRemainingItems = args["copyRemainingItems"].(bool)
 	}
-	if err := db.Save(&trip).Error; err != nil {
+	if err := db.Manager.Save(&trip).Error; err != nil {
 		return nil, err
 	}
 	return trip, nil

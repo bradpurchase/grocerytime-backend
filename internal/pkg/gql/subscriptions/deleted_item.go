@@ -15,14 +15,12 @@ import (
 func DeletedItem(p graphql.ResolveParams) (interface{}, error) {
 	fmt.Println("Processing subscription DeletedItem...")
 
-	db := db.FetchConnection()
-
 	rootValue := p.Info.RootValue.(map[string]interface{})
 	payload := rootValue["deleteItem"].(map[string]interface{})
 
 	tripID := p.Args["tripId"]
 	item := &models.Item{}
-	query := db.
+	query := db.Manager.
 		Where("id = ? AND grocery_trip_id = ?", payload["id"], tripID).
 		First(&item).
 		Error
