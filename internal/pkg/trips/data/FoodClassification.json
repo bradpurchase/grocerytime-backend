@@ -49,6 +49,15 @@
       "label": "Alcohol"
     },
     {
+      "text": "baby",
+      "label": "Baby"
+    },
+
+    {
+      "text": "baby wipes",
+      "label": "Baby"
+    },
+    {
       "text": "diapers",
       "label": "Baby"
     },
@@ -289,6 +298,30 @@
       "label": "Cleaning"
     },
     {
+      "text": "paper towel",
+      "label": "Cleaning"
+    },
+    {
+      "text": "toilet paper",
+      "label": "Cleaning"
+    },
+    {
+      "text": "windex",
+      "label": "Cleaning"
+    },
+    {
+      "text": "clorox",
+      "label": "Cleaning"
+    },
+    {
+      "text": "lysol",
+      "label": "Cleaning"
+    },
+    {
+      "text": "wipes",
+      "label": "Cleaning"
+    },
+    {
       "text": "ketchup",
       "label": "Condiments"
     },
@@ -478,6 +511,10 @@
     },
     {
       "text": "makeup",
+      "label": "Personal Care"
+    },
+    {
+      "text": "tampons",
       "label": "Personal Care"
     },
     {
