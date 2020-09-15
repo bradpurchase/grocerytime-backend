@@ -246,6 +246,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "chips",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "beans",
       "label": "Canned Goods"
     },
@@ -342,6 +346,10 @@
       "label": "Condiments"
     },
     {
+      "text": "peanut butter",
+      "label": "Condiments"
+    },
+    {
       "text": "milk",
       "label": "Dairy"
     },
@@ -363,6 +371,14 @@
     },
     {
       "text": "cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "parmesan",
+      "label": "Dairy"
+    },
+    {
+      "text": "ricotta",
       "label": "Dairy"
     },
     {
@@ -427,6 +443,14 @@
     },
     {
       "text": "beyond meat",
+      "label": "Meat"
+    },
+    {
+      "text": "beyond sausage",
+      "label": "Meat"
+    },
+    {
+      "text": "beyond beef",
       "label": "Meat"
     },
     {
@@ -547,6 +571,22 @@
     },
     {
       "text": "carrots",
+      "label": "Produce"
+    },
+    {
+      "text": "spinach",
+      "label": "Produce"
+    },
+    {
+      "text": "kale",
+      "label": "Produce"
+    },
+    {
+      "text": "mushrooms",
+      "label": "Produce"
+    },
+    {
+      "text": "onions",
       "label": "Produce"
     },
     {
