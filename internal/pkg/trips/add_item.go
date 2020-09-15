@@ -20,13 +20,13 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (interface{}, error)
 	tripID := args["tripId"]
 	trip := &models.GroceryTrip{}
 	if err := db.Manager.Where("id = ?", tripID).Find(&trip).Error; err != nil {
-		return nil, err
+		return nil, errors.New("trip does not exist")
 	}
 
 	// Verify that the current user belongs to this store
 	storeUser := &models.StoreUser{}
 	if err := db.Manager.Where("store_id = ? AND user_id = ?", trip.StoreID, userID).First(&storeUser).Error; err != nil {
-		return nil, err
+		return nil, errors.New("user does not belong to this store")
 	}
 
 	itemCompleted := false
@@ -52,7 +52,7 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (interface{}, error)
 
 	category, err := FetchGroceryTripCategory(trip.ID, categoryName)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("could not find or create grocery trip category")
 	}
 	item.CategoryID = &category.ID
 
@@ -78,7 +78,7 @@ func FetchGroceryTripCategory(tripID uuid.UUID, name string) (models.GroceryTrip
 	if err := query; errors.Is(err, gorm.ErrRecordNotFound) {
 		newCategory, err := CreateGroceryTripCategory(tripID, name)
 		if err != nil {
-			return models.GroceryTripCategory{}, errors.New("could not find or create grocery trip category")
+			return models.GroceryTripCategory{}, err
 		}
 		return newCategory, err
 	}
@@ -90,14 +90,14 @@ func CreateGroceryTripCategory(tripID uuid.UUID, name string) (models.GroceryTri
 	storeCategory := models.StoreCategory{}
 	query := db.Manager.Select("id").Where("name = ?", name).First(&storeCategory).Error
 	if err := query; err != nil {
-		return models.GroceryTripCategory{}, err
+		return models.GroceryTripCategory{}, errors.New("could not find store category")
 	}
 	newCategory := models.GroceryTripCategory{
 		GroceryTripID:   tripID,
 		StoreCategoryID: storeCategory.ID,
 	}
 	if err := db.Manager.Create(&newCategory).Error; err != nil {
-		return models.GroceryTripCategory{}, err
+		return models.GroceryTripCategory{}, errors.New("could not create trip category")
 	}
 	return newCategory, nil
 }
