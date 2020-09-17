@@ -20,12 +20,7 @@ func CreateUser(email string, password string, name string, clientID uuid.UUID) 
 
 	// Check for dupe email
 	var dupeCount int64
-	existsQuery := db.Manager.
-		Model(&models.User{}).
-		Where("email = ?", email).
-		Count(&dupeCount).
-		Error
-	if err := existsQuery; err != nil {
+	if err := db.Manager.Model(&models.User{}).Where("email = ?", email).Count(&dupeCount).Error; err != nil {
 		return nil, err
 	}
 	if dupeCount > 0 {
