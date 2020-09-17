@@ -8,8 +8,7 @@ import (
 )
 
 func (s *Suite) TestCreateUser_InvalidPassword() {
-	email := "test@example.com"
-	_, e := CreateUser(email, "", uuid.NewV4())
+	_, e := CreateUser("test@example.com", "", "John", uuid.NewV4())
 	require.Error(s.T(), e)
 }
 
@@ -19,13 +18,14 @@ func (s *Suite) TestCreateUser_DuplicateEmail() {
 		WithArgs(email).
 		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(email))
 
-	_, e := CreateUser(email, "password", uuid.NewV4())
+	_, e := CreateUser(email, "password", "John", uuid.NewV4())
 	require.Error(s.T(), e)
 	assert.Equal(s.T(), e.Error(), "An account with this email address already exists")
 }
 
 func (s *Suite) TestCreateUser_UserCreated() {
 	email := "test@example.com"
+	name := "John Doe"
 	storeName := "My Grocery Store"
 
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"users\"*").
@@ -34,7 +34,7 @@ func (s *Suite) TestCreateUser_UserCreated() {
 
 	userID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"users\" (.+)$").
-		WithArgs(email, sqlmock.AnyArg(), "", "", AnyTime{}, AnyTime{}, AnyTime{}).
+		WithArgs(email, sqlmock.AnyArg(), name, AnyTime{}, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userID))
 
 	clientID := uuid.NewV4()
@@ -61,7 +61,7 @@ func (s *Suite) TestCreateUser_UserCreated() {
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
-	user, err := CreateUser(email, "password", clientID)
+	user, err := CreateUser(email, "password", name, clientID)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), user.Email, email)
 	assert.NotNil(s.T(), user.Tokens)

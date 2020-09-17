@@ -103,6 +103,9 @@ func init() {
 						"password": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
 					},
 					Resolve: resolvers.SignupResolver,
 				},

@@ -12,8 +12,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// CreateUser creates a user account with an email and password
-func CreateUser(email string, password string, clientID uuid.UUID) (*models.User, error) {
+// CreateUser creates a user account with details provided
+func CreateUser(email string, password string, name string, clientID uuid.UUID) (*models.User, error) {
 	passhash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -26,6 +26,7 @@ func CreateUser(email string, password string, clientID uuid.UUID) (*models.User
 	}
 
 	user := &models.User{
+		Name:       name,
 		Email:      email,
 		Password:   string(passhash),
 		LastSeenAt: time.Now(),

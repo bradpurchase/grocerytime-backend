@@ -123,6 +123,26 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Migrator().DropIndex(&models.GroceryTripCategory{}, "idx_grocery_trip_categories_store_category_id")
 			},
 		},
+		{
+			// Rename user first_name to name
+			ID: "202009161947_rename_user_first_name",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Migrator().RenameColumn(&models.User{}, "first_name", "name")
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().RenameColumn(&models.User{}, "name", "first_name")
+			},
+		},
+		{
+			// Drop last_name from users
+			ID: "202009161947_drop_last_name",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Migrator().DropColumn(&models.User{}, "last_name")
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().AddColumn(&models.User{}, "last_name")
+			},
+		},
 	})
 	return m.Migrate()
 }

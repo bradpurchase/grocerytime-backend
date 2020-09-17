@@ -24,7 +24,8 @@ func SignupResolver(p graphql.ResolveParams) (interface{}, error) {
 	// Create a new user account with the args provided
 	email := p.Args["email"].(string)
 	password := p.Args["password"].(string)
-	user, err := auth.CreateUser(email, password, apiClient.ID)
+	name := p.Args["name"].(string)
+	user, err := auth.CreateUser(email, password, name, apiClient.ID)
 	if err != nil {
 		return nil, err
 	}
