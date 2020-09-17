@@ -19,10 +19,7 @@ var UserType = graphql.NewObject(
 			"email": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.String),
 			},
-			"firstName": &graphql.Field{
-				Type: graphql.String,
-			},
-			"lastName": &graphql.Field{
+			"name": &graphql.Field{
 				Type: graphql.String,
 			},
 			"createdAt": &graphql.Field{

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	uuid "github.com/satori/go.uuid"
-	"gorm.io/gorm"
 )
 
 type User struct {
@@ -20,15 +19,4 @@ type User struct {
 	// Associations
 	Stores []Store
 	Tokens []AuthToken
-}
-
-// AfterCreate hook to automatically create some associated records
-func (u *User) AfterCreate(tx *gorm.DB) (err error) {
-	// Create default store
-	store := Store{UserID: u.ID, Name: "My Grocery Store"}
-	if err := tx.Create(&store).Error; err != nil {
-		return err
-	}
-
-	return
 }
