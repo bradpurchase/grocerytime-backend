@@ -43,5 +43,6 @@ func (s *Suite) TestCreateUser_UserCreated() {
 	user, err := CreateUser(email, "password", name, clientID)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), user.Email, email)
+	assert.Equal(s.T(), user.Name, name)
 	assert.NotNil(s.T(), user.Tokens)
 }
