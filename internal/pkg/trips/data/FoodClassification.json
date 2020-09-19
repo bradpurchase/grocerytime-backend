@@ -586,6 +586,10 @@
       "label": "Produce"
     },
     {
+      "text": "oranges",
+      "label": "Produce"
+    },
+    {
       "text": "carrots",
       "label": "Produce"
     },
@@ -603,6 +607,22 @@
     },
     {
       "text": "onions",
+      "label": "Produce"
+    },
+    {
+      "text": "potato",
+      "label": "Produce"
+    },
+    {
+      "text": "tomato",
+      "label": "Produce"
+    },
+    {
+      "text": "salad",
+      "label": "Produce"
+    },
+    {
+      "text": "brussels sprouts",
       "label": "Produce"
     },
     {

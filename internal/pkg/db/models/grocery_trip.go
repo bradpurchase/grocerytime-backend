@@ -43,6 +43,8 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 		// If the completed trip was configured to copy its remaining items
 		// over to the next trip, perform this operation - otherwise, mark
 		// each item in the completed trip as completed
+		completed := true
+		columns := Item{Completed: &completed}
 		if g.CopyRemainingItems {
 			// Duplicate the catgeory associated with each item
 			remainingItems := []Item{}
@@ -69,25 +71,16 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 				if err := tx.Where(groceryTripCategory).FirstOrCreate(&groceryTripCategory).Error; err != nil {
 					return err
 				}
-				updateItemsQuery := tx.
-					Model(&Item{}).
-					Where("grocery_trip_id = ? AND completed = ?", g.ID, false).
-					UpdateColumns(Item{GroceryTripID: newTrip.ID, CategoryID: &groceryTripCategory.ID}).
-					Error
-				if err := updateItemsQuery; err != nil {
-					return err
-				}
+				columns = Item{GroceryTripID: newTrip.ID, CategoryID: &groceryTripCategory.ID}
 			}
-		} else {
-			completed := true
-			updateItemsQuery := tx.
-				Model(&Item{}).
-				Where("grocery_trip_id = ? AND completed = ?", g.ID, false).
-				UpdateColumns(Item{Completed: &completed}).
-				Error
-			if err := updateItemsQuery; err != nil {
-				return err
-			}
+		}
+		updateItemsQuery := tx.
+			Model(&Item{}).
+			Where("grocery_trip_id = ? AND completed = ?", g.ID, false).
+			UpdateColumns(columns).
+			Error
+		if err := updateItemsQuery; err != nil {
+			return err
 		}
 	}
 	return nil
