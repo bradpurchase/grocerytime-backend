@@ -1,6 +1,8 @@
 package trips
 
 import (
+	"errors"
+
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 )
@@ -9,7 +11,7 @@ import (
 func UpdateTrip(args map[string]interface{}) (interface{}, error) {
 	trip := models.GroceryTrip{}
 	if err := db.Manager.Where("id = ?", args["tripId"]).First(&trip).Error; err != nil {
-		return nil, err
+		return nil, errors.New("trip does not exist")
 	}
 	if args["name"] != nil {
 		trip.Name = args["name"].(string)
