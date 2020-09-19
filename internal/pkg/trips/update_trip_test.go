@@ -10,18 +10,12 @@ import (
 
 func (s *Suite) TestUpdateTrip_TripNotFound() {
 	tripID := uuid.NewV4()
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
-		WithArgs(tripID).
-		WillReturnRows(s.mock.NewRows([]string{}))
 
-	args := map[string]interface{}{
-		"tripId": tripID,
-	}
-
+	args := map[string]interface{}{"tripId": tripID}
 	result, e := UpdateTrip(args)
 	require.Error(s.T(), e)
 	assert.Nil(s.T(), result)
-	assert.Equal(s.T(), e.Error(), "record not found")
+	assert.Equal(s.T(), e.Error(), "trip does not exist")
 }
 
 func (s *Suite) TestUpdateTrip_NameUpdate() {
@@ -84,15 +78,7 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 	storeID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(tripID).
-		WillReturnRows(s.mock.
-			NewRows([]string{"id", "store_id", "name"}).
-			AddRow(tripID, storeID, "Trip 1"))
-
-	args := map[string]interface{}{
-		"tripId":             tripID,
-		"completed":          true,
-		"copyRemainingItems": true,
-	}
+		WillReturnRows(s.mock.NewRows([]string{"id", "store_id", "name"}).AddRow(tripID, storeID, "Trip 1"))
 
 	s.mock.ExpectBegin()
 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
@@ -101,13 +87,34 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(storeID).
 		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
+
+	newTripID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(storeID, "Trip 2", false, false, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(s.mock.NewRows([]string{"store_id"}).AddRow(storeID))
+		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(newTripID))
+
+	// Test creating a category for each remaining item
+	remainingItemID := uuid.NewV4()
+	itemCategoryID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(tripID, false).
+		WillReturnRows(s.mock.NewRows([]string{"id", "category_id"}).AddRow(remainingItemID, itemCategoryID))
+	storeCategoryID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_categories\"*").
+		WithArgs(itemCategoryID).
+		WillReturnRows(s.mock.NewRows([]string{"id", "name"}).AddRow(storeCategoryID, "Produce"))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trip_categories\"*").
+		WithArgs(newTripID, storeCategoryID).
+		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectCommit()
 
+	args := map[string]interface{}{
+		"tripId":             tripID,
+		"completed":          true,
+		"copyRemainingItems": true,
+	}
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), trip.(models.GroceryTrip).Completed, true)
