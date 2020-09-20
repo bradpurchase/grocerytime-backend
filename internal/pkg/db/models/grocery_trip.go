@@ -31,10 +31,9 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 			return err
 		}
 
-		// Create the next trip for the user.
-		// The new trip name is suffixed by a number that represents the number
-		// of trips the user has made to the store (i.e. "Trip 12")
-		newTripName := fmt.Sprintf("Trip %d", (tripsCount + 1))
+		// Create the next trip for the user
+		currentTime := time.Now()
+		newTripName := currentTime.Format("January 02, 2006")
 		newTrip := &GroceryTrip{StoreID: g.StoreID, Name: newTripName}
 		if err := tx.Create(&newTrip).Error; err != nil {
 			return err
@@ -84,4 +83,15 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 		}
 	}
 	return nil
+}
+
+// BeforeCreate hook is triggered before a trip is created
+func (g *GroceryTrip) BeforeCreate(tx *gorm.DB) (err error) {
+	// If this store has already had a trip with this name, affix a count to it to make it unique
+	var dupeCount int64
+	if err := tx.Model(&GroceryTrip{}).Where("name = ? AND store_id = ?", g.Name, g.StoreID).Count(&dupeCount).Error; err != nil {
+		return err
+	}
+	g.Name = fmt.Sprintf("%s (%d)", g.Name, (dupeCount + 1))
+	return
 }
