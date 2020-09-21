@@ -45,9 +45,11 @@ func (s *Store) AfterCreate(tx *gorm.DB) (err error) {
 	}
 
 	// Create default grocery trip
+	currentTime := time.Now()
+	tripName := currentTime.Format("Jan 02, 2006")
 	trip := GroceryTrip{
 		StoreID:            s.ID,
-		Name:               "Trip 1",
+		Name:               tripName,
 		Completed:          false,
 		CopyRemainingItems: false,
 	}

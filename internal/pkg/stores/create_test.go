@@ -1,6 +1,8 @@
 package stores
 
 import (
+	"time"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
@@ -42,8 +44,13 @@ func (s *Suite) TestCreateStore_Created() {
 			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	}
 
+	currentTime := time.Now()
+	tripName := currentTime.Format("Jan 02, 2006")
+	s.mock.ExpectQuery("^SELECT count*").
+		WithArgs(tripName, sqlmock.AnyArg()).
+		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(0))
 	s.mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), "Trip 1", false, false, AnyTime{}, AnyTime{}, nil).
+		WithArgs(sqlmock.AnyArg(), tripName, false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	s.mock.ExpectCommit()
 
