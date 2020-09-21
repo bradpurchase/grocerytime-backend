@@ -88,12 +88,12 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 // BeforeCreate hook is triggered before a trip is created
 func (g *GroceryTrip) BeforeCreate(tx *gorm.DB) (err error) {
 	// If this store has already had a trip with this name, affix a count to it to make it unique
-	var dupeCount int64
-	if err := tx.Model(&GroceryTrip{}).Where("name = ? AND store_id = ?", g.Name, g.StoreID).Count(&dupeCount).Error; err != nil {
+	var count int64
+	if err := tx.Model(&GroceryTrip{}).Where("name = ? AND store_id = ?", g.Name, g.StoreID).Count(&count).Error; err != nil {
 		return err
 	}
-	if dupeCount > 0 {
-		g.Name = fmt.Sprintf("%s (%d)", g.Name, (dupeCount + 1))
+	if count > 0 {
+		g.Name = fmt.Sprintf("%s (%d)", g.Name, (count + 1))
 	}
 	return
 }
