@@ -33,7 +33,7 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 
 		// Create the next trip for the user
 		currentTime := time.Now()
-		newTripName := currentTime.Format("January 02, 2006")
+		newTripName := currentTime.Format("Jan 02, 2006")
 		newTrip := &GroceryTrip{StoreID: g.StoreID, Name: newTripName}
 		if err := tx.Create(&newTrip).Error; err != nil {
 			return err
@@ -92,6 +92,8 @@ func (g *GroceryTrip) BeforeCreate(tx *gorm.DB) (err error) {
 	if err := tx.Model(&GroceryTrip{}).Where("name = ? AND store_id = ?", g.Name, g.StoreID).Count(&dupeCount).Error; err != nil {
 		return err
 	}
-	g.Name = fmt.Sprintf("%s (%d)", g.Name, (dupeCount + 1))
+	if dupeCount > 0 {
+		g.Name = fmt.Sprintf("%s (%d)", g.Name, (dupeCount + 1))
+	}
 	return
 }
