@@ -105,8 +105,6 @@ func CreateGroceryTripCategory(tripID uuid.UUID, name string) (models.GroceryTri
 // DetermineCategoryName opens the FoodClassification.json file and
 // scans it for the classification associated with the food item very quickly using gson
 func DetermineCategoryName(name string) string {
-	properName := strings.ToLower(name)
-
 	absPath, _ := filepath.Abs("internal/pkg/trips/data/FoodClassification.json")
 	json, err := ioutil.ReadFile(absPath)
 	if err != nil {
@@ -114,6 +112,7 @@ func DetermineCategoryName(name string) string {
 	}
 	jsonString := string(json)
 
+	properName := strings.ToLower(name)
 	search := fmt.Sprintf("foods.#(text%%\"%s*\").label", properName)
 	value := gjson.Get(jsonString, search)
 	foundCategory := value.String()
