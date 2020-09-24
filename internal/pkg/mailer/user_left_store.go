@@ -19,9 +19,9 @@ func SendUserLeftStoreEmail(storeName string, listUserEmail string, recipientEma
 	htmlContent := "<p>Hello,</p>"
 	htmlContent += "<p>A member of your list <strong>" + storeName + "</strong>, "
 	htmlContent += "<strong>" + listUserEmail + "</strong>, has left.</p>"
-	htmlContent += "<p>This person no longer has access to this list. If you still "
-	htmlContent += "want this person in your list, you are able to re-invite them by "
-	htmlContent += "  tapping the share icon in the top right when you are viewing the list.</p>"
+	htmlContent += "<p>This person no longer has access to this store in the app. If you still "
+	htmlContent += "want this person to work on this store list with you, you are able to re-invite them by "
+	htmlContent += "  tapping the share icon in the top right when you are viewing the store in the app.</p>"
 	htmlContent += "<p>Regards,<br />Brad from GroceryTime</p>"
 	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"
 

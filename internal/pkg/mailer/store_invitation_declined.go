@@ -19,7 +19,7 @@ func SendStoreInviteDeclinedEmail(storeName string, invitedUserEmail string, rec
 	htmlContent := "<p>Hello,</p>"
 	htmlContent += "<p>This email is to inform you that, sadly, your invitation "
 	htmlContent += "sent to <strong>" + invitedUserEmail + "</strong> to join your "
-	htmlContent += "list <strong>" + storeName + "</strong> was declined.</p>"
+	htmlContent += "list for <strong>" + storeName + "</strong> was declined.</p>"
 	htmlContent += "<p>Regards,<br />Brad from GroceryTime</p>"
 	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"
 

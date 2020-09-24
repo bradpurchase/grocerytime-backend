@@ -10,11 +10,11 @@ import (
 // SendStoreRenamedEmail sends an email to a list user about a list being renamed
 func SendStoreRenamedEmail(oldName string, newName string, email string) (interface{}, error) {
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
-	subject := "Your shared list was renamed 📝"
+	subject := "An update to one of your grocery lists in GroceryTime 📝"
 	to := mail.NewEmail("", email)
 
 	plainTextContent := "The list " + oldName + " was renamed to " + newName + "."
-	htmlContent := "<p>Your shared list \"" + oldName + "\" has been renamed to \"" + newName + "\".</p>"
+	htmlContent := "<p>Your list \"" + oldName + "\" has been renamed to \"" + newName + "\".</p>"
 	htmlContent += "<p>----</p>"
 	htmlContent += "<p>This message was sent to you because you are a member of the " + newName + " grocery list on GroceryTime.</p>"
 	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"

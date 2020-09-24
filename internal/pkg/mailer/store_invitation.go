@@ -18,9 +18,8 @@ func SendStoreInvitationEmail(storeName string, email string) (interface{}, erro
 	plainTextContent += "Click here to download GroceryTime: https://grocerytime.app/download"
 
 	htmlContent := "<p>Hello,</p>"
-	htmlContent += "<p>You've been invited to join <strong>" + storeName + "</strong>, a grocery list on the app GroceryTime.</p>"
-	htmlContent += "<p>When you join a list, you can work on it together and see updates in real time. "
-	htmlContent += "You can also track your separate grocery trips from week to week (or any interval you like!) and view past trips. It makes grocery time so much easier!</p>"
+	htmlContent += "<p>You've been invited to join the grocery list <strong>" + storeName + "</strong> on the app GroceryTime.</p>"
+	htmlContent += "<p>When you join someone on GroceryTime, you can work together on grocery lists, stay organized, and make shopping super easy!</p>"
 	htmlContent += "<p>Simply download the app and sign up with this email address (" + email + ") to join. Click here to download GroceryTime: https://grocerytime.app/download</p>"
 	htmlContent += "<p>All the best,<br />Brad from GroceryTime</p>"
 	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"

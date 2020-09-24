@@ -15,7 +15,7 @@ func SendStoreDeletedEmail(storeName string, userEmail string) (interface{}, err
 
 	plainTextContent := "The list " + storeName + " has been deleted by the creator."
 	htmlContent := "<p>Hello,</p>"
-	htmlContent += "<p>This is to inform you that the list " + storeName + " has been deleted. You can no longer access this list or its items.</p>"
+	htmlContent += "<p>This is to inform you that your list for the store " + storeName + " has been deleted. You can no longer access this store in the app.</p>"
 	htmlContent += "<p>Thanks,<br />Brad from GroceryTime</p>"
 	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"
 
