@@ -9,6 +9,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/migration"
 )
@@ -23,11 +24,29 @@ var Manager *gorm.DB
 // FetchConnection establishes a database connection
 func FetchConnection() *gorm.DB {
 	dsn := os.Getenv("POSTGRES_DSN")
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: SetLogger(),
+	})
 	if err != nil {
 		log.Panic("[db] Database connection err: ", err)
 	}
 	return db
+}
+
+// SetLogger determines the log level based on DB_LOGMODE environment variable
+func SetLogger() logger.Interface {
+	var logLevel logger.LogLevel
+	switch logMode := os.Getenv("DB_LOGMODE"); logMode {
+	case "error":
+		logLevel = 2
+	case "warn":
+		logLevel = 3
+	case "info":
+		logLevel = 4
+	default:
+		logLevel = 1
+	}
+	return logger.Default.LogMode(logLevel)
 }
 
 func Factory() {
