@@ -68,11 +68,11 @@ func (s *Suite) TestRemoveUserFromStore_StoreNotFound() {
 
 func (s *Suite) TestRemoveUserFromStore_StoreUserNotFound() {
 	storeID := uuid.NewV4()
-	user := models.User{ID: uuid.NewV4()}
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
 
+	user := models.User{ID: uuid.NewV4()}
 	_, e := RemoveUserFromStore(user, storeID)
 	require.Error(s.T(), e)
 	assert.Equal(s.T(), e.Error(), "store user not found")
@@ -99,7 +99,6 @@ func (s *Suite) TestRemoveUserFromStore_SuccessInvitedUser() {
 
 	s.mock.ExpectBegin()
 	s.mock.ExpectExec("UPDATE \"store_users\"*").
-		WithArgs(AnyTime{}, storeUser.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectCommit()
 
@@ -124,7 +123,7 @@ func (s *Suite) TestRemoveUserFromStore_SuccessJoinedStoreUser() {
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
 
-	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
+	user := models.User{ID: uuid.NewV4(), Email: "test@example.com", Name: "Jane"}
 	storeUser := models.StoreUser{
 		ID:      uuid.NewV4(),
 		StoreID: storeID,
@@ -139,7 +138,6 @@ func (s *Suite) TestRemoveUserFromStore_SuccessJoinedStoreUser() {
 
 	s.mock.ExpectBegin()
 	s.mock.ExpectExec("UPDATE \"store_users\"*").
-		WithArgs(AnyTime{}, storeUser.ID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectCommit()
 
@@ -152,9 +150,9 @@ func (s *Suite) TestRemoveUserFromStore_SuccessJoinedStoreUser() {
 	s.mock.ExpectQuery("^SELECT \"email\" FROM \"users\"*").
 		WithArgs(creatorUserID).
 		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(creatorUser.Email))
-	s.mock.ExpectQuery("^SELECT \"email\" FROM \"users\"*").
+	s.mock.ExpectQuery("^SELECT \"name\" FROM \"users\"*").
 		WithArgs(storeUser.UserID).
-		WillReturnRows(sqlmock.NewRows([]string{"email"}).AddRow(user.Email))
+		WillReturnRows(sqlmock.NewRows([]string{"name"}).AddRow(user.Name))
 
 	lu, err := RemoveUserFromStore(user, storeID)
 	require.NoError(s.T(), err)
