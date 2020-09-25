@@ -8,7 +8,7 @@ import (
 )
 
 // SendStoreInvitationEmail sends an email to a person being invited to join a list
-func SendStoreInvitationEmail(storeName string, email string) (interface{}, error) {
+func SendStoreInvitationEmail(storeName string, email string, inviterName string) (interface{}, error) {
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
 	subject := "You've been invited to join " + storeName + " on GroceryTime 🛒"
 	to := mail.NewEmail("", email)
@@ -18,7 +18,7 @@ func SendStoreInvitationEmail(storeName string, email string) (interface{}, erro
 	plainTextContent += "Click here to download GroceryTime: https://grocerytime.app/download"
 
 	htmlContent := "<p>Hello,</p>"
-	htmlContent += "<p>You've been invited to join the grocery list <strong>" + storeName + "</strong> on the app GroceryTime.</p>"
+	htmlContent += "<p>" + inviterName + " has invited you to join them on GroceryTime to work on their <strong>" + storeName + "</strong> grocery list.</p>"
 	htmlContent += "<p>When you join someone on GroceryTime, you can work together on grocery lists, stay organized, and make shopping super easy!</p>"
 	htmlContent += "<p>Simply download the app and sign up with this email address (" + email + ") to join. Click here to download GroceryTime: https://grocerytime.app/download</p>"
 	htmlContent += "<p>All the best,<br />Brad from GroceryTime</p>"

@@ -31,10 +31,16 @@ type StoreUser struct {
 func (lu *StoreUser) AfterCreate(tx *gorm.DB) (err error) {
 	if len(lu.Email) > 0 {
 		store := Store{}
-		if err := tx.Select("name").Where("id = ?", lu.StoreID).First(&store).Error; err != nil {
+		if err := tx.Select("name, user_id").Where("id = ?", lu.StoreID).First(&store).Error; err != nil {
 			return err
 		}
-		_, err := mailer.SendStoreInvitationEmail(store.Name, lu.Email)
+
+		// Retrieve the name of the user who created this list by using store.UserID
+		creatorUser := User{}
+		if err := tx.Select("name").Where("id = ?", store.UserID).First(&creatorUser).Error; err != nil {
+			return err
+		}
+		_, err := mailer.SendStoreInvitationEmail(store.Name, lu.Email, creatorUser.Name)
 		if err != nil {
 			return err
 		}
