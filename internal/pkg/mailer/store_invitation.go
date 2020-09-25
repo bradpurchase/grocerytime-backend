@@ -9,24 +9,28 @@ import (
 
 // SendStoreInvitationEmail sends an email to a person being invited to join a list
 func SendStoreInvitationEmail(storeName string, email string, inviterName string) (interface{}, error) {
+	m := mail.NewV3Mail()
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
-	subject := "You've been invited to join " + storeName + " on GroceryTime 🛒"
-	to := mail.NewEmail("", email)
+	m.SetFrom(from)
+	m.SetTemplateID("d-39b0bd8d6b8747fcacbce147020364cd")
 
-	plainTextContent := "You've been invited to join " + storeName + " on GroceryTime. "
-	plainTextContent += "Simply download the app and sign up with this email address to join. "
-	plainTextContent += "Click here to download GroceryTime: https://grocerytime.app/download"
+	p := mail.NewPersonalization()
+	toAddresses := []*mail.Email{
+		mail.NewEmail("", email),
+	}
+	p.AddTos(toAddresses...)
 
-	htmlContent := "<p>Hello,</p>"
-	htmlContent += "<p>" + inviterName + " has invited you to join them on GroceryTime to work on their <strong>" + storeName + "</strong> grocery list.</p>"
-	htmlContent += "<p>When you join someone on GroceryTime, you can work together on grocery lists, stay organized, and make shopping super easy!</p>"
-	htmlContent += "<p>Simply download the app and sign up with this email address (" + email + ") to join. Click here to download GroceryTime: https://grocerytime.app/download</p>"
-	htmlContent += "<p>All the best,<br />Brad from GroceryTime</p>"
-	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"
+	p.SetDynamicTemplateData("first_name", inviterName)
+	p.SetDynamicTemplateData("unique_name", storeName)
+	p.SetDynamicTemplateData("email", email)
 
-	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
-	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
-	response, err := client.Send(message)
+	m.AddPersonalizations(p)
+
+	request := sendgrid.GetRequest(os.Getenv("SENDGRID_API_KEY"), "/v3/mail/send", "https://api.sendgrid.com")
+	request.Method = "POST"
+	var Body = mail.GetRequestBody(m)
+	request.Body = Body
+	response, err := sendgrid.API(request)
 	if err != nil {
 		return nil, err
 	}
