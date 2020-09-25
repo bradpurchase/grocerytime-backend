@@ -9,25 +9,28 @@ import (
 
 // SendUserLeftStoreEmail is sent to a list creator to inform them
 // about a member of their list leaving
-func SendUserLeftStoreEmail(storeName string, listUserEmail string, recipientEmail string) (interface{}, error) {
+func SendUserLeftStoreEmail(storeName string, listUserName string, recipientEmail string) (interface{}, error) {
+	m := mail.NewV3Mail()
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
-	subject := "Someone left your " + storeName + " list 👋"
-	to := mail.NewEmail("", recipientEmail)
+	m.SetFrom(from)
+	m.SetTemplateID("d-63341b53948a4fee84da900aeae8f0f3")
 
-	plainTextContent := "The member " + listUserEmail + " has left your list " + storeName + "."
+	p := mail.NewPersonalization()
+	toAddresses := []*mail.Email{
+		mail.NewEmail("", recipientEmail),
+	}
+	p.AddTos(toAddresses...)
 
-	htmlContent := "<p>Hello,</p>"
-	htmlContent += "<p>A member of your list <strong>" + storeName + "</strong>, "
-	htmlContent += "<strong>" + listUserEmail + "</strong>, has left.</p>"
-	htmlContent += "<p>This person no longer has access to this store in the app. If you still "
-	htmlContent += "want this person to work on this store list with you, you are able to re-invite them by "
-	htmlContent += "  tapping the share icon in the top right when you are viewing the store in the app.</p>"
-	htmlContent += "<p>Regards,<br />Brad from GroceryTime</p>"
-	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"
+	p.SetDynamicTemplateData("user_name", listUserName)
+	p.SetDynamicTemplateData("store_name", storeName)
 
-	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
-	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
-	response, err := client.Send(message)
+	m.AddPersonalizations(p)
+
+	request := sendgrid.GetRequest(os.Getenv("SENDGRID_API_KEY"), "/v3/mail/send", "https://api.sendgrid.com")
+	request.Method = "POST"
+	var Body = mail.GetRequestBody(m)
+	request.Body = Body
+	response, err := sendgrid.API(request)
 	if err != nil {
 		return nil, err
 	}

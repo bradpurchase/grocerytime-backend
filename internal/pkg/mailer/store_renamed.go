@@ -9,19 +9,27 @@ import (
 
 // SendStoreRenamedEmail sends an email to a list user about a list being renamed
 func SendStoreRenamedEmail(oldName string, newName string, email string) (interface{}, error) {
+	m := mail.NewV3Mail()
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
-	subject := "An update to one of your grocery lists in GroceryTime 📝"
-	to := mail.NewEmail("", email)
+	m.SetFrom(from)
+	m.SetTemplateID("d-1af58330d6a3429fa67f5f816733e05b")
 
-	plainTextContent := "The list " + oldName + " was renamed to " + newName + "."
-	htmlContent := "<p>Your list \"" + oldName + "\" has been renamed to \"" + newName + "\".</p>"
-	htmlContent += "<p>----</p>"
-	htmlContent += "<p>This message was sent to you because you are a member of the " + newName + " grocery list on GroceryTime.</p>"
-	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"
+	p := mail.NewPersonalization()
+	toAddresses := []*mail.Email{
+		mail.NewEmail("", email),
+	}
+	p.AddTos(toAddresses...)
 
-	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
-	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
-	response, err := client.Send(message)
+	p.SetDynamicTemplateData("unique_name", oldName)
+	p.SetDynamicTemplateData("unique_name_2", newName)
+
+	m.AddPersonalizations(p)
+
+	request := sendgrid.GetRequest(os.Getenv("SENDGRID_API_KEY"), "/v3/mail/send", "https://api.sendgrid.com")
+	request.Method = "POST"
+	var Body = mail.GetRequestBody(m)
+	request.Body = Body
+	response, err := sendgrid.API(request)
 	if err != nil {
 		return nil, err
 	}

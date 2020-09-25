@@ -10,22 +10,27 @@ import (
 // SendStoreInviteDeclinedEmail is sent to a store creator to inform them
 // about a store invite to another user being declined
 func SendStoreInviteDeclinedEmail(storeName string, invitedUserEmail string, recipientEmail string) (interface{}, error) {
+	m := mail.NewV3Mail()
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
-	subject := "Invitation declined to join " + storeName + " on GroceryTime 😞"
-	to := mail.NewEmail("", recipientEmail)
+	m.SetFrom(from)
+	m.SetTemplateID("d-c7cf36bec4b94157adc9f4a90cd5e1c1")
 
-	plainTextContent := "Your invitation sent to " + invitedUserEmail + " was declined"
+	p := mail.NewPersonalization()
+	toAddresses := []*mail.Email{
+		mail.NewEmail("", recipientEmail),
+	}
+	p.AddTos(toAddresses...)
 
-	htmlContent := "<p>Hello,</p>"
-	htmlContent += "<p>This email is to inform you that, sadly, your invitation "
-	htmlContent += "sent to <strong>" + invitedUserEmail + "</strong> to join your "
-	htmlContent += "list for <strong>" + storeName + "</strong> was declined.</p>"
-	htmlContent += "<p>Regards,<br />Brad from GroceryTime</p>"
-	htmlContent += "<p>If you have any questions, concerns, or general feedback about GroceryTime, please email us at <a href=\"mailto:support@grocerytime.app\">support@grocerytime.app</a></p>"
+	p.SetDynamicTemplateData("email", invitedUserEmail)
+	p.SetDynamicTemplateData("unique_name", storeName)
 
-	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
-	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
-	response, err := client.Send(message)
+	m.AddPersonalizations(p)
+
+	request := sendgrid.GetRequest(os.Getenv("SENDGRID_API_KEY"), "/v3/mail/send", "https://api.sendgrid.com")
+	request.Method = "POST"
+	var Body = mail.GetRequestBody(m)
+	request.Body = Body
+	response, err := sendgrid.API(request)
 	if err != nil {
 		return nil, err
 	}

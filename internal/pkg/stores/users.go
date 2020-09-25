@@ -77,7 +77,7 @@ func RemoveUserFromStore(user models.User, storeID interface{}) (interface{}, er
 		return nil, errors.New("store user not found")
 	}
 
-	if err := db.Manager.Delete(&storeUser).Error; err != nil {
+	if err := db.Manager.Where("id = ?", &storeUser.ID).Delete(&storeUser).Error; err != nil {
 		return nil, err
 	}
 
@@ -100,10 +100,10 @@ func RemoveUserFromStore(user models.User, storeID interface{}) (interface{}, er
 		}
 	} else {
 		storeUserUser := &models.User{}
-		if err := db.Manager.Select("email").Where("id = ?", storeUser.UserID).Find(&storeUserUser).Error; err != nil {
+		if err := db.Manager.Select("name").Where("id = ?", storeUser.UserID).Find(&storeUserUser).Error; err != nil {
 			return nil, err
 		}
-		_, err := mailer.SendUserLeftStoreEmail(store.Name, storeUserUser.Email, creatorUser.Email)
+		_, err := mailer.SendUserLeftStoreEmail(store.Name, storeUserUser.Name, creatorUser.Email)
 		if err != nil {
 			return nil, err
 		}
