@@ -44,7 +44,7 @@ func SetLogger() logger.Interface {
 	case "info":
 		logLevel = 4
 	default:
-		logLevel = 1
+		logLevel = 1 // silent
 	}
 	return logger.Default.LogMode(logLevel)
 }
