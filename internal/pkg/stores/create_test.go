@@ -18,7 +18,7 @@ func (s *Suite) TestCreateStore_DupeStore() {
 
 	_, e := CreateStore(userID, storeName)
 	require.Error(s.T(), e)
-	assert.Equal(s.T(), e.Error(), "You already added a store with this name")
+	assert.Equal(s.T(), e.Error(), "you already added a store with this name")
 }
 
 func (s *Suite) TestCreateStore_Created() {
