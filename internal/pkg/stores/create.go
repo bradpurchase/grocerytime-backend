@@ -12,7 +12,7 @@ import (
 func CreateStore(userID uuid.UUID, name string) (models.Store, error) {
 	dupeStore, _ := RetrieveStoreForUserByName(name, userID)
 	if dupeStore.Name != "" {
-		return models.Store{}, errors.New("You already added a store with this name")
+		return models.Store{}, errors.New("you already added a store with this name")
 	}
 	store := models.Store{UserID: userID, Name: name}
 	if err := db.Manager.Create(&store).Error; err != nil {

@@ -41,7 +41,7 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (interface{}, error)
 		Completed:     &itemCompleted,
 	}
 
-	// If categoryName is explicily provided in the arguments, use it,
+	// If categoryName is explicitly provided in the arguments, use it,
 	// otherwise we need to determine it automagically ✨
 	var categoryName string
 	if args["categoryName"] != nil {

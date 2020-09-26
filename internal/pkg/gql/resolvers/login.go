@@ -29,7 +29,7 @@ func LoginResolver(p graphql.ResolveParams) (interface{}, error) {
 	email := p.Args["email"]
 	password := p.Args["password"]
 	if email == nil || password == nil {
-		return nil, errors.New("Missing required arguments for login: email, password")
+		return nil, errors.New("missing required arguments for login: email, password")
 	}
 
 	//TODO i18n

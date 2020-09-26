@@ -11,7 +11,7 @@ import (
 
 // RetrieveUserStores retrieves stores that the userID has created or has been added to
 func RetrieveUserStores(user models.User) ([]models.Store, error) {
-	stores := []models.Store{}
+	var stores []models.Store
 	query := db.Manager.
 		Select("stores.*").
 		Joins("INNER JOIN store_users ON store_users.store_id = stores.id").
@@ -29,7 +29,7 @@ func RetrieveUserStores(user models.User) ([]models.Store, error) {
 
 // RetrieveInvitedUserStores retrieves stores that the userID has created or has been added to
 func RetrieveInvitedUserStores(user models.User) ([]models.Store, error) {
-	stores := []models.Store{}
+	var stores []models.Store
 	query := db.Manager.
 		Select("stores.*").
 		Joins("INNER JOIN store_users ON store_users.store_id = stores.id").
@@ -86,7 +86,7 @@ func DeleteStore(storeID interface{}, userID uuid.UUID) (models.Store, error) {
 	}
 
 	// Delete items in each trip in this store, and then delete the trips themselves
-	trips := []models.GroceryTrip{}
+	var trips []models.GroceryTrip
 	if err := db.Manager.Where("store_id = ?", storeID).Find(&trips).Error; err != nil {
 		return store, errors.New("couldn't find trips in store")
 	}
@@ -96,7 +96,7 @@ func DeleteStore(storeID interface{}, userID uuid.UUID) (models.Store, error) {
 		// Note: we can just use `.Delete` directly here because
 		// we don't need to do anything with the items after deletion.
 		// for store users we need to fetch, notify, and *then* delete
-		items := []models.Item{}
+		var items []models.Item
 		if err := db.Manager.Where("grocery_trip_id = ?", tripID).Delete(&items).Error; err != nil {
 			return store, errors.New("couldn't delete items in this store's trips")
 		}
@@ -107,7 +107,7 @@ func DeleteStore(storeID interface{}, userID uuid.UUID) (models.Store, error) {
 		}
 	}
 
-	storeUsers := []models.StoreUser{}
+	var storeUsers []models.StoreUser
 	if err := db.Manager.Where("store_id = ?", storeID).Find(&storeUsers).Error; err != nil {
 		return store, errors.New("couldn't retrieve store users")
 	}

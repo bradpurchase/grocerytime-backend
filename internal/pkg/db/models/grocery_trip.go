@@ -45,8 +45,8 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 		completed := true
 		columns := Item{Completed: &completed}
 		if g.CopyRemainingItems {
-			// Duplicate the catgeory associated with each item
-			remainingItems := []Item{}
+			// Duplicate the category associated with each item
+			var remainingItems []Item
 			if err := tx.Where("grocery_trip_id = ? AND completed = ?", g.ID, false).Find(&remainingItems).Error; err != nil {
 				return err
 			}
@@ -93,7 +93,7 @@ func (g *GroceryTrip) BeforeCreate(tx *gorm.DB) (err error) {
 		return err
 	}
 	if count > 0 {
-		g.Name = fmt.Sprintf("%s (%d)", g.Name, (count + 1))
+		g.Name = fmt.Sprintf("%s (%d)", g.Name, count + 1)
 	}
 	return
 }

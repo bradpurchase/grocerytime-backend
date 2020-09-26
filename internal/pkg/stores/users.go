@@ -114,7 +114,7 @@ func RemoveUserFromStore(user models.User, storeID interface{}) (interface{}, er
 
 // RetrieveStoreUsers finds all store users in a store by storeID5
 func RetrieveStoreUsers(storeID uuid.UUID) (interface{}, error) {
-	storeUsers := []models.StoreUser{}
+	var storeUsers []models.StoreUser
 	if err := db.Manager.Where("store_id = ?", storeID).Order("created_at ASC").Find(&storeUsers).Error; err != nil {
 		return nil, err
 	}
