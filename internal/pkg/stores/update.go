@@ -8,6 +8,7 @@ import (
 )
 
 // UpdateStoreForUser updates a store for the given userID with the provided args
+// Note: only a store creator can update a store, so we check for the user_id on the store record itself
 func UpdateStoreForUser(userID uuid.UUID, args map[string]interface{}) (interface{}, error) {
 	store := &models.Store{}
 	if err := db.Manager.Where("id = ? AND user_id = ?", args["storeId"], userID).First(&store).Error; err != nil {

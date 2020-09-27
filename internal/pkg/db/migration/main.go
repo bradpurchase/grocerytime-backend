@@ -143,6 +143,19 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Migrator().AddColumn(&models.User{}, "last_name")
 			},
 		},
+		{
+			// Add default_store to store_users
+			ID: "202009261422_add_default_store_to_store_users",
+			Migrate: func(tx *gorm.DB) error {
+				type StoreUser struct {
+					DefaultStore bool
+				}
+				return tx.AutoMigrate(&models.StoreUser{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropColumn(&models.StoreUser{}, "default_store")
+			},
+		},
 	})
 	return m.Migrate()
 }

@@ -175,7 +175,7 @@ func (s *Suite) TestAddUserToStore_UserNotFoundInStore() {
 	require.Error(s.T(), e)
 }
 
-func (s *Suite) TestAddUserToStore_Success() {
+func (s *Suite) TestAddUserToStore_SuccessFirstStoreSetToDefault() {
 	storeID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
 		WithArgs(storeID).
@@ -189,6 +189,9 @@ func (s *Suite) TestAddUserToStore_Success() {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "email"}).AddRow(storeUserID, email))
 
 	s.mock.ExpectBegin()
+	s.mock.ExpectQuery("^SELECT count*").
+		WithArgs(user.ID, true).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 	s.mock.ExpectExec("^UPDATE \"store_users\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectCommit()
@@ -198,6 +201,36 @@ func (s *Suite) TestAddUserToStore_Success() {
 	assert.Equal(s.T(), storeUser.(*models.StoreUser).ID, storeUserID)
 	assert.Equal(s.T(), storeUser.(*models.StoreUser).UserID, user.ID)
 	assert.Equal(s.T(), storeUser.(*models.StoreUser).Email, "")
+	assert.Equal(s.T(), storeUser.(*models.StoreUser).DefaultStore, true)
+}
+
+func (s *Suite) TestAddUserToStore_SuccessNotDefault() {
+	storeID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(storeID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
+
+	email := "test@example.com"
+	user := models.User{ID: uuid.NewV4(), Email: email}
+	storeUserID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(storeID, user.Email).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "email"}).AddRow(storeUserID, email))
+
+	s.mock.ExpectBegin()
+	s.mock.ExpectQuery("^SELECT count*").
+		WithArgs(user.ID, true).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(2))
+	s.mock.ExpectExec("^UPDATE \"store_users\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
+	storeUser, err := AddUserToStore(user, storeID)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), storeUser.(*models.StoreUser).ID, storeUserID)
+	assert.Equal(s.T(), storeUser.(*models.StoreUser).UserID, user.ID)
+	assert.Equal(s.T(), storeUser.(*models.StoreUser).Email, "")
+	assert.Equal(s.T(), storeUser.(*models.StoreUser).DefaultStore, false)
 }
 
 func (s *Suite) TestRetrieveStoreUsers_HasStoreUsers() {
