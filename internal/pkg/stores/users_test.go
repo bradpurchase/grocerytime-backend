@@ -21,8 +21,11 @@ func (s *Suite) TestInviteToStoreByEmail_UserExistsNotYetAdded() {
 		WithArgs(storeID, email, false).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
+	s.mock.ExpectQuery("^SELECT count*").
+		WithArgs(sqlmock.AnyArg(), true).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
 	s.mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
-		WithArgs(storeID, sqlmock.AnyArg(), email, false, false, AnyTime{}, AnyTime{}, nil).
+		WithArgs(storeID, sqlmock.AnyArg(), email, false, false, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
 	s.mock.ExpectQuery("^SELECT name, user_id FROM \"stores\"*").
 		WithArgs(storeID).
