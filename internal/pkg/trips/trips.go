@@ -11,19 +11,19 @@ import (
 
 // RetrieveCurrentStoreTrip retrieves the currently active grocery trip in a
 // store by storeID if the userID has access to to the store
-func RetrieveCurrentStoreTrip(storeID uuid.UUID, user models.User) (interface{}, error) {
+func RetrieveCurrentStoreTrip(storeID uuid.UUID, user models.User) (groceryTrip models.GroceryTrip, err error) {
 	query := db.Manager.
 		Where("store_id = ?", storeID).
 		Where("user_id = ? OR email = ?", user.ID, user.Email).
 		Find(&models.StoreUser{}).
 		Error
 	if err := query; err != nil {
-		return nil, errors.New("user is not a member of this store")
+		return groceryTrip, errors.New("user is not a member of this store")
 	}
 
 	trip := models.GroceryTrip{}
 	if err := db.Manager.Where("store_id = ? AND completed = ?", storeID, false).Order("created_at DESC").Find(&trip).Error; err != nil {
-		return nil, errors.New("could not find trip associated with this store")
+		return groceryTrip, errors.New("could not find trip associated with this store")
 	}
 	return trip, nil
 }
