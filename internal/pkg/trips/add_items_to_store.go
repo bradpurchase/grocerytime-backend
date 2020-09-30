@@ -19,7 +19,7 @@ func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems 
 	}
 
 	// Fetch the current trip for this store
-	trip, err := FindCurrentTripInStore(store.ID)
+	tripID, err := FindCurrentTripIDInStore(store.ID)
 	if err != nil {
 		return addedItems, errors.New("could not find current trip in store")
 	}
@@ -29,7 +29,7 @@ func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems 
 	for i := range itemNames {
 		itemName := itemNames[i].(string)
 		item, err := AddItem(userID, map[string]interface{}{
-			"tripId":   trip.ID,
+			"tripId":   tripID,
 			"name":     itemName,
 			"quantity": 1,
 		})
@@ -58,8 +58,8 @@ func FindOrCreateStore(userID uuid.UUID, name string) (storeRecord models.Store,
 	return store, err
 }
 
-// FindCurrentTripInStore retrieves the most recent trip in the store that hasn't been completed
-func FindCurrentTripInStore(storeID uuid.UUID) (currentTrip models.GroceryTrip, err error) {
+// FindCurrentTripIDInStore retrieves the ID of the most recent trip in the store that hasn't been completed
+func FindCurrentTripIDInStore(storeID uuid.UUID) (tripID uuid.UUID, err error) {
 	trip := models.GroceryTrip{}
 	tripQuery := db.Manager.
 		Select("id").
@@ -67,7 +67,7 @@ func FindCurrentTripInStore(storeID uuid.UUID) (currentTrip models.GroceryTrip, 
 		Last(&trip).
 		Error
 	if err := tripQuery; err != nil {
-		return currentTrip, err
+		return tripID, err
 	}
-	return trip, err
+	return trip.ID, err
 }
