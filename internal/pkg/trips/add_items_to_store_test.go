@@ -35,55 +35,6 @@ func (s *Suite) TestAddItemsToStore_CannotFindCurrentTrip() {
 	assert.Equal(s.T(), err.Error(), "could not find current trip in store")
 }
 
-// func (s *Suite) TestAddItemsToStore_CannotCreateItems() {
-// 	userID := uuid.NewV4()
-// 	storeName := "Hanks"
-// 	storeID := uuid.NewV4()
-// 	items := []interface{}{"Apples", "Oranges", "Pears"}
-// 	args := map[string]interface{}{"storeName": storeName, "items": items}
-// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
-// 		WithArgs(userID, storeName).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id", "name"}).AddRow(storeID, userID, storeName))
-
-// 	tripID := uuid.NewV4()
-// 	trip := models.GroceryTrip{ID: tripID, StoreID: storeID}
-// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
-// 		WithArgs(storeID, false).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id"}).AddRow(trip.ID, trip.StoreID))
-// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
-// 		WithArgs(trip.StoreID, userID).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}))
-
-// 	_, err := AddItemsToStore(userID, args)
-// 	require.Error(s.T(), err)
-// 	assert.Equal(s.T(), err.Error(), "could not create item")
-// }
-
-// func (s *Suite) TestAddItemsToStore_CreatesItems() {
-// 	userID := uuid.NewV4()
-// 	storeName := "Hanks"
-// 	storeID := uuid.NewV4()
-// 	items := []interface{}{"Apples", "Oranges", "Pears"}
-// 	args := map[string]interface{}{"storeName": storeName, "items": items}
-// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
-// 		WithArgs(userID, storeName).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id", "name"}).AddRow(storeID, userID, storeName))
-
-// 	tripID := uuid.NewV4()
-// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
-// 		WithArgs(storeID, false).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id", "completed"}).AddRow(tripID, false))
-
-// 	itemID := uuid.NewV4()
-// 	s.mock.ExpectQuery("^INSERT INTO \"items\" (.+)$").
-// 		WithArgs(tripID, sqlmock.AnyArg(), userID, "Apples", 1, false, 1, AnyTime{}, AnyTime{}, nil).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id", "trip_id"}).AddRow(itemID, tripID))
-
-// 	addedItems, err := AddItemsToStore(userID, args)
-// 	require.NoError(s.T(), err)
-// 	assert.Equal(s.T(), len(addedItems), 3)
-// }
-
 func (s *Suite) TestFindOrCreateStore_ExistingStoreFound() {
 	userID := uuid.NewV4()
 	storeID := uuid.NewV4()
