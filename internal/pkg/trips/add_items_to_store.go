@@ -11,7 +11,7 @@ import (
 
 // AddItemsToStore adds an array of items to a store for a user. It creates
 // the store for the user if it doesn't already exist.
-func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems []models.Item, err error) {
+func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems []*models.Item, err error) {
 	storeName := args["storeName"].(string)
 	store, err := FindOrCreateStore(userID, storeName)
 	if err != nil {

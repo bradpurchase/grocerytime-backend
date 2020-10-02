@@ -16,7 +16,7 @@ import (
 )
 
 // AddItem adds an item to a trip and handles things like permission checks
-func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem models.Item, err error) {
+func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.Item, err error) {
 	tripID := args["tripId"]
 	trip := &models.GroceryTrip{}
 	if err := db.Manager.Where("id = ?", tripID).Find(&trip).Error; err != nil {
@@ -32,7 +32,7 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem models.It
 	itemCompleted := false
 	itemName := args["name"].(string)
 	quantity := args["quantity"].(int)
-	item := models.Item{
+	item := &models.Item{
 		GroceryTripID: trip.ID,
 		UserID:        userID,
 		Name:          itemName,
