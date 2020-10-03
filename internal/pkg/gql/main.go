@@ -214,6 +214,16 @@ func init() {
 					},
 					Resolve: resolvers.UpdateItemResolver,
 				},
+				"markItemAsCompleted": &graphql.Field{
+					Type:        gql.ItemType,
+					Description: "Marks item as completed by name for user (in any store)",
+					Args: graphql.FieldConfigArgument{
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.MarkItemAsCompletedResolver,
+				},
 				"reorderItem": &graphql.Field{
 					Type:        gql.GroceryTripType,
 					Description: "Updates the order of an item in a trip",
