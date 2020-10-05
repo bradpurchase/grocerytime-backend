@@ -442,46 +442,6 @@
       "label": "Dry Goods"
     },
     {
-      "text": "frozen",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "frozen yogurt",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "ice cream",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "popcicles",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "TV dinner",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "ice",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "chicken strips",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "nuggets",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "fries",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "hash browns",
-      "label": "Frozen Foods"
-    },
-    {
       "text": "meat",
       "label": "Meat"
     },
@@ -540,6 +500,46 @@
     {
       "text": "deli",
       "label": "Meat"
+    },
+    {
+      "text": "frozen",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "frozen yogurt",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "ice cream",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "popcicles",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "TV dinner",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "ice",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "chicken strips",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "nuggets",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "fries",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "hash browns",
+      "label": "Frozen Foods"
     },
     {
       "text": "birthday",
