@@ -122,6 +122,10 @@
       "label": "Bakery"
     },
     {
+      "text": "pizza dough",
+      "label": "Bakery"
+    },
+    {
       "text": "baking",
       "label": "Baking"
     },
@@ -187,6 +191,10 @@
     },
     {
       "text": "yeast",
+      "label": "Baking"
+    },
+    {
+      "text": "graham crackers",
       "label": "Baking"
     },
     {
@@ -275,6 +283,10 @@
     },
     {
       "text": "oatmeal",
+      "label": "Cereal"
+    },
+    {
+      "text": "granola bars",
       "label": "Cereal"
     },
     {
@@ -386,6 +398,10 @@
       "label": "Dairy"
     },
     {
+      "text": "mozzarella",
+      "label": "Dairy"
+    },
+    {
       "text": "pasta",
       "label": "Dry Goods"
     },
@@ -422,40 +438,8 @@
       "label": "Dry Goods"
     },
     {
-      "text": "frozen",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "ice cream",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "popcicles",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "TV dinner",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "ice",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "chicken strips",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "nuggets",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "fries",
-      "label": "Frozen Foods"
-    },
-    {
-      "text": "hash browns",
-      "label": "Frozen Foods"
+      "text": "ramen",
+      "label": "Dry Goods"
     },
     {
       "text": "meat",
@@ -498,6 +482,10 @@
       "label": "Meat"
     },
     {
+      "text": "pork chops",
+      "label": "Meat"
+    },
+    {
       "text": "veal",
       "label": "Meat"
     },
@@ -512,6 +500,50 @@
     {
       "text": "deli",
       "label": "Meat"
+    },
+    {
+      "text": "frozen",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "frozen yogurt",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "ice cream",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "popcicles",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "TV dinner",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "ice",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "chicken strips",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "chicken nuggets",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "nuggets",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "fries",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "hash browns",
+      "label": "Frozen Foods"
     },
     {
       "text": "birthday",
@@ -566,6 +598,14 @@
       "label": "Personal Care"
     },
     {
+      "text": "deodorant",
+      "label": "Personal Care"
+    },
+    {
+      "text": "toothpaste",
+      "label": "Personal Care"
+    },
+    {
       "text": "vitamin",
       "label": "Pharmacy"
     },
@@ -586,6 +626,10 @@
       "label": "Produce"
     },
     {
+      "text": "pears",
+      "label": "Produce"
+    },
+    {
       "text": "bananas",
       "label": "Produce"
     },
@@ -595,6 +639,10 @@
     },
     {
       "text": "carrots",
+      "label": "Produce"
+    },
+    {
+      "text": "lettuce",
       "label": "Produce"
     },
     {
@@ -619,6 +667,10 @@
     },
     {
       "text": "tomato",
+      "label": "Produce"
+    },
+    {
+      "text": "dill",
       "label": "Produce"
     },
     {

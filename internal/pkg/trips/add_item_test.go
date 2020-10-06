@@ -13,9 +13,8 @@ func (s *Suite) TestAddItem_TripDoesntExist() {
 	userID := uuid.NewV4()
 	args := map[string]interface{}{"tripId": tripID}
 
-	result, err := AddItem(userID, args)
+	_, err := AddItem(userID, args)
 	require.Error(s.T(), err)
-	assert.Nil(s.T(), result)
 	assert.Equal(s.T(), err.Error(), "trip does not exist")
 }
 
@@ -32,9 +31,8 @@ func (s *Suite) TestAddItem_UserDoesntBelongInList() {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}))
 
 	args := map[string]interface{}{"tripId": tripID}
-	result, err := AddItem(userID, args)
+	_, err := AddItem(userID, args)
 	require.Error(s.T(), err)
-	assert.Nil(s.T(), result)
 	assert.Equal(s.T(), err.Error(), "user does not belong to this store")
 }
 
@@ -64,6 +62,6 @@ func (s *Suite) TestAddItem_AddsItemToTripWithCategoryName() {
 
 	item, err := AddItem(userID, args)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), item.(models.Item).ID, itemID)
-	assert.Equal(s.T(), item.(models.Item).Name, args["name"])
+	assert.Equal(s.T(), item.ID, itemID)
+	assert.Equal(s.T(), item.Name, args["name"])
 }

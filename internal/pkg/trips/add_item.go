@@ -16,23 +16,23 @@ import (
 )
 
 // AddItem adds an item to a trip and handles things like permission checks
-func AddItem(userID uuid.UUID, args map[string]interface{}) (interface{}, error) {
+func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.Item, err error) {
 	tripID := args["tripId"]
 	trip := &models.GroceryTrip{}
 	if err := db.Manager.Where("id = ?", tripID).Find(&trip).Error; err != nil {
-		return nil, errors.New("trip does not exist")
+		return addedItem, errors.New("trip does not exist")
 	}
 
 	// Verify that the current user belongs to this store
 	storeUser := &models.StoreUser{}
 	if err := db.Manager.Where("store_id = ? AND user_id = ?", trip.StoreID, userID).First(&storeUser).Error; err != nil {
-		return nil, errors.New("user does not belong to this store")
+		return addedItem, errors.New("user does not belong to this store")
 	}
 
 	itemCompleted := false
 	itemName := args["name"].(string)
 	quantity := args["quantity"].(int)
-	item := models.Item{
+	item := &models.Item{
 		GroceryTripID: trip.ID,
 		UserID:        userID,
 		Name:          itemName,
@@ -52,12 +52,12 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (interface{}, error)
 
 	category, err := FetchGroceryTripCategory(trip.ID, categoryName)
 	if err != nil {
-		return nil, errors.New("could not find or create grocery trip category")
+		return addedItem, errors.New("could not find or create grocery trip category")
 	}
 	item.CategoryID = &category.ID
 
 	if err := db.Manager.Create(&item).Error; err != nil {
-		return nil, err
+		return addedItem, err
 	}
 	return item, nil
 }
@@ -66,38 +66,38 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (interface{}, error)
 
 // FetchGroceryTripCategory retrieves a grocery trip category for a new item by
 // finding or creating a category depending on if one exists by the name provided
-func FetchGroceryTripCategory(tripID uuid.UUID, name string) (models.GroceryTripCategory, error) {
-	category := models.GroceryTripCategory{}
+func FetchGroceryTripCategory(tripID uuid.UUID, name string) (category models.GroceryTripCategory, err error) {
+	groceryTripCategory := models.GroceryTripCategory{}
 	query := db.Manager.
 		Select("grocery_trip_categories.id").
 		Joins("INNER JOIN store_categories ON store_categories.id = grocery_trip_categories.store_category_id").
 		Where("grocery_trip_categories.grocery_trip_id = ?", tripID).
 		Where("store_categories.name = ?", name).
-		First(&category).
+		First(&groceryTripCategory).
 		Error
 	if err := query; errors.Is(err, gorm.ErrRecordNotFound) {
 		newCategory, err := CreateGroceryTripCategory(tripID, name)
 		if err != nil {
-			return models.GroceryTripCategory{}, err
+			return category, err
 		}
 		return newCategory, err
 	}
-	return category, nil
+	return groceryTripCategory, nil
 }
 
 // CreateGroceryTripCategory creates a grocery trip category by name
-func CreateGroceryTripCategory(tripID uuid.UUID, name string) (models.GroceryTripCategory, error) {
+func CreateGroceryTripCategory(tripID uuid.UUID, name string) (category models.GroceryTripCategory, err error) {
 	storeCategory := models.StoreCategory{}
 	query := db.Manager.Select("id").Where("name = ?", name).First(&storeCategory).Error
 	if err := query; err != nil {
-		return models.GroceryTripCategory{}, errors.New("could not find store category")
+		return category, errors.New("could not find store category")
 	}
 	newCategory := models.GroceryTripCategory{
 		GroceryTripID:   tripID,
 		StoreCategoryID: storeCategory.ID,
 	}
 	if err := db.Manager.Create(&newCategory).Error; err != nil {
-		return models.GroceryTripCategory{}, errors.New("could not create trip category")
+		return category, errors.New("could not create trip category")
 	}
 	return newCategory, nil
 }

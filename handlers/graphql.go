@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -38,11 +39,11 @@ func GraphQLHandler() http.HandlerFunc {
 
 		// Publish to graphql pub/sub for subscriptions here if the dataset is not nil
 		//TODO clean this up
-		// operationName := opts.OperationName
-		// if operationName == "AddItemToTrip" && result.Data.(map[string]interface{})["addItemToTrip"] != nil {
-		// 	fmt.Printf("publishing message %v\n", result.Data)
-		// 	gqlPubSub.Publish("newItem", result.Data)
-		// }
+		operationName := opts.OperationName
+		if operationName == "AddItemToTrip" && result.Data.(map[string]interface{})["addItemToTrip"] != nil {
+			fmt.Printf("publishing message %v\n", result.Data)
+			gqlPubSub.Publish("newItem", result.Data)
+		}
 		// if operationName == "UpdateItem" && result.Data.(map[string]interface{})["updateItem"] != nil {
 		// 	fmt.Printf("publishing message %v\n", result.Data)
 		// 	gqlPubSub.Publish("updatedItem", result.Data)

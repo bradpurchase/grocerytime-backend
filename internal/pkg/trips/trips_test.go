@@ -53,9 +53,8 @@ func TestSuite(t *testing.T) {
 func (s *Suite) TestRetrieveCurrentStoreTrip_UserNotMemberOfStore() {
 	storeID := uuid.NewV4()
 	user := models.User{ID: uuid.NewV4()}
-	result, err := RetrieveCurrentStoreTrip(storeID, user)
+	_, err := RetrieveCurrentStoreTrip(storeID, user)
 	require.Error(s.T(), err)
-	assert.Nil(s.T(), result)
 	assert.Equal(s.T(), err.Error(), "user is not a member of this store")
 }
 
@@ -66,9 +65,8 @@ func (s *Suite) TestRetrieveCurrentStoreTrip_TripNotAssociatedWithStore() {
 		WithArgs(storeID, user.ID, user.Email).
 		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
-	result, err := RetrieveCurrentStoreTrip(storeID, user)
+	_, err := RetrieveCurrentStoreTrip(storeID, user)
 	require.Error(s.T(), err)
-	assert.Nil(s.T(), result)
 	assert.Equal(s.T(), err.Error(), "could not find trip associated with this store")
 }
 
@@ -87,7 +85,7 @@ func (s *Suite) TestRetrieveCurrentStoreTrip_FoundResult() {
 
 	trip, err := RetrieveCurrentStoreTrip(storeID, user)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), trip.(models.GroceryTrip).Name, tripName)
+	assert.Equal(s.T(), trip.Name, tripName)
 }
 
 func (s *Suite) TestRetrieveTrip_NotFound() {

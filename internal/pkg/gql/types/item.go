@@ -27,7 +27,7 @@ var ItemType = graphql.NewObject(
 			"categoryName": &graphql.Field{
 				Type: graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					groceryTripCategoryID := p.Source.(models.Item).CategoryID
+					groceryTripCategoryID := p.Source.(*models.Item).CategoryID
 					groceryTripCategory := &models.GroceryTripCategory{}
 					if err := db.Manager.Select("store_category_id").Where("id = ?", groceryTripCategoryID).First(&groceryTripCategory).Error; err != nil {
 						return nil, err

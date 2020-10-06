@@ -2,7 +2,6 @@ package trips
 
 import (
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -39,7 +38,7 @@ func (s *Suite) TestDeleteItem_SuccessMoreInCategory() {
 
 	item, err := DeleteItem(itemID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), item.(models.Item).ID, itemID)
+	assert.Equal(s.T(), item.ID, itemID)
 }
 
 func (s *Suite) TestDeleteItem_SuccessLastInCategory() {
@@ -67,5 +66,5 @@ func (s *Suite) TestDeleteItem_SuccessLastInCategory() {
 
 	item, err := DeleteItem(itemID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), item.(models.Item).ID, itemID)
+	assert.Equal(s.T(), item.ID, itemID)
 }

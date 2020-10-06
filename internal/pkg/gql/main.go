@@ -3,12 +3,9 @@ package gql
 import (
 	"github.com/graphql-go/graphql"
 
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/subscriptions"
 	gql "github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/types"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 )
 
 // Schema defines a graphql.Schema instance
@@ -217,6 +214,16 @@ func init() {
 					},
 					Resolve: resolvers.UpdateItemResolver,
 				},
+				"markItemAsCompleted": &graphql.Field{
+					Type:        gql.ItemType,
+					Description: "Marks item as completed by name for user (in any store)",
+					Args: graphql.FieldConfigArgument{
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.MarkItemAsCompletedResolver,
+				},
 				"reorderItem": &graphql.Field{
 					Type:        gql.GroceryTripType,
 					Description: "Updates the order of an item in a trip",
@@ -247,19 +254,22 @@ func init() {
 							Type: graphql.String,
 						},
 					},
-					Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-						header := p.Info.RootValue.(map[string]interface{})["Authorization"]
-						user, err := auth.FetchAuthenticatedUser(header.(string))
-						if err != nil {
-							return nil, err
-						}
-
-						item, err := trips.AddItem(user.(models.User).ID, p.Args)
-						if err != nil {
-							return nil, err
-						}
-						return item, nil
+					Resolve: resolvers.AddItemToTrip,
+				},
+				"addItemsToStore": &graphql.Field{
+					Type:        graphql.NewList(gql.ItemType),
+					Description: "Add an array of items to a store by name. (Creates store if needed)",
+					Args: graphql.FieldConfigArgument{
+						"items": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(
+								graphql.NewList(graphql.String),
+							),
+						},
+						"storeName": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
 					},
+					Resolve: resolvers.AddItemsToStore,
 				},
 				"updateTrip": &graphql.Field{
 					Type:        gql.GroceryTripType,
