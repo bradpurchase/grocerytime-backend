@@ -530,6 +530,10 @@
       "label": "Frozen Foods"
     },
     {
+      "text": "chicken nuggets",
+      "label": "Frozen Foods"
+    },
+    {
       "text": "nuggets",
       "label": "Frozen Foods"
     },
@@ -594,6 +598,14 @@
       "label": "Personal Care"
     },
     {
+      "text": "deodorant",
+      "label": "Personal Care"
+    },
+    {
+      "text": "toothpaste",
+      "label": "Personal Care"
+    },
+    {
       "text": "vitamin",
       "label": "Pharmacy"
     },
@@ -655,6 +667,10 @@
     },
     {
       "text": "tomato",
+      "label": "Produce"
+    },
+    {
+      "text": "dill",
       "label": "Produce"
     },
     {
