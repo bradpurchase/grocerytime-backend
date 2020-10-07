@@ -33,11 +33,23 @@ func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (models.Stor
 
 // AddUserToStore properly associates a user with a store by userID by removing
 // the email value and adding the userID value
-func AddUserToStore(user models.User, storeID interface{}) (interface{}, error) {
+func AddUserToStore(user models.User, storeID interface{}) (newStoreUser *models.StoreUser, err error) {
 	store := &models.Store{}
 	if err := db.Manager.Where("id = ?", storeID).First(&store).Error; err != nil {
-		return nil, err
+		return newStoreUser, err
 	}
+
+	// Get a count of this user's stores to determine if this will be their default
+	var numStores int64
+	storesCountQuery := db.Manager.
+		Model(&models.StoreUser{}).
+		Where("user_id = ? AND active = ?", user.ID, true).
+		Count(&numStores).
+		Error
+	if err := storesCountQuery; err != nil {
+		return newStoreUser, err
+	}
+	defaultStore := numStores == 0
 
 	storeUser := &models.StoreUser{}
 	updateStoreUserQuery := db.Manager.
@@ -45,14 +57,15 @@ func AddUserToStore(user models.User, storeID interface{}) (interface{}, error) 
 		Find(&storeUser).
 		Error
 	if err := updateStoreUserQuery; err != nil {
-		return nil, err
+		return newStoreUser, err
 	}
 	storeUser.Email = ""
 	storeUser.UserID = user.ID
 	storeUserActive := true
 	storeUser.Active = &storeUserActive
+	storeUser.DefaultStore = defaultStore
 	if err := db.Manager.Save(&storeUser).Error; err != nil {
-		return nil, err
+		return newStoreUser, err
 	}
 	return storeUser, nil
 }

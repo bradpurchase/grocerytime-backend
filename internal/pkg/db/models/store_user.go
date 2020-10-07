@@ -28,24 +28,19 @@ type StoreUser struct {
 }
 
 // BeforeCreate hook to handle setting some properties before adding the record
+//
+// Determines whether or not this store should be considered the default
+// store for the user. This should be the case if it's the first store they're a part of.
+// This excludes the case where a StoreUser record is created via invite, in which case
+// only the user's email is provided and not an ID.
 func (su *StoreUser) BeforeCreate(tx *gorm.DB) (err error) {
-	// Determine whether or not this store should be considered the default
-	// store for the user. This should be the case if it's the first store they're a part of
-	var numStores int64
-	if err := tx.Model(&StoreUser{}).Where("user_id = ? AND active = ?", su.UserID, true).Count(&numStores).Error; err != nil {
-		return err
+	if len(su.Email) == 0 {
+		var numStores int64
+		if err := tx.Model(&StoreUser{}).Where("user_id = ? AND active = ?", su.UserID, true).Count(&numStores).Error; err != nil {
+			return err
+		}
+		su.DefaultStore = numStores == 0
 	}
-	su.DefaultStore = numStores == 0
-	return
-}
-
-// BeforeUpdate hook to handle setting DefaultStore if user was invited and has now joined their first store
-func (su *StoreUser) BeforeUpdate(tx *gorm.DB) (err error) {
-	var numStores int64
-	if err := tx.Model(&StoreUser{}).Where("user_id = ? AND active = ?", su.UserID, true).Count(&numStores).Error; err != nil {
-		return err
-	}
-	su.DefaultStore = numStores == 1
 	return
 }
 

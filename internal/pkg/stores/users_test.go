@@ -25,7 +25,7 @@ func (s *Suite) TestInviteToStoreByEmail_UserExistsNotYetAdded() {
 		WithArgs(sqlmock.AnyArg(), true).
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
 	s.mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
-		WithArgs(storeID, sqlmock.AnyArg(), email, false, false, true, AnyTime{}, AnyTime{}, nil).
+		WithArgs(storeID, sqlmock.AnyArg(), email, false, false, false, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
 	s.mock.ExpectQuery("^SELECT name, user_id FROM \"stores\"*").
 		WithArgs(storeID).
@@ -184,27 +184,30 @@ func (s *Suite) TestAddUserToStore_SuccessFirstStoreSetToDefault() {
 		WithArgs(storeID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
 
+	userID := uuid.NewV4()
 	email := "test@example.com"
-	user := models.User{ID: uuid.NewV4(), Email: email}
+	user := models.User{ID: userID, Email: email}
+
+	s.mock.ExpectQuery("^SELECT count*").
+		WithArgs(user.ID, true).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
+
 	storeUserID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, user.Email).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "email"}).AddRow(storeUserID, email))
 
 	s.mock.ExpectBegin()
-	s.mock.ExpectQuery("^SELECT count*").
-		WithArgs(user.ID, true).
-		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
 	s.mock.ExpectExec("^UPDATE \"store_users\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectCommit()
 
 	storeUser, err := AddUserToStore(user, storeID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).ID, storeUserID)
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).UserID, user.ID)
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).Email, "")
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).DefaultStore, true)
+	assert.Equal(s.T(), storeUser.ID, storeUserID)
+	assert.Equal(s.T(), storeUser.UserID, user.ID)
+	assert.Equal(s.T(), storeUser.Email, "")
+	assert.Equal(s.T(), storeUser.DefaultStore, true)
 }
 
 func (s *Suite) TestAddUserToStore_SuccessNotDefault() {
@@ -215,25 +218,27 @@ func (s *Suite) TestAddUserToStore_SuccessNotDefault() {
 
 	email := "test@example.com"
 	user := models.User{ID: uuid.NewV4(), Email: email}
+
+	s.mock.ExpectQuery("^SELECT count*").
+		WithArgs(user.ID, true).
+		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(2))
+
 	storeUserID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, user.Email).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "email"}).AddRow(storeUserID, email))
 
 	s.mock.ExpectBegin()
-	s.mock.ExpectQuery("^SELECT count*").
-		WithArgs(user.ID, true).
-		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(2))
 	s.mock.ExpectExec("^UPDATE \"store_users\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectCommit()
 
 	storeUser, err := AddUserToStore(user, storeID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).ID, storeUserID)
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).UserID, user.ID)
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).Email, "")
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).DefaultStore, false)
+	assert.Equal(s.T(), storeUser.ID, storeUserID)
+	assert.Equal(s.T(), storeUser.UserID, user.ID)
+	assert.Equal(s.T(), storeUser.Email, "")
+	assert.Equal(s.T(), storeUser.DefaultStore, false)
 }
 
 func (s *Suite) TestRetrieveStoreUsers_HasStoreUsers() {
