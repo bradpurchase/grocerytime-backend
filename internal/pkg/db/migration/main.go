@@ -3,8 +3,10 @@ package migration
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -19,6 +21,7 @@ func migrate(db *gorm.DB) error {
 		&models.Item{},
 		&models.Store{},
 		&models.StoreUser{},
+		&models.StoreUserPreference{},
 		&models.StoreCategory{},
 		&models.User{},
 	)
@@ -141,6 +144,54 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Migrator().AddColumn(&models.User{}, "last_name")
+			},
+		},
+		{
+			// Create store_user_preferences
+			ID: "202010071813_create_store_user_preferences",
+			Migrate: func(tx *gorm.DB) error {
+				type StoreUserPreference struct {
+					ID            uuid.UUID
+					StoreUserID   uuid.UUID
+					DefaultStore  bool
+					Notifications bool
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
+				}
+				return tx.AutoMigrate(&StoreUserPreference{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("store_user_preferences")
+			},
+		},
+		{
+			// Create missing store_user_preferences records
+			ID: "202010071829_create_store_user_preferences_records",
+			Migrate: func(tx *gorm.DB) error {
+				var storeUsers []models.StoreUser
+				if err := tx.Where("active = ?", true).Find(&storeUsers).Error; err != nil {
+					return err
+				}
+				for i := range storeUsers {
+					storeUserPref := &models.StoreUserPreference{
+						ID:          uuid.NewV4(),
+						StoreUserID: storeUsers[i].ID,
+					}
+					if err := tx.Create(&storeUserPref).Error; err != nil {
+						return err
+					}
+				}
+				return nil
+			},
+			Rollback: func(tx *gorm.DB) error {
+				// Empty all records in the table
+				var storeUserPrefs []models.StoreUserPreference
+				if err := tx.Find(&storeUserPrefs).Error; err != nil {
+					return err
+				}
+				return nil
 			},
 		},
 	})
