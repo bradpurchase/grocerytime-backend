@@ -59,11 +59,14 @@ func FindOrCreateStore(userID uuid.UUID, name string) (storeRecord models.Store,
 }
 
 // FindCurrentTripIDInStore retrieves the ID of the most recent trip in the store that hasn't been completed
+//
+// TODO: DRY this up with trips.RetrieveCurrentStoreTrip
 func FindCurrentTripIDInStore(storeID uuid.UUID) (tripID uuid.UUID, err error) {
 	trip := models.GroceryTrip{}
 	tripQuery := db.Manager.
 		Select("id").
 		Where("store_id = ? AND completed = ?", storeID, false).
+		Order("created_at DESC").
 		Last(&trip).
 		Error
 	if err := tripQuery; err != nil {

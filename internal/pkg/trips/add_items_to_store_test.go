@@ -1,6 +1,7 @@
 package trips
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -75,8 +76,9 @@ func (s *Suite) TestFindOrCreateStore_StoreCreated() {
 
 	currentTime := time.Now()
 	tripName := currentTime.Format("Jan 02, 2006")
+	likeTripName := fmt.Sprintf("%%%s%%", tripName)
 	s.mock.ExpectQuery("^SELECT count*").
-		WithArgs(tripName, sqlmock.AnyArg()).
+		WithArgs(likeTripName, sqlmock.AnyArg()).
 		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(0))
 	s.mock.ExpectQuery("^INSERT INTO \"grocery_trips\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), tripName, false, false, AnyTime{}, AnyTime{}, nil).
