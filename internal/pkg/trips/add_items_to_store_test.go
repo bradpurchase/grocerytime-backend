@@ -62,8 +62,14 @@ func (s *Suite) TestFindOrCreateStore_StoreCreated() {
 	s.mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
 		WithArgs(storeName, AnyTime{}, AnyTime{}, nil, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(storeID, userID))
+
+	storeUserID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, true, AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeUserID))
+
+	s.mock.ExpectQuery("^INSERT INTO \"store_user_preferences\" (.+)$").
+		WithArgs(storeUserID, false, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
 	categories := fetchCategories()
