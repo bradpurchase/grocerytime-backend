@@ -386,6 +386,10 @@
       "label": "Dairy"
     },
     {
+      "text": "margarine",
+      "label": "Dairy"
+    },
+    {
       "text": "cheese",
       "label": "Dairy"
     },
@@ -630,6 +634,10 @@
       "label": "Produce"
     },
     {
+      "text": "kiwi",
+      "label": "Produce"
+    },
+    {
       "text": "bananas",
       "label": "Produce"
     },
@@ -639,6 +647,10 @@
     },
     {
       "text": "strawberries",
+      "label": "Produce"
+    },
+    {
+      "text": "pineapple",
       "label": "Produce"
     },
     {
@@ -683,6 +695,62 @@
     },
     {
       "text": "brussels sprouts",
+      "label": "Produce"
+    },
+    {
+      "text": "cabbage",
+      "label": "Produce"
+    },
+    {
+      "text": "cauliflower",
+      "label": "Produce"
+    },
+    {
+      "text": "turnip",
+      "label": "Produce"
+    },
+    {
+      "text": "asparagus",
+      "label": "Produce"
+    },
+    {
+      "text": "peppers",
+      "label": "Produce"
+    },
+    {
+      "text": "bell peppers",
+      "label": "Produce"
+    },
+    {
+      "text": "squash",
+      "label": "Produce"
+    },
+    {
+      "text": "garlic",
+      "label": "Produce"
+    },
+    {
+      "text": "horseradish",
+      "label": "Produce"
+    },
+    {
+      "text": "celery",
+      "label": "Produce"
+    },
+    {
+      "text": "leek",
+      "label": "Produce"
+    },
+    {
+      "text": "beet",
+      "label": "Produce"
+    },
+    {
+      "text": "lemon",
+      "label": "Produce"
+    },
+    {
+      "text": "lime",
       "label": "Produce"
     },
     {
