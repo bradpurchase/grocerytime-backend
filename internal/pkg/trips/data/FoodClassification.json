@@ -654,6 +654,10 @@
       "label": "Produce"
     },
     {
+      "text": "mango",
+      "label": "Produce"
+    },
+    {
       "text": "carrots",
       "label": "Produce"
     },
@@ -747,6 +751,18 @@
     },
     {
       "text": "lemon",
+      "label": "Produce"
+    },
+    {
+      "text": "mint",
+      "label": "Produce"
+    },
+    {
+      "text": "basil",
+      "label": "Produce"
+    },
+    {
+      "text": "thyme",
       "label": "Produce"
     },
     {
