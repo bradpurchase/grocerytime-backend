@@ -52,6 +52,16 @@ func init() {
 					},
 					Resolve: resolvers.GroceryTripResolver,
 				},
+				"itemSearch": &graphql.Field{
+					Type:        gql.ItemType,
+					Description: "Search for an item in the user's stores by name",
+					Args: graphql.FieldConfigArgument{
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.ItemSearchResolver,
+				},
 			},
 		},
 	)

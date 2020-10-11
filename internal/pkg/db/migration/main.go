@@ -32,8 +32,8 @@ func AutoMigrateService(db *gorm.DB) error {
 
 		// Create the UUID extensions
 		// postgres user needs to have superuser perms for now
-		db.Exec("create extension \"pgcrypto\";")
-		db.Exec("create extension \"uuid-oosp\";")
+		db.Exec("CREATE EXTENSION \"pgcrypto\";")
+		db.Exec("CREATE EXTENSION \"uuid-oosp\";")
 
 		if err := migrate(db); err != nil {
 			return fmt.Errorf("[Migration.InitSchema]: %v", err)
@@ -141,6 +141,16 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Migrator().AddColumn(&models.User{}, "last_name")
+			},
+		},
+		{
+			// Add index idx_items_grocery_trip_id_name
+			ID: "202010111143_add_idx_items_grocery_trip_id_name",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Exec("CREATE INDEX idx_items_name_grocery_trip_id ON items (name, grocery_trip_id)").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("DROP INDEX idx_items_name_grocery_trip_id").Error
 			},
 		},
 	})
