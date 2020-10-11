@@ -54,7 +54,7 @@ func init() {
 				},
 				"itemSearch": &graphql.Field{
 					Type:        gql.ItemType,
-					Description: "Find an item by name in the current user's history",
+					Description: "Search for an item in the user's stores by name",
 					Args: graphql.FieldConfigArgument{
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),

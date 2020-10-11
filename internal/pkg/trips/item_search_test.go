@@ -9,7 +9,18 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func (s *Suite) TestSearchForItemByName_NotFound() {
+func (s *Suite) TestSearchForItemByName_NoTripHistory() {
+	userID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+
+	_, e := SearchForItemByName("zap", userID)
+	require.Error(s.T(), e)
+	assert.Equal(s.T(), e.Error(), "no item matches the search term")
+}
+
+func (s *Suite) TestSearchForItemByName_ItemNotFound() {
 	userID := uuid.NewV4()
 	tripID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
