@@ -60,6 +60,40 @@ func (s *Store) AfterCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
+// AfterDelete hook handles deleting associated records after store is deleted
+func (s *Store) AfterDelete(tx *gorm.DB) (err error) {
+	// Delete items associated with this store
+	var trips []GroceryTrip
+	if err := tx.Where("store_id = ?", s.ID).Find(&trips).Error; err != nil {
+		return err
+	}
+	for i := range trips {
+		if err := tx.Where("grocery_trip_id = ?", trips[i].ID).Delete(&Item{}).Error; err != nil {
+			return err
+		}
+	}
+
+	// Delete GroceryTrip records associated with this store
+	if err := tx.Where("store_id = ?", s.ID).Delete(&GroceryTrip{}).Error; err != nil {
+		return err
+	}
+
+	// Delete StoreUser records associated with this store
+	var storeUsers []StoreUser
+	if err := tx.Where("store_id = ?", s.ID).Delete(&storeUsers).Error; err != nil {
+		return err
+	}
+
+	// Send notification to store users about this store being deleted
+	// for i := range storeUsers {
+	// 	_, err := mailer.SendStoreDeletedEmail(s.Name, storeUsers[i].User.Email)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// }
+	return
+}
+
 func fetchCategories() [20]string {
 	categories := [20]string{
 		"Produce",
