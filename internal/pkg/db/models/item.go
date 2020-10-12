@@ -61,8 +61,3 @@ func (i *Item) AfterUpdate(tx *gorm.DB) (err error) {
 	tx.Model(&GroceryTrip{}).Where("id = ?", i.GroceryTripID).Update("updated_at", time.Now())
 	return nil
 }
-
-// func (i *Item) AfterDelete(tx *gorm.DB) (err error) {
-// 	tx.Model(&GroceryTrip{}).Where("id = ?", i.GroceryTripID).Update("updated_at", time.Now())
-// 	return nil
-// }

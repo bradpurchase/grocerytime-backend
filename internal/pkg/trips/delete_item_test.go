@@ -28,9 +28,11 @@ func (s *Suite) TestDeleteItem_SuccessMoreInCategory() {
 	s.mock.ExpectBegin()
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	s.mock.ExpectCommit()
+
 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	s.mock.ExpectCommit()
 
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(categoryID).
@@ -51,9 +53,10 @@ func (s *Suite) TestDeleteItem_SuccessLastInCategory() {
 	s.mock.ExpectBegin()
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
+
 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	s.mock.ExpectCommit()
 
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(categoryID).
