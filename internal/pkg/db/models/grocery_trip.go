@@ -21,6 +21,7 @@ type GroceryTrip struct {
 
 	// Associations
 	Store Store
+	Items []Item
 }
 
 // AfterUpdate hook is triggered after a trip is updated, such as in trips.UpdateTrip

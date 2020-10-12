@@ -16,10 +16,10 @@ func DeleteStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	store, err := stores.DeleteStore(p.Args["storeId"], user.(models.User).ID)
+	storeID := p.Args["storeId"]
+	store, err := stores.DeleteStore(storeID, user.(models.User).ID)
 	if err != nil {
 		return nil, err
 	}
-
 	return store, nil
 }
