@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
@@ -80,17 +81,34 @@ func (s *Store) AfterDelete(tx *gorm.DB) (err error) {
 
 	// Delete StoreUser records associated with this store
 	var storeUsers []StoreUser
-	if err := tx.Where("store_id = ?", s.ID).Delete(&storeUsers).Error; err != nil {
+	if err := tx.Where("store_id = ? AND active = ?", s.ID, true).Find(&storeUsers).Error; err != nil {
 		return err
 	}
 
 	// Send notification to store users about this store being deleted
-	// for i := range storeUsers {
-	// 	_, err := mailer.SendStoreDeletedEmail(s.Name, storeUsers[i].User.Email)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
+	var emails []string
+	for i := range storeUsers {
+		var user User
+		userQuery := tx.
+			Select("email").
+			Where("id = ?", storeUsers[i].UserID).
+			Find(&user).
+			Error
+		if err := userQuery; err != nil {
+			return err
+		}
+		emails = append(emails, user.Email)
+	}
+
+	_, e := mailer.SendStoreDeletedEmail(s.Name, emails)
+	if e != nil {
+		return e
+	}
+
+	if err := tx.Where("store_id = ?", s.ID).Delete(&StoreUser{}).Error; err != nil {
+		return err
+	}
+
 	return
 }
 

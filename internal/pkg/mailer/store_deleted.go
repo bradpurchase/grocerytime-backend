@@ -8,16 +8,19 @@ import (
 )
 
 // SendStoreDeletedEmail sends an email to a store member about a store being deleted
-func SendStoreDeletedEmail(storeName string, email string) (interface{}, error) {
+func SendStoreDeletedEmail(storeName string, emails []string) (interface{}, error) {
 	m := mail.NewV3Mail()
 	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
 	m.SetFrom(from)
-	m.SetTemplateID("d-39b0bd8d6b8747fcacbce147020364cd")
+	m.SetTemplateID("d-523064949e1a4f739415896dacb80dc3")
 
 	p := mail.NewPersonalization()
-	toAddresses := []*mail.Email{
-		mail.NewEmail("", email),
+	// Retrieve emails for all StoreUser records
+	toAddresses := []*mail.Email{}
+	for i := range emails {
+		toAddresses = append(toAddresses, mail.NewEmail("", emails[i]))
 	}
+
 	p.AddTos(toAddresses...)
 
 	p.SetDynamicTemplateData("store_name", storeName)
