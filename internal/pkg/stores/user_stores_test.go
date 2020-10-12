@@ -223,6 +223,14 @@ func (s *Suite) TestDeleteStore_StoreFound() {
 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(storeID, true).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(uuid.NewV4(), userID))
+
+	s.mock.ExpectQuery("^SELECT \"email\" FROM \"users\"*").
+		WithArgs(userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
+
 	s.mock.ExpectExec("^UPDATE \"store_users\" (.+)$").
 		WithArgs(AnyTime{}, storeID).
 		WillReturnResult(sqlmock.NewResult(1, 1))

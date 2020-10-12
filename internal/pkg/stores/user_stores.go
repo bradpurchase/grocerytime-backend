@@ -76,7 +76,7 @@ func DeleteStore(storeID interface{}, userID uuid.UUID) (deletedStore models.Sto
 		return deletedStore, errors.New("couldn't retrieve store")
 	}
 	if err := db.Manager.Delete(&store).Error; err != nil {
-		return deletedStore, errors.New("couldn't delete store")
+		return deletedStore, err
 	}
 	return store, nil
 }
