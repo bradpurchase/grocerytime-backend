@@ -76,6 +76,8 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 				newItem.ID = uuid.Nil
 				newItem.GroceryTripID = newTrip.ID
 				newItem.CategoryID = &groceryTripCategory.ID
+				newItem.CreatedAt = time.Now()
+				newItem.UpdatedAt = time.Now()
 				newItems = append(newItems, newItem)
 			}
 
