@@ -42,6 +42,19 @@ func init() {
 					},
 					Resolve: resolvers.StoreResolver,
 				},
+				"trips": &graphql.Field{
+					Type:        graphql.NewList(gql.GroceryTripType),
+					Description: "Retrieve trip history for a store",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"completed": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+					},
+					Resolve: resolvers.GroceryTripsResolver,
+				},
 				"trip": &graphql.Field{
 					Type:        gql.GroceryTripType,
 					Description: "Retrieve a specific grocery trip within a store",
