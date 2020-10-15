@@ -47,6 +47,7 @@ func RetrieveTrips(storeID interface{}, userID uuid.UUID, completed bool) (trips
 	var trips []models.GroceryTrip
 	tripsQuery := db.Manager.
 		Where("store_id = ? AND completed = ?", storeID, completed).
+		Order("created_at DESC").
 		Find(&trips).
 		Error
 	if err := tripsQuery; err != nil {
