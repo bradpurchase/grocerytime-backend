@@ -792,6 +792,14 @@
     {
       "text": "tuna",
       "label": "Seafood"
+    },
+    {
+      "text": "cod",
+      "label": "Seafood"
+    },
+    {
+      "text": "bass",
+      "label": "Seafood"
     }
   ]
 }

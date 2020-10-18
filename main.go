@@ -12,9 +12,6 @@ import (
 	// Autoload env variables from .env
 	_ "github.com/joho/godotenv/autoload"
 
-	// Heroku metrics for Go
-	_ "github.com/heroku/x/hmetrics/onload"
-
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 
 	"github.com/gorilla/mux"
