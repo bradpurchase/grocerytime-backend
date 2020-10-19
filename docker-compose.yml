@@ -46,6 +46,9 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     volumes_from:
       - "nginx-proxy"
+volumes:
+  app:
+  database_postgres:
 
 networks:
   gt-network:
