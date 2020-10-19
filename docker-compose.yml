@@ -1,6 +1,6 @@
 version: "3"
 services:
-  server:
+  app:
     restart: always
     image: grocerytime:latest
     container_name: grocerytime
@@ -13,7 +13,8 @@ services:
     depends_on:
       - database
     networks:
-      - gt-network
+      - webproxy
+      - default
 
   database:
     restart: always
@@ -24,8 +25,6 @@ services:
       - "5432:5432"
     volumes:
       - database_postgres:/var/lib/postgresql/data
-    networks:
-      - gt-network
 
   nginx-proxy:
     restart: always
@@ -38,17 +37,22 @@ services:
       - "/usr/share/nginx/html"
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
       - "/etc/nginx/certs"
+    networks:
+      - webproxy
 
   letsencrypt-nginx-proxy-companion:
     restart: always
     image: jrcs/letsencrypt-nginx-proxy-companion
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    volumes_from:
-      - "nginx-proxy"
+    networks:
+      - webproxy
+    depends_on:
+      - nginx-proxy
+
 volumes:
   app:
   database_postgres:
 
 networks:
-  gt-network:
+  webproxy:
