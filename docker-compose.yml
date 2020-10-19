@@ -8,6 +8,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
     depends_on:
       - database
     networks:
@@ -44,9 +46,6 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     volumes_from:
       - "nginx-proxy"
-volumes:
-  app:
-  database_postgres:
 
 networks:
   gt-network:
