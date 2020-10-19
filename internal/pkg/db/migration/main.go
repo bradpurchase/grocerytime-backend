@@ -57,70 +57,70 @@ func AutoMigrateService(db *gorm.DB) error {
 			// Add index idx_items_grocery_trip_id_category_id
 			ID: "202006021110_add_idx_items_grocery_trip_id_category_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.Item{}, "idx_grocery_trip_id_category_id")
+				return tx.Exec("CREATE INDEX idx_grocery_trip_id_category_id ON items (grocery_trip_id, category_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.Item{}, "idx_grocery_trip_id_category_id")
+				return tx.Exec("DROP INDEX idx_grocery_trip_id_category_id").Error
 			},
 		},
 		{
 			// Add index idx_store_users_store_id
 			ID: "202006021117_add_idx_store_users_store_id_user_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.StoreUser{}, "idx_store_users_store_id_user_id")
+				return tx.Exec("CREATE INDEX idx_store_users_store_id_user_id ON store_users (store_id, user_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.StoreUser{}, "idx_store_users_store_id_user_id")
+				return tx.Exec("DROP INDEX idx_store_users_store_id_user_id").Error
 			},
 		},
 		{
 			// Add index idx_store_users_user_id
 			ID: "202006021118_add_idx_store_users_store_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.StoreUser{}, "idx_store_users_store_id")
+				return tx.Exec("CREATE INDEX idx_store_users_store_id ON store_users (store_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.StoreUser{}, "idx_store_users_store_id")
+				return tx.Exec("DROP INDEX idx_store_users_store_id").Error
 			},
 		},
 		{
 			// Add index idx_store_categories_store_id
 			ID: "202009060829_add_idx_store_categories_store_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.StoreCategory{}, "idx_store_categories_store_id")
+				return tx.Exec("CREATE INDEX idx_store_categories_store_id ON store_categories (store_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.StoreCategory{}, "idx_store_categories_store_id")
+				return tx.Exec("DROP INDEX idx_store_categories_store_id").Error
 			},
 		},
 		{
 			// Add index idx_grocery_trips_store_id
 			ID: "202009060831_add_idx_grocery_trips_store_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.GroceryTrip{}, "idx_grocery_trips_store_id")
+				return tx.Exec("CREATE INDEX idx_grocery_trips_store_id ON grocery_trips (store_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.GroceryTrip{}, "idx_grocery_trips_store_id")
+				return tx.Exec("DROP INDEX idx_grocery_trips_store_id").Error
 			},
 		},
 		{
 			// Add index idx_grocery_trip_categories_grocery_trip_id
 			ID: "202009060833_add_idx_grocery_trip_categories_grocery_trip_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.GroceryTripCategory{}, "idx_grocery_trip_categories_grocery_trip_id")
+				return tx.Exec("CREATE INDEX idx_grocery_trip_categories_grocery_trip_id ON grocery_trip_categories (grocery_trip_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.GroceryTripCategory{}, "idx_grocery_trip_categories_grocery_trip_id")
+				return tx.Exec("DROP INDEX idx_grocery_trip_categories_grocery_trip_id").Error
 			},
 		},
 		{
 			// Add index idx_grocery_trip_categories_grocery_trip_id
 			ID: "202009060835_add_idx_grocery_trip_categories_store_category_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.GroceryTripCategory{}, "idx_grocery_trip_categories_store_category_id")
+				return tx.Exec("CREATE INDEX idx_grocery_trip_categories_store_category_id ON grocery_trip_categories (store_category_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.GroceryTripCategory{}, "idx_grocery_trip_categories_store_category_id")
+				return tx.Exec("DROP INDEX idx_grocery_trip_categories_store_category_id").Error
 			},
 		},
 		{
