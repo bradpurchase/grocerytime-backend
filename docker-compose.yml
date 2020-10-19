@@ -45,6 +45,8 @@ services:
     image: jrcs/letsencrypt-nginx-proxy-companion
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    volumes_from:
+      - "nginx-proxy"
     networks:
       - webproxy
     depends_on:
