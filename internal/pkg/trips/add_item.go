@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
@@ -104,7 +105,17 @@ func CreateGroceryTripCategory(tripID uuid.UUID, name string) (category models.G
 // DetermineCategoryName opens the FoodClassification.json file and
 // scans it for the classification associated with the food item very quickly using gson
 func DetermineCategoryName(name string) string {
-	json, err := ioutil.ReadFile("data/FoodClassification.json")
+	file, err := os.Open("data/FoodClassification.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err = file.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	json, err := ioutil.ReadAll(file)
 	if err != nil {
 		log.Fatal(err)
 	}
