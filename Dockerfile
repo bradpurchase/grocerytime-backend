@@ -9,5 +9,6 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /usr/bin
 COPY --from=build /go/src/app/bin /go/bin
+COPY --from=build /go/src/app/data ./data
 EXPOSE 8080
 ENTRYPOINT /go/bin/api --port 8080

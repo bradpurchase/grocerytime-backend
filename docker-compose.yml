@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./data:/data
+      - ./data:/go/src/app
     ports:
       - "8080:8080"
     depends_on:
