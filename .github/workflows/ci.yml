@@ -1,5 +1,9 @@
-on: [push, pull_request]
 name: CI/CD
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 jobs:
   test:
     strategy:
