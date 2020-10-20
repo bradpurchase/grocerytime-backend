@@ -35,10 +35,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - "/etc/nginx/vhost.d"
-      - "/usr/share/nginx/html"
+      - "vhost:/etc/nginx/vhost.d"
+      - "html:/usr/share/nginx/html"
+      - "certs:/etc/nginx/certs"
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      - "/etc/nginx/certs"
     networks:
       - webproxy
 
@@ -57,6 +57,9 @@ services:
 volumes:
   app:
   database_postgres:
+  vhost:
+  html:
+  certs:
 
 networks:
   webproxy:
