@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Test
+name: CI/CD
 jobs:
   test:
     strategy:
@@ -16,3 +16,12 @@ jobs:
         uses: actions/checkout@v2
       - name: Run Tests
         run: go test ./...
+      - name: Build & Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          passphrase: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
+          script: |
+            cd grocerytime
+            git pull origin main
+            docker-compose build && docker-compose up -d
