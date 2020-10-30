@@ -97,22 +97,6 @@ func init() {
 					},
 					Resolve: resolvers.LoginResolver,
 				},
-				"token": &graphql.Field{
-					Type:        gql.AuthTokenType,
-					Description: "Retrieve an access token (DEPRECATED)",
-					Args: graphql.FieldConfigArgument{
-						"grantType": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-						"email": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-						"password": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-					},
-					Resolve: resolvers.TokenResolver,
-				},
 				"signup": &graphql.Field{
 					Type:        gql.UserType,
 					Description: "Create a new user account",
@@ -128,6 +112,16 @@ func init() {
 						},
 					},
 					Resolve: resolvers.SignupResolver,
+				},
+				"forgotPassword": &graphql.Field{
+					Type:        gql.UserType,
+					Description: "Sends an email to a user to set a new password",
+					Args: graphql.FieldConfigArgument{
+						"email": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.ForgotPasswordResolver,
 				},
 				"createStore": &graphql.Field{
 					Type:        gql.StoreType,
