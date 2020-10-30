@@ -11,7 +11,7 @@ import (
 // about a member of their list leaving
 func SendUserLeftStoreEmail(storeName string, listUserName string, recipientEmail string) (interface{}, error) {
 	m := mail.NewV3Mail()
-	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
+	from := mail.NewEmail("GroceryTime", "noreply@groceryti.me")
 	m.SetFrom(from)
 	m.SetTemplateID("d-63341b53948a4fee84da900aeae8f0f3")
 

@@ -11,7 +11,7 @@ import (
 // about a store invite to another user being declined
 func SendStoreInviteDeclinedEmail(storeName string, invitedUserEmail string, recipientEmail string) (interface{}, error) {
 	m := mail.NewV3Mail()
-	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
+	from := mail.NewEmail("GroceryTime", "noreply@groceryti.me")
 	m.SetFrom(from)
 	m.SetTemplateID("d-c7cf36bec4b94157adc9f4a90cd5e1c1")
 
