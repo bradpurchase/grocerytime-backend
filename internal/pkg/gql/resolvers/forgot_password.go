@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/user"
 	"github.com/graphql-go/graphql"
 )
 
@@ -21,7 +22,7 @@ func ForgotPasswordResolver(p graphql.ResolveParams) (interface{}, error) {
 
 	// Create a new user account with the args provided
 	email := p.Args["email"].(string)
-	user, err := auth.SendForgotPasswordEmail(email)
+	user, err := user.SendForgotPasswordEmail(email)
 	if err != nil {
 		return nil, err
 	}

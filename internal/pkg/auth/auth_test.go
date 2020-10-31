@@ -45,24 +45,20 @@ func (s *Suite) SetupSuite() {
 	db.Manager = s.DB
 }
 
-func (s *Suite) AfterTest(_, _ string) {
-	//require.NoError(s.T(), s.mock.ExpectationsWereMet())
-}
-
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
 
 func (s *Suite) TestFetchAuthenticatedUser_NoAuthHeader() {
-	user, err := FetchAuthenticatedUser("")
+	_, err := FetchAuthenticatedUser("")
+	require.Error(s.T(), err)
 	assert.Equal(s.T(), err.Error(), "no authorization header provided")
-	assert.Nil(s.T(), user)
 }
 
 func (s *Suite) TestFetchAuthenticatedUser_MalformedAuthHeader() {
-	user, err := FetchAuthenticatedUser("hello123")
+	_, err := FetchAuthenticatedUser("hello123")
+	require.Error(s.T(), err)
 	assert.Equal(s.T(), err.Error(), "no bearer token provided")
-	assert.Nil(s.T(), user)
 }
 
 func (s *Suite) TestFetchAuthenticatedUser_TokenNotFound() {
@@ -71,7 +67,8 @@ func (s *Suite) TestFetchAuthenticatedUser_TokenNotFound() {
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	_, e := FetchAuthenticatedUser("Bearer hello123")
-	s.Equal(e.Error(), "token invalid/expired")
+	require.Error(s.T(), e)
+	assert.Equal(s.T(), e.Error(), "token invalid/expired")
 }
 
 func (s *Suite) TestFetchAuthenticatedUser_TokenFound() {
