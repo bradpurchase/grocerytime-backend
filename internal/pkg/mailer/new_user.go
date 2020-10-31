@@ -10,7 +10,7 @@ import (
 // SendNewUserEmail sends an email to a new user on signup
 func SendNewUserEmail(email string) (interface{}, error) {
 	m := mail.NewV3Mail()
-	from := mail.NewEmail("GroceryTime", "noreply@groceryti.me")
+	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
 	m.SetFrom(from)
 	m.SetTemplateID("d-323c957c7bdf42b095f96514e37db6e5")
 
