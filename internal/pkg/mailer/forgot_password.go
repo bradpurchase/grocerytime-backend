@@ -1,7 +1,6 @@
 package mailer
 
 import (
-	"log"
 	"os"
 
 	uuid "github.com/satori/go.uuid"
@@ -32,6 +31,5 @@ func SendForgotPasswordEmail(email string, token uuid.UUID) (interface{}, error)
 	if err != nil {
 		return nil, err
 	}
-	log.Println(response)
 	return response, nil
 }
