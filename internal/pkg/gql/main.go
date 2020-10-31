@@ -22,6 +22,16 @@ func init() {
 					Description: "Retrieve the current user",
 					Resolve:     resolvers.AuthenticatedUserResolver,
 				},
+				"passwordReset": &graphql.Field{
+					Type:        gql.UserType,
+					Description: "Retrieve information about a password reset",
+					Args: graphql.FieldConfigArgument{
+						"token": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.PasswordResetResolver,
+				},
 				"stores": &graphql.Field{
 					Type:        graphql.NewList(gql.StoreType),
 					Description: "Retrieve stores for the current user",
