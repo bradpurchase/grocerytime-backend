@@ -10,7 +10,7 @@ import (
 // SendStoreDeletedEmail sends an email to a store member about a store being deleted
 func SendStoreDeletedEmail(storeName string, emails []string) (interface{}, error) {
 	m := mail.NewV3Mail()
-	from := mail.NewEmail("GroceryTime", "noreply@groceryti.me")
+	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
 	m.SetFrom(from)
 	m.SetTemplateID("d-523064949e1a4f739415896dacb80dc3")
 

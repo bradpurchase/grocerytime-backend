@@ -10,7 +10,7 @@ import (
 // SendStoreInvitationEmail sends an email to a person being invited to join a list
 func SendStoreInvitationEmail(storeName string, email string, inviterName string) (interface{}, error) {
 	m := mail.NewV3Mail()
-	from := mail.NewEmail("GroceryTime", "noreply@groceryti.me")
+	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
 	m.SetFrom(from)
 	m.SetTemplateID("d-39b0bd8d6b8747fcacbce147020364cd")
 

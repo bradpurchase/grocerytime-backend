@@ -10,7 +10,7 @@ import (
 // SendStoreRenamedEmail sends an email to a list user about a list being renamed
 func SendStoreRenamedEmail(oldName string, newName string, email string) (interface{}, error) {
 	m := mail.NewV3Mail()
-	from := mail.NewEmail("GroceryTime", "noreply@groceryti.me")
+	from := mail.NewEmail("GroceryTime", "noreply@grocerytime.app")
 	m.SetFrom(from)
 	m.SetTemplateID("d-1af58330d6a3429fa67f5f816733e05b")
 
