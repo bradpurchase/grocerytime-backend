@@ -3,8 +3,10 @@ package migration
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -50,7 +52,7 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Create(&models.ApiClient{Name: "GroceryTime for iOS"}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Where("name = ?", "Test").Delete(&models.ApiClient{}).Error
+				return tx.Where("name = ?", "GroceryTime for iOS").Delete(&models.ApiClient{}).Error
 			},
 		},
 		{
@@ -131,6 +133,30 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Exec("DROP INDEX idx_items_name_grocery_trip_id").Error
+			},
+		},
+		{
+			// Add password reset fields to user
+			ID: "202010310840_add_password_reset_token_and_password_reset_token_expiry_to_users",
+			Migrate: func(tx *gorm.DB) error {
+				type User struct {
+					PasswordResetToken       uuid.UUID `gorm:"type:uuid"`
+					PasswordResetTokenExpiry time.Time
+				}
+				return tx.AutoMigrate(&User{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("ALTER TABLE users DROP COLUMN password_reset_token, DROP COLUMN password_reset_token_expiry").Error
+			},
+		},
+		{
+			// Create web API client
+			ID: "202010310843_web_api_client",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Create(&models.ApiClient{Name: "GroceryTime for Web"}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Where("name = ?", "GroceryTime for Web").Delete(&models.ApiClient{}).Error
 			},
 		},
 	})
