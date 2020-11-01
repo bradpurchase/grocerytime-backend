@@ -87,7 +87,6 @@ func (s *Suite) TestFindOrCreateStore_StoreCreated() {
 
 	store, err := FindOrCreateStore(userID, storeName)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), store.UserID, userID)
 	assert.Equal(s.T(), store.Name, storeName)
 }
 
