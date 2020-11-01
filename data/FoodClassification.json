@@ -262,6 +262,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "crackers",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "beans",
       "label": "Canned Goods"
     },
@@ -370,6 +374,10 @@
       "label": "Condiments"
     },
     {
+      "text": "vinegar",
+      "label": "Condiments"
+    },
+    {
       "text": "milk",
       "label": "Dairy"
     },
@@ -395,6 +403,10 @@
     },
     {
       "text": "cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "sliced cheese",
       "label": "Dairy"
     },
     {
@@ -439,6 +451,14 @@
     },
     {
       "text": "spice",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "cayenne pepper",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "pepper flakes",
       "label": "Dry Goods"
     },
     {
@@ -694,7 +714,15 @@
       "label": "Produce"
     },
     {
+      "text": "potatoes",
+      "label": "Produce"
+    },
+    {
       "text": "tomato",
+      "label": "Produce"
+    },
+    {
+      "text": "tomatoes",
       "label": "Produce"
     },
     {
@@ -775,6 +803,22 @@
     },
     {
       "text": "lime",
+      "label": "Produce"
+    },
+    {
+      "text": "avocado",
+      "label": "Produce"
+    },
+    {
+      "text": "tofu",
+      "label": "Produce"
+    },
+    {
+      "text": "cilantro",
+      "label": "Produce"
+    },
+    {
+      "text": "green onion",
       "label": "Produce"
     },
     {
