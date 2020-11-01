@@ -133,6 +133,19 @@ func init() {
 					},
 					Resolve: resolvers.ForgotPasswordResolver,
 				},
+				"resetPassword": &graphql.Field{
+					Type:        gql.UserType,
+					Description: "Updates a password for a user",
+					Args: graphql.FieldConfigArgument{
+						"password": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"token": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.ResetPasswordResolver,
+				},
 				"createStore": &graphql.Field{
 					Type:        gql.StoreType,
 					Description: "Create a store",
