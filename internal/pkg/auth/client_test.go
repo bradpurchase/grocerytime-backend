@@ -1,22 +1,20 @@
 package auth
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRetrieveClientCredentials_NoAuthHeader(t *testing.T) {
+func (s *Suite) TestRetrieveClientCredentials_NoAuthHeader() {
 	_, err := RetrieveClientCredentials("")
-	assert.Equal(t, err.Error(), "no authorization header provided")
+	assert.Equal(s.T(), err.Error(), "no authorization header provided")
 }
 
-func TestRetrieveClientCredentials_Malformed(t *testing.T) {
+func (s *Suite) TestRetrieveClientCredentials_Malformed() {
 	_, err := RetrieveClientCredentials("Hello123")
-	assert.Equal(t, err.Error(), "authorization header value is malformed, must be key:secret")
+	assert.Equal(s.T(), err.Error(), "authorization header value is malformed, must be key:secret")
 }
 
-func TestRetrieveClientCredentials(t *testing.T) {
+func (s *Suite) TestRetrieveClientCredentials() {
 	token, _ := RetrieveClientCredentials("hello123:world456")
-	assert.Equal(t, token, []string{"hello123", "world456"})
+	assert.Equal(s.T(), token, []string{"hello123", "world456"})
 }

@@ -22,6 +22,12 @@ var UserType = graphql.NewObject(
 			"name": &graphql.Field{
 				Type: graphql.String,
 			},
+			"passwordResetToken": &graphql.Field{
+				Type: graphql.String,
+			},
+			"passwordResetTokenExpiry": &graphql.Field{
+				Type: graphql.DateTime,
+			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},

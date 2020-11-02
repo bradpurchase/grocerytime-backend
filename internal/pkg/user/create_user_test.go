@@ -1,4 +1,4 @@
-package auth
+package user
 
 import (
 	"github.com/DATA-DOG/go-sqlmock"
@@ -32,7 +32,7 @@ func (s *Suite) TestCreateUser_UserCreated() {
 	userID := uuid.NewV4()
 	name := "John Doe"
 	s.mock.ExpectQuery("^INSERT INTO \"users\" (.+)$").
-		WithArgs(email, sqlmock.AnyArg(), name, AnyTime{}, AnyTime{}, AnyTime{}).
+		WithArgs(email, sqlmock.AnyArg(), name, nil, nil, AnyTime{}, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userID))
 
 	clientID := uuid.NewV4()
