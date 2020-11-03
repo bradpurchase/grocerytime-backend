@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"time"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -25,11 +26,17 @@ func ResetPassword(password string, token string) (resetUser *models.User, err e
 	}
 
 	// Update the password and send an email to the user
+	// Also, expire the password_reset_token_expiry so the link can no longer be accessed
 	passhash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return resetUser, err
 	}
-	if err := db.Manager.Model(&user).Update("password", string(passhash)).Error; err != nil {
+	expiry := time.Now()
+	updateQuery := db.Manager.
+		Model(&user).
+		Updates(&models.User{Password: string(passhash), PasswordResetTokenExpiry: &expiry}).
+		Error
+	if err := updateQuery; err != nil {
 		return resetUser, err
 	}
 
