@@ -274,6 +274,26 @@
       "label": "Canned Goods"
     },
     {
+      "text": "canned pineapple",
+      "label": "Canned Goods"
+    },
+    {
+      "text": "pineapple chunks",
+      "label": "Canned Goods"
+    },
+    {
+      "text": "black beans",
+      "label": "Canned Goods"
+    },
+    {
+      "text": "kidney beans",
+      "label": "Canned Goods"
+    },
+    {
+      "text": "diced tomatoes",
+      "label": "Canned Goods"
+    },
+    {
       "text": "cereal",
       "label": "Cereal"
     },
@@ -419,6 +439,10 @@
     },
     {
       "text": "mozzarella",
+      "label": "Dairy"
+    },
+    {
+      "text": "sour cream",
       "label": "Dairy"
     },
     {
@@ -763,6 +787,22 @@
     },
     {
       "text": "bell peppers",
+      "label": "Produce"
+    },
+    {
+      "text": "green peppers",
+      "label": "Produce"
+    },
+    {
+      "text": "yellow peppers",
+      "label": "Produce"
+    },
+    {
+      "text": "red peppers",
+      "label": "Produce"
+    },
+    {
+      "text": "orange peppers",
       "label": "Produce"
     },
     {
