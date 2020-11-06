@@ -33,7 +33,7 @@ func (g *GroceryTrip) AfterUpdate(tx *gorm.DB) (err error) {
 			return err
 		}
 		currentTime := time.Now()
-		newTripName := currentTime.Format("Jan 02, 2006")
+		newTripName := currentTime.Format("Jan 2, 2006")
 		newTrip := &GroceryTrip{StoreID: g.StoreID, Name: newTripName}
 		if err := tx.Create(&newTrip).Error; err != nil {
 			return err

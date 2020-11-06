@@ -46,7 +46,7 @@ func (s *Suite) TestCreateStore_Created() {
 	}
 
 	currentTime := time.Now()
-	tripName := currentTime.Format("Jan 02, 2006")
+	tripName := currentTime.Format("Jan 2, 2006")
 	likeTripName := fmt.Sprintf("%%%s%%", tripName)
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(likeTripName, sqlmock.AnyArg()).

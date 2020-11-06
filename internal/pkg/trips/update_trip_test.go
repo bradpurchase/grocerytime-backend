@@ -69,7 +69,7 @@ func (s *Suite) TestUpdateTrip_DupeTripName() {
 	//
 	// Note: this covers the case where a user creates multiple trips in the same day
 	currentTime := time.Now()
-	tripName := currentTime.Format("Jan 02, 2006")
+	tripName := currentTime.Format("Jan 2, 2006")
 	likeTripName := fmt.Sprintf("%%%s%%", tripName)
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(likeTripName, storeID).
@@ -112,7 +112,7 @@ func (s *Suite) TestUpdateTrip_MarkCompleted() {
 		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
 
 	currentTime := time.Now()
-	tripName := currentTime.Format("Jan 02, 2006")
+	tripName := currentTime.Format("Jan 2, 2006")
 	likeTripName := fmt.Sprintf("%%%s%%", tripName)
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(likeTripName, storeID).
@@ -148,7 +148,7 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 
 	newTripID := uuid.NewV4()
 	currentTime := time.Now()
-	tripName := currentTime.Format("Jan 02, 2006")
+	tripName := currentTime.Format("Jan 2, 2006")
 	likeTripName := fmt.Sprintf("%%%s%%", tripName)
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(likeTripName, storeID).
