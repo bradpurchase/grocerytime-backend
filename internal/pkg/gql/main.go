@@ -327,6 +327,9 @@ func init() {
 						"copyRemainingItems": &graphql.ArgumentConfig{
 							Type: graphql.Boolean,
 						},
+						"newTripName": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 					},
 					Resolve: resolvers.UpdateTripResolver,
 				},
