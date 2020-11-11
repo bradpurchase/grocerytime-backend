@@ -58,6 +58,8 @@ func (s *Suite) TestUpdateTrip_DupeTripName() {
 
 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	s.mock.ExpectBegin()
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(storeID).
 		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(0))
@@ -79,6 +81,7 @@ func (s *Suite) TestUpdateTrip_DupeTripName() {
 
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
 
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
@@ -103,6 +106,7 @@ func (s *Suite) TestUpdateTrip_MarkCompleted() {
 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
+	s.mock.ExpectBegin()
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(storeID).
 		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
@@ -119,6 +123,7 @@ func (s *Suite) TestUpdateTrip_MarkCompleted() {
 
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectCommit()
 
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
@@ -136,6 +141,7 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
+	s.mock.ExpectBegin()
 	s.mock.ExpectQuery("^SELECT count*").
 		WithArgs(storeID).
 		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
@@ -175,6 +181,8 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 		"completed":          true,
 		"copyRemainingItems": true,
 	}
+	s.mock.ExpectCommit()
+
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), trip.(models.GroceryTrip).Completed, true)
