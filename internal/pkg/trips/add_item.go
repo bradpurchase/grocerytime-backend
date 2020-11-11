@@ -117,7 +117,7 @@ func DetermineCategoryName(name string) string {
 	}
 	jsonString := string(json)
 
-	properName := strings.ToLower(name)
+	properName := strings.TrimSpace(strings.ToLower(name))
 	search := fmt.Sprintf("foods.#(text%%\"%s*\").label", properName)
 	value := gjson.Get(jsonString, search)
 	foundCategory := value.String()
