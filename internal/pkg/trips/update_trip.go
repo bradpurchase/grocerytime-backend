@@ -2,7 +2,6 @@ package trips
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
@@ -64,7 +63,6 @@ func UpdateTrip(args map[string]interface{}) (interface{}, error) {
 			}
 
 			var newItems []models.Item
-			fmt.Println(remainingItems)
 			for i := range remainingItems {
 				// Retrieve the store category associated with the previous trip and use it
 				// to create a duplicate grocery trip category in new trip
