@@ -82,6 +82,10 @@
       "label": "Bakery"
     },
     {
+      "text": "bagels",
+      "label": "Bakery"
+    },
+    {
       "text": "baguette",
       "label": "Bakery"
     },
@@ -127,6 +131,10 @@
     },
     {
       "text": "pizza dough",
+      "label": "Bakery"
+    },
+    {
+      "text": "crepes",
       "label": "Bakery"
     },
     {
@@ -254,6 +262,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "snacks",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "nuts",
       "label": "Candy & Snacks"
     },
@@ -262,7 +274,15 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "crisps",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "crackers",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "bark thins",
       "label": "Candy & Snacks"
     },
     {
@@ -350,6 +370,18 @@
       "label": "Cleaning"
     },
     {
+      "text": "dishwashing liquid",
+      "label": "Cleaning"
+    },
+    {
+      "text": "sponge",
+      "label": "Cleaning"
+    },
+    {
+      "text": "garbage bags",
+      "label": "Cleaning"
+    },
+    {
       "text": "windex",
       "label": "Cleaning"
     },
@@ -362,7 +394,15 @@
       "label": "Cleaning"
     },
     {
+      "text": "lysol wipes",
+      "label": "Cleaning"
+    },
+    {
       "text": "wipes",
+      "label": "Cleaning"
+    },
+    {
+      "text": "kleenex",
       "label": "Cleaning"
     },
     {
@@ -394,7 +434,19 @@
       "label": "Condiments"
     },
     {
+      "text": "almond butter",
+      "label": "Condiments"
+    },
+    {
       "text": "vinegar",
+      "label": "Condiments"
+    },
+    {
+      "text": "maple syrup",
+      "label": "Condiments"
+    },
+    {
+      "text": "syrup",
       "label": "Condiments"
     },
     {
@@ -407,6 +459,10 @@
     },
     {
       "text": "eggs",
+      "label": "Dairy"
+    },
+    {
+      "text": "egg whites",
       "label": "Dairy"
     },
     {
@@ -442,11 +498,27 @@
       "label": "Dairy"
     },
     {
+      "text": "cheddar",
+      "label": "Dairy"
+    },
+    {
+      "text": "cheddar cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "cottage cheese",
+      "label": "Dairy"
+    },
+    {
       "text": "sour cream",
       "label": "Dairy"
     },
     {
       "text": "pasta",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "spaghetti",
       "label": "Dry Goods"
     },
     {
@@ -514,11 +586,31 @@
       "label": "Meat"
     },
     {
+      "text": "chicken breast",
+      "label": "Meat"
+    },
+    {
+      "text": "chicken thighs",
+      "label": "Meat"
+    },
+    {
+      "text": "chicken cutlets",
+      "label": "Meat"
+    },
+    {
       "text": "turkey",
       "label": "Meat"
     },
     {
+      "text": "turkey breast",
+      "label": "Meat"
+    },
+    {
       "text": "beef",
+      "label": "Meat"
+    },
+    {
+      "text": "ground beef",
       "label": "Meat"
     },
     {
@@ -598,6 +690,14 @@
       "label": "Frozen Foods"
     },
     {
+      "text": "potstickers",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "perogies",
+      "label": "Frozen Foods"
+    },
+    {
       "text": "birthday",
       "label": "Paper Products"
     },
@@ -650,6 +750,10 @@
       "label": "Personal Care"
     },
     {
+      "text": "makeup wipes",
+      "label": "Personal Care"
+    },
+    {
       "text": "tampons",
       "label": "Personal Care"
     },
@@ -658,7 +762,23 @@
       "label": "Personal Care"
     },
     {
+      "text": "cologne",
+      "label": "Personal Care"
+    },
+    {
       "text": "toothpaste",
+      "label": "Personal Care"
+    },
+    {
+      "text": "mouthwash",
+      "label": "Personal Care"
+    },
+    {
+      "text": "condoms",
+      "label": "Personal Care"
+    },
+    {
+      "text": "lube",
       "label": "Personal Care"
     },
     {
@@ -676,6 +796,10 @@
     {
       "text": "prescription",
       "label": "Pharmacy"
+    },
+    {
+      "text": "fruits",
+      "label": "Produce"
     },
     {
       "text": "apples",
@@ -730,11 +854,23 @@
       "label": "Produce"
     },
     {
+      "text": "cabbage",
+      "label": "Produce"
+    },
+    {
       "text": "mushrooms",
       "label": "Produce"
     },
     {
       "text": "onions",
+      "label": "Produce"
+    },
+    {
+      "text": "red onion",
+      "label": "Produce"
+    },
+    {
+      "text": "brown onion",
       "label": "Produce"
     },
     {
@@ -862,7 +998,23 @@
       "label": "Produce"
     },
     {
+      "text": "parsley",
+      "label": "Produce"
+    },
+    {
       "text": "green onion",
+      "label": "Produce"
+    },
+    {
+      "text": "escallion",
+      "label": "Produce"
+    },
+    {
+      "text": "scallion",
+      "label": "Produce"
+    },
+    {
+      "text": "cucumber",
       "label": "Produce"
     },
     {
