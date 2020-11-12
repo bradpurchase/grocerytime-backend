@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
@@ -32,11 +33,24 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 
 	itemCompleted := false
 	itemName := args["name"].(string)
-	quantity := args["quantity"].(int)
+	var quantity int
+	if args["quantity"] != nil {
+		quantity = args["quantity"].(int)
+	} else {
+		quantity = 1
+	}
 
+	// Handle inline quantity in the item name (e.g. Orange x 5)
 	re := regexp.MustCompile("(.*)(\\s)x(\\s?)(\\d+)")
 	match := re.FindStringSubmatch(itemName)
-	fmt.Println("quantity match", match[4])
+	if match != nil {
+		quantity, err = strconv.Atoi(match[4])
+		if err != nil {
+			return addedItem, errors.New("inline quantity in item name is malformed")
+		}
+		// Strip the quantity out of the name
+		itemName = re.ReplaceAllString(itemName, "$1")
+	}
 
 	item := &models.Item{
 		GroceryTripID: trip.ID,
