@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
@@ -32,6 +33,11 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 	itemCompleted := false
 	itemName := args["name"].(string)
 	quantity := args["quantity"].(int)
+
+	re := regexp.MustCompile("(.*)(\\s)x(\\s?)(\\d+)")
+	match := re.FindStringSubmatch(itemName)
+	fmt.Println("quantity match", match[4])
+
 	item := &models.Item{
 		GroceryTripID: trip.ID,
 		UserID:        userID,
