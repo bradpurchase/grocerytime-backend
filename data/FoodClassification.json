@@ -234,6 +234,10 @@
       "label": "Beverages"
     },
     {
+      "text": "diet pepsi",
+      "label": "Beverages"
+    },
+    {
       "text": "dr pepper",
       "label": "Beverages"
     },
@@ -283,6 +287,18 @@
     },
     {
       "text": "bark thins",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "chocolate",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "dark chocolate",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "milk chocolate",
       "label": "Candy & Snacks"
     },
     {
