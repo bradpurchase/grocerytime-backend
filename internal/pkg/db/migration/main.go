@@ -19,6 +19,10 @@ func migrate(db *gorm.DB) error {
 		&models.GroceryTrip{},
 		&models.GroceryTripCategory{},
 		&models.Item{},
+		&models.Meal{},
+		&models.Recipe{},
+		&models.RecipeIngredient{},
+		&models.RecipeUser{},
 		&models.Store{},
 		&models.StoreUser{},
 		&models.StoreCategory{},
@@ -157,6 +161,74 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Where("name = ?", "GroceryTime for Web").Delete(&models.ApiClient{}).Error
+			},
+		},
+		{
+			// Create recipes table
+			ID: "202011112039_create_recipes",
+			Migrate: func(tx *gorm.DB) error {
+				type Recipe struct {
+					ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					Name     string    `gorm:"type:varchar(255);not null;index:idx_recipes_name"`
+					URL      *string   `gorm:"type:varchar(255)"`
+					MealType string    `gorm:"type:varchar(10);not null;index:idx_recipes_meal_type"`
+				}
+				return tx.AutoMigrate(&Recipe{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("recipes")
+			},
+		},
+		{
+			// Create recipe_ingredients table
+			ID: "202011112056_create_recipe_ingredients",
+			Migrate: func(tx *gorm.DB) error {
+				type RecipeIngredient struct {
+					ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					RecipeID uuid.UUID `gorm:"type:uuid;not null"`
+					Name     string    `gorm:"type:varchar(100);not null;index:idx_recipe_ingredients_name"`
+					Amount   int       `gorm:"default:1;not null"`
+					Units    *string   `gorm:"type:varchar(20)"`
+				}
+				return tx.AutoMigrate(&RecipeIngredient{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("recipe_ingredients")
+			},
+		},
+		{
+			// Create recipe_users table
+			ID: "202011112103_create_recipe_users",
+			Migrate: func(tx *gorm.DB) error {
+				type RecipeUser struct {
+					ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					RecipeID uuid.UUID `gorm:"type:uuid;not null"`
+					UserID   uuid.UUID `gorm:"type:uuid;not null"`
+				}
+				return tx.AutoMigrate(&RecipeUser{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("recipe_users")
+			},
+		},
+		{
+			// Create meals table
+			ID: "202011112104_create_meals",
+			Migrate: func(tx *gorm.DB) error {
+				type Meal struct {
+					ID          uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					RecipeID    uuid.UUID `gorm:"type:uuid;not null"`
+					UserID      uuid.UUID `gorm:"type:uuid;not null"`
+					HouseholdID uuid.UUID `gorm:"type:uuid;not null"`
+					Name        string    `gorm:"type:varchar(255);not null;index:idx_meals_name"`
+					MealType    string    `gorm:"type:varchar(10);not null"`
+					Notes       *string   `gorm:"type:text"`
+					Date        time.Time
+				}
+				return tx.AutoMigrate(&Meal{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("meals")
 			},
 		},
 	})
