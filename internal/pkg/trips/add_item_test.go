@@ -65,3 +65,63 @@ func (s *Suite) TestAddItem_AddsItemToTripWithCategoryName() {
 	assert.Equal(s.T(), item.ID, itemID)
 	assert.Equal(s.T(), item.Name, args["name"])
 }
+
+func (s *Suite) TestAddItem_NoQuantityArg() {
+	userID := uuid.NewV4()
+	tripID := uuid.NewV4()
+	storeID := uuid.NewV4()
+	trip := &models.GroceryTrip{ID: tripID, StoreID: storeID}
+	args := map[string]interface{}{
+		"tripId":       tripID,
+		"name":         "Kleenex",
+		"categoryName": "Cleaning",
+	}
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(tripID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id"}).AddRow(trip.ID, trip.StoreID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(trip.StoreID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), trip.StoreID, userID))
+
+	itemID := uuid.NewV4()
+	s.mock.ExpectQuery("^INSERT INTO \"items\" (.+)$").
+		WithArgs(trip.ID, sqlmock.AnyArg(), userID, "Kleenex", 1, false, 1, AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
+
+	item, err := AddItem(userID, args)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), item.ID, itemID)
+	assert.Equal(s.T(), item.Name, "Kleenex")
+	assert.Equal(s.T(), item.Quantity, 1)
+}
+
+func (s *Suite) TestAddItem_InlineQuantityInItemName() {
+	userID := uuid.NewV4()
+	tripID := uuid.NewV4()
+	storeID := uuid.NewV4()
+	trip := &models.GroceryTrip{ID: tripID, StoreID: storeID}
+	args := map[string]interface{}{
+		"tripId":       tripID,
+		"name":         "Apples x 6",
+		"categoryName": "Produce",
+	}
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(tripID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id"}).AddRow(trip.ID, trip.StoreID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(trip.StoreID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), trip.StoreID, userID))
+
+	itemID := uuid.NewV4()
+	s.mock.ExpectQuery("^INSERT INTO \"items\" (.+)$").
+		WithArgs(trip.ID, sqlmock.AnyArg(), userID, "Apples", 6, false, 1, AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
+
+	item, err := AddItem(userID, args)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), item.ID, itemID)
+	assert.Equal(s.T(), item.Name, "Apples")
+	assert.Equal(s.T(), item.Quantity, 6)
+}
