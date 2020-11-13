@@ -16,6 +16,17 @@ var GroceryTripType = graphql.NewObject(
 			"storeID": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
+			"storeName": &graphql.Field{
+				Type: graphql.String,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					storeID := p.Source.(models.GroceryTrip).StoreID
+					store := models.Store{}
+					if err := db.Manager.Select("name").Where("id = ?", storeID).First(&store).Error; err != nil {
+						return nil, err
+					}
+					return store.Name, nil
+				},
+			},
 			"name": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.String),
 			},

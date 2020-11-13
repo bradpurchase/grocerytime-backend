@@ -207,9 +207,9 @@ func (s *Suite) TestDeleteStore_StoreFound() {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(storeID, userID))
 
 	s.mock.ExpectBegin()
+
 	s.mock.ExpectExec("^UPDATE \"stores\" (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	s.mock.ExpectCommit()
 
 	tripID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
@@ -223,14 +223,19 @@ func (s *Suite) TestDeleteStore_StoreFound() {
 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	storeUsersID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
-		WithArgs(storeID).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeUsersID))
+		WithArgs(storeID, true).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(uuid.NewV4(), userID))
 
-	s.mock.ExpectExec("UPDATE \"store_users\"*").
-		WithArgs(AnyTime{}, storeID, storeUsersID).
+	s.mock.ExpectQuery("^SELECT \"email\" FROM \"users\"*").
+		WithArgs(userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
+
+	s.mock.ExpectExec("^UPDATE \"store_users\" (.+)$").
+		WithArgs(AnyTime{}, storeID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	s.mock.ExpectCommit()
 
 	store, err := DeleteStore(storeID, userID)
 	require.NoError(s.T(), err)

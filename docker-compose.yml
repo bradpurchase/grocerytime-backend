@@ -1,39 +1,65 @@
-version: '3'
+version: "3"
 services:
   app:
-    image: grocerytime_backend:latest
-    container_name: grocerytime_server
-    volumes:
-      - app:/server
     restart: always
+    image: grocerytime:latest
+    container_name: grocerytime
+    env_file: .env
     build:
-      context: ./server
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./data:/go/src/app
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
-      - postgres
+      - database
     networks:
-      - gt-network
+      - webproxy
+      - default
 
-  postgres:
+  database:
+    restart: always
     image: postgres:latest
     container_name: grocerytime_db
-    restart: always
-    environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-      - DATABASE_HOST=${DB_HOST}
+    env_file: .env
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - database_postgres:/var/lib/postgresql/data
+
+  nginx-proxy:
+    restart: always
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "vhost:/etc/nginx/vhost.d"
+      - "html:/usr/share/nginx/html"
+      - "certs:/etc/nginx/certs"
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
     networks:
-      - gt-network
+      - webproxy
+
+  letsencrypt-nginx-proxy-companion:
+    restart: always
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    volumes_from:
+      - "nginx-proxy"
+    networks:
+      - webproxy
+    depends_on:
+      - nginx-proxy
 
 volumes:
   app:
   database_postgres:
+  vhost:
+  html:
+  certs:
 
 networks:
-  gt-network:
+  webproxy:

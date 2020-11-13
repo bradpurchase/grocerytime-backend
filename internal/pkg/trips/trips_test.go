@@ -88,6 +88,37 @@ func (s *Suite) TestRetrieveCurrentStoreTrip_FoundResult() {
 	assert.Equal(s.T(), trip.Name, tripName)
 }
 
+func (s *Suite) TestRetrieveTrips_UserNotActive() {
+	storeID := uuid.NewV4()
+	userID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT count*").
+		WithArgs(storeID, userID, true).
+		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(0))
+
+	_, e := RetrieveTrips(storeID, userID, false)
+	require.Error(s.T(), e)
+	assert.Equal(s.T(), e.Error(), "user is not active in this store")
+}
+
+func (s *Suite) TestRetrieveTrips_Found() {
+	storeID := uuid.NewV4()
+	userID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT count*").
+		WithArgs(storeID, userID, true).
+		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
+
+	rows := s.mock.NewRows([]string{"id"}).
+		AddRow(uuid.NewV4()).
+		AddRow(uuid.NewV4())
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(storeID, false).
+		WillReturnRows(rows)
+
+	trips, err := RetrieveTrips(storeID, userID, false)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), len(trips), 2)
+}
+
 func (s *Suite) TestRetrieveTrip_NotFound() {
 	tripID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").

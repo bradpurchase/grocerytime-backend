@@ -10,10 +10,10 @@ import (
 // Item defines the model for items
 type Item struct {
 	ID            uuid.UUID  `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	GroceryTripID uuid.UUID  `gorm:"type:uuid;not null"`
+	GroceryTripID uuid.UUID  `gorm:"type:uuid;not null;index:idx_items_grocery_trip_id_name"`
 	CategoryID    *uuid.UUID `gorm:"type:uuid;not null"`
 	UserID        uuid.UUID  `gorm:"type:uuid;not null"`
-	Name          string     `gorm:"type:varchar(100);not null"`
+	Name          string     `gorm:"type:varchar(100);not null;index:idx_items_grocery_trip_id_name"`
 	Quantity      int        `gorm:"default:1;not null"`
 	Completed     *bool      `gorm:"default:false;not null"`
 	Position      int        `gorm:"default:1;not null"`
@@ -58,11 +58,6 @@ func (i *Item) BeforeUpdate(tx *gorm.DB) (err error) {
 }
 
 func (i *Item) AfterUpdate(tx *gorm.DB) (err error) {
-	tx.Model(&GroceryTrip{}).Where("id = ?", i.GroceryTripID).Update("updated_at", time.Now())
-	return nil
-}
-
-func (i *Item) AfterDelete(tx *gorm.DB) (err error) {
 	tx.Model(&GroceryTrip{}).Where("id = ?", i.GroceryTripID).Update("updated_at", time.Now())
 	return nil
 }

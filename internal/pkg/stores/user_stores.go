@@ -2,7 +2,6 @@ package stores
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -10,8 +9,7 @@ import (
 )
 
 // RetrieveUserStores retrieves stores that the userID has created or has been added to
-func RetrieveUserStores(user models.User) ([]models.Store, error) {
-	var stores []models.Store
+func RetrieveUserStores(user models.User) (stores []models.Store, err error) {
 	query := db.Manager.
 		Select("stores.*").
 		Joins("INNER JOIN store_users ON store_users.store_id = stores.id").
@@ -28,8 +26,7 @@ func RetrieveUserStores(user models.User) ([]models.Store, error) {
 }
 
 // RetrieveInvitedUserStores retrieves stores that the userID has created or has been added to
-func RetrieveInvitedUserStores(user models.User) ([]models.Store, error) {
-	var stores []models.Store
+func RetrieveInvitedUserStores(user models.User) (stores []models.Store, err error) {
 	query := db.Manager.
 		Select("stores.*").
 		Joins("INNER JOIN store_users ON store_users.store_id = stores.id").
@@ -42,19 +39,18 @@ func RetrieveInvitedUserStores(user models.User) ([]models.Store, error) {
 		Find(&stores).
 		Error
 	if err := query; err != nil {
-		return nil, err
+		return stores, err
 	}
 	return stores, nil
 }
 
 // RetrieveStoreForUser retrieves a specific store by storeID and userID
-func RetrieveStoreForUser(storeID interface{}, userID uuid.UUID) (models.Store, error) {
-	store := models.Store{}
+func RetrieveStoreForUser(storeID interface{}, userID uuid.UUID) (store models.Store, err error) {
 	if err := db.Manager.Where("id = ?", storeID).First(&store).Error; err != nil {
 		return store, err
 	}
 	// Check that the passed userID is a member of this store
-	storeUser := &models.StoreUser{}
+	var storeUser models.StoreUser
 	if err := db.Manager.Where("store_id = ? AND user_id = ?", storeID, userID).First(&storeUser).Error; err != nil {
 		return store, err
 	}
@@ -72,50 +68,15 @@ func RetrieveStoreForUserByName(name string, userID uuid.UUID) (models.Store, er
 	return store, nil
 }
 
-// DeleteStore deletes a store, its associated trips, items, store users,
-// and finally notifies the store users that the store has been deleted
-//
-// Note: this really performs a soft delete for stores and associated models
-func DeleteStore(storeID interface{}, userID uuid.UUID) (models.Store, error) {
-	store := models.Store{}
+// DeleteStore handles deletion of a store record
+// Note: Associated trips, items, store users etc. are deleted in the AfterDelete hook on the model
+func DeleteStore(storeID interface{}, userID uuid.UUID) (deletedStore models.Store, err error) {
+	var store models.Store
 	if err := db.Manager.Where("id = ? AND user_id = ?", storeID, userID).First(&store).Error; err != nil {
-		return store, errors.New("couldn't retrieve store")
+		return deletedStore, errors.New("couldn't retrieve store")
 	}
 	if err := db.Manager.Delete(&store).Error; err != nil {
-		return store, errors.New("couldn't delete store")
+		return deletedStore, err
 	}
-
-	// Delete items in each trip in this store, and then delete the trips themselves
-	var trips []models.GroceryTrip
-	if err := db.Manager.Where("store_id = ?", storeID).Find(&trips).Error; err != nil {
-		return store, errors.New("couldn't find trips in store")
-	}
-	for i := range trips {
-		tripID := trips[i].ID
-
-		// Note: we can just use `.Delete` directly here because
-		// we don't need to do anything with the items after deletion.
-		// for store users we need to fetch, notify, and *then* delete
-		var items []models.Item
-		if err := db.Manager.Where("grocery_trip_id = ?", tripID).Delete(&items).Error; err != nil {
-			return store, errors.New("couldn't delete items in this store's trips")
-		}
-
-		trip := models.GroceryTrip{}
-		if err := db.Manager.Where("id = ?", tripID).Delete(&trip).Error; err != nil {
-			return store, fmt.Errorf("couldn't delete trip: %s", tripID)
-		}
-	}
-
-	var storeUsers []models.StoreUser
-	if err := db.Manager.Where("store_id = ?", storeID).Find(&storeUsers).Error; err != nil {
-		return store, errors.New("couldn't retrieve store users")
-	}
-
-	//TODO notify store users that store was deleted (except creator)
-	if err := db.Manager.Where("store_id = ?", storeID).Delete(&storeUsers).Error; err != nil {
-		return store, errors.New("couldn't delete store users")
-	}
-
 	return store, nil
 }

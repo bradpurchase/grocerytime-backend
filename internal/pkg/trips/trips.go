@@ -28,6 +28,34 @@ func RetrieveCurrentStoreTrip(storeID uuid.UUID, user models.User) (groceryTrip 
 	return trip, nil
 }
 
+// RetrieveTrips retrieves grocery trips within a store
+func RetrieveTrips(storeID interface{}, userID uuid.UUID, completed bool) (tripsList []models.GroceryTrip, err error) {
+	// Verify that this store belongs to the user
+	var count int64
+	existsQuery := db.Manager.
+		Model(&models.StoreUser{}).
+		Where("store_id = ? AND user_id = ? AND active = ?", storeID, userID, true).
+		Count(&count).
+		Error
+	if err := existsQuery; err != nil {
+		return tripsList, err
+	}
+	if count == 0 {
+		return tripsList, errors.New("user is not active in this store")
+	}
+
+	var trips []models.GroceryTrip
+	tripsQuery := db.Manager.
+		Where("store_id = ? AND completed = ?", storeID, completed).
+		Order("created_at DESC").
+		Find(&trips).
+		Error
+	if err := tripsQuery; err != nil {
+		return tripsList, err
+	}
+	return trips, nil
+}
+
 // RetrieveTrip retrieves a specific grocery trip by ID
 func RetrieveTrip(tripID interface{}) (models.GroceryTrip, error) {
 	trip := models.GroceryTrip{}

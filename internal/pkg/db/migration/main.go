@@ -35,8 +35,8 @@ func AutoMigrateService(db *gorm.DB) error {
 
 		// Create the UUID extensions
 		// postgres user needs to have superuser perms for now
-		db.Exec("create extension \"pgcrypto\";")
-		db.Exec("create extension \"uuid-oosp\";")
+		db.Exec("CREATE EXTENSION \"pgcrypto\";")
+		db.Exec("CREATE EXTENSION \"uuid-oosp\";")
 
 		if err := migrate(db); err != nil {
 			return fmt.Errorf("[Migration.InitSchema]: %v", err)
@@ -53,97 +53,111 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Create(&models.ApiClient{Name: "GroceryTime for iOS"}).Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Where("name = ?", "Test").Delete(&models.ApiClient{}).Error
+				return tx.Where("name = ?", "GroceryTime for iOS").Delete(&models.ApiClient{}).Error
 			},
 		},
 		{
 			// Add index idx_items_grocery_trip_id_category_id
 			ID: "202006021110_add_idx_items_grocery_trip_id_category_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.Item{}, "idx_grocery_trip_id_category_id")
+				return tx.Exec("CREATE INDEX idx_grocery_trip_id_category_id ON items (grocery_trip_id, category_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.Item{}, "idx_grocery_trip_id_category_id")
+				return tx.Exec("DROP INDEX idx_grocery_trip_id_category_id").Error
 			},
 		},
 		{
 			// Add index idx_store_users_store_id
 			ID: "202006021117_add_idx_store_users_store_id_user_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.StoreUser{}, "idx_store_users_store_id_user_id")
+				return tx.Exec("CREATE INDEX idx_store_users_store_id_user_id ON store_users (store_id, user_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.StoreUser{}, "idx_store_users_store_id_user_id")
+				return tx.Exec("DROP INDEX idx_store_users_store_id_user_id").Error
 			},
 		},
 		{
 			// Add index idx_store_users_user_id
 			ID: "202006021118_add_idx_store_users_store_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.StoreUser{}, "idx_store_users_store_id")
+				return tx.Exec("CREATE INDEX idx_store_users_store_id ON store_users (store_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.StoreUser{}, "idx_store_users_store_id")
+				return tx.Exec("DROP INDEX idx_store_users_store_id").Error
 			},
 		},
 		{
 			// Add index idx_store_categories_store_id
 			ID: "202009060829_add_idx_store_categories_store_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.StoreCategory{}, "idx_store_categories_store_id")
+				return tx.Exec("CREATE INDEX idx_store_categories_store_id ON store_categories (store_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.StoreCategory{}, "idx_store_categories_store_id")
+				return tx.Exec("DROP INDEX idx_store_categories_store_id").Error
 			},
 		},
 		{
 			// Add index idx_grocery_trips_store_id
 			ID: "202009060831_add_idx_grocery_trips_store_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.GroceryTrip{}, "idx_grocery_trips_store_id")
+				return tx.Exec("CREATE INDEX idx_grocery_trips_store_id ON grocery_trips (store_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.GroceryTrip{}, "idx_grocery_trips_store_id")
+				return tx.Exec("DROP INDEX idx_grocery_trips_store_id").Error
 			},
 		},
 		{
 			// Add index idx_grocery_trip_categories_grocery_trip_id
 			ID: "202009060833_add_idx_grocery_trip_categories_grocery_trip_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.GroceryTripCategory{}, "idx_grocery_trip_categories_grocery_trip_id")
+				return tx.Exec("CREATE INDEX idx_grocery_trip_categories_grocery_trip_id ON grocery_trip_categories (grocery_trip_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.GroceryTripCategory{}, "idx_grocery_trip_categories_grocery_trip_id")
+				return tx.Exec("DROP INDEX idx_grocery_trip_categories_grocery_trip_id").Error
 			},
 		},
 		{
 			// Add index idx_grocery_trip_categories_grocery_trip_id
 			ID: "202009060835_add_idx_grocery_trip_categories_store_category_id",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().CreateIndex(&models.GroceryTripCategory{}, "idx_grocery_trip_categories_store_category_id")
+				return tx.Exec("CREATE INDEX idx_grocery_trip_categories_store_category_id ON grocery_trip_categories (store_category_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropIndex(&models.GroceryTripCategory{}, "idx_grocery_trip_categories_store_category_id")
+				return tx.Exec("DROP INDEX idx_grocery_trip_categories_store_category_id").Error
 			},
 		},
 		{
-			// Rename user first_name to name
-			ID: "202009161947_rename_user_first_name",
+			// Add index idx_items_grocery_trip_id_name
+			ID: "202010111143_add_idx_items_grocery_trip_id_name",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().RenameColumn(&models.User{}, "first_name", "name")
+				return tx.Exec("CREATE INDEX idx_items_name_grocery_trip_id ON items (name, grocery_trip_id)").Error
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().RenameColumn(&models.User{}, "name", "first_name")
+				return tx.Exec("DROP INDEX idx_items_name_grocery_trip_id").Error
 			},
 		},
 		{
-			// Drop last_name from users
-			ID: "202009161947_drop_last_name",
+			// Add password reset fields to user
+			ID: "202010310840_add_password_reset_token_and_password_reset_token_expiry_to_users",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Migrator().DropColumn(&models.User{}, "last_name")
+				type User struct {
+					PasswordResetToken       uuid.UUID `gorm:"type:uuid"`
+					PasswordResetTokenExpiry time.Time
+				}
+				return tx.AutoMigrate(&User{})
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().AddColumn(&models.User{}, "last_name")
+				return tx.Exec("ALTER TABLE users DROP COLUMN password_reset_token, DROP COLUMN password_reset_token_expiry").Error
+			},
+		},
+		{
+			// Create web API client
+			ID: "202010310843_web_api_client",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Create(&models.ApiClient{Name: "GroceryTime for Web"}).Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Where("name = ?", "GroceryTime for Web").Delete(&models.ApiClient{}).Error
 			},
 		},
 		{

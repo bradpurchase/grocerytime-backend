@@ -22,6 +22,16 @@ func init() {
 					Description: "Retrieve the current user",
 					Resolve:     resolvers.AuthenticatedUserResolver,
 				},
+				"passwordReset": &graphql.Field{
+					Type:        gql.UserType,
+					Description: "Retrieve information about a password reset",
+					Args: graphql.FieldConfigArgument{
+						"token": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.PasswordResetResolver,
+				},
 				"stores": &graphql.Field{
 					Type:        graphql.NewList(gql.StoreType),
 					Description: "Retrieve stores for the current user",
@@ -42,6 +52,19 @@ func init() {
 					},
 					Resolve: resolvers.StoreResolver,
 				},
+				"trips": &graphql.Field{
+					Type:        graphql.NewList(gql.GroceryTripType),
+					Description: "Retrieve trip history for a store",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"completed": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+					},
+					Resolve: resolvers.GroceryTripsResolver,
+				},
 				"trip": &graphql.Field{
 					Type:        gql.GroceryTripType,
 					Description: "Retrieve a specific grocery trip within a store",
@@ -51,6 +74,16 @@ func init() {
 						},
 					},
 					Resolve: resolvers.GroceryTripResolver,
+				},
+				"itemSearch": &graphql.Field{
+					Type:        gql.ItemType,
+					Description: "Search for an item in the user's stores by name",
+					Args: graphql.FieldConfigArgument{
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.ItemSearchResolver,
 				},
 			},
 		},
@@ -74,22 +107,6 @@ func init() {
 					},
 					Resolve: resolvers.LoginResolver,
 				},
-				"token": &graphql.Field{
-					Type:        gql.AuthTokenType,
-					Description: "Retrieve an access token (DEPRECATED)",
-					Args: graphql.FieldConfigArgument{
-						"grantType": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-						"email": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-						"password": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-					},
-					Resolve: resolvers.TokenResolver,
-				},
 				"signup": &graphql.Field{
 					Type:        gql.UserType,
 					Description: "Create a new user account",
@@ -105,6 +122,29 @@ func init() {
 						},
 					},
 					Resolve: resolvers.SignupResolver,
+				},
+				"forgotPassword": &graphql.Field{
+					Type:        gql.UserType,
+					Description: "Sends an email to a user to set a new password",
+					Args: graphql.FieldConfigArgument{
+						"email": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.ForgotPasswordResolver,
+				},
+				"resetPassword": &graphql.Field{
+					Type:        gql.UserType,
+					Description: "Updates a password for a user",
+					Args: graphql.FieldConfigArgument{
+						"password": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"token": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.ResetPasswordResolver,
 				},
 				"createStore": &graphql.Field{
 					Type:        gql.StoreType,
@@ -286,6 +326,9 @@ func init() {
 						},
 						"copyRemainingItems": &graphql.ArgumentConfig{
 							Type: graphql.Boolean,
+						},
+						"newTripName": &graphql.ArgumentConfig{
+							Type: graphql.String,
 						},
 					},
 					Resolve: resolvers.UpdateTripResolver,

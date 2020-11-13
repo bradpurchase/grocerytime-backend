@@ -14,7 +14,12 @@ func FetchAuthenticatedUser(header string) (interface{}, error) {
 		return nil, err
 	}
 	authToken := &models.AuthToken{}
-	if err := db.Manager.Preload("User").Where("access_token = ?", token).Last(&authToken).Error; err != nil {
+	query := db.Manager.
+		Preload("User").
+		Where("access_token = ?", token).
+		Last(&authToken).
+		Error
+	if err := query; err != nil {
 		return nil, errors.New("token invalid/expired")
 	}
 	return authToken.User, nil

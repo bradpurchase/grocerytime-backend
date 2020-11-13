@@ -2,6 +2,7 @@ package trips
 
 import (
 	"errors"
+	"time"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -20,13 +21,32 @@ func DeleteItem(itemID interface{}) (deletedItem models.Item, err error) {
 		return deletedItem, err
 	}
 
+	// Touch the GroceryTrip record to update its updated_at timestamp
+	updateTripQuery := db.Manager.
+		Model(&models.GroceryTrip{}).
+		Where("id = ?", item.GroceryTripID).
+		Update("updated_at", time.Now()).
+		Error
+	if err := updateTripQuery; err != nil {
+		return deletedItem, err
+	}
+
 	// If this was the last item in this trip category, delete the trip category too
 	var remainingItemsCount int64
-	if err := db.Manager.Model(&models.Item{}).Where("category_id = ?", categoryID).Count(&remainingItemsCount).Error; err != nil {
+	categoryItemsCountQuery := db.Manager.
+		Model(&models.Item{}).
+		Where("category_id = ?", categoryID).
+		Count(&remainingItemsCount).
+		Error
+	if err := categoryItemsCountQuery; err != nil {
 		return deletedItem, err
 	}
 	if remainingItemsCount == 0 {
-		if err := db.Manager.Where("id = ?", categoryID).Delete(&models.GroceryTripCategory{}).Error; err != nil {
+		deleteCategoryQuery := db.Manager.
+			Where("id = ?", categoryID).
+			Delete(&models.GroceryTripCategory{}).
+			Error
+		if err := deleteCategoryQuery; err != nil {
 			return deletedItem, err
 		}
 	}
