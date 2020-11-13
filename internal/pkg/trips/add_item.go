@@ -41,7 +41,7 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 	}
 
 	// Handle inline quantity in the item name (e.g. Orange x 5)
-	re := regexp.MustCompile("(.*)(\\s)x(\\s?)(\\d+)")
+	re := regexp.MustCompile("^(.*)(\\s)x(\\s?)(\\d+)(\\s+)?")
 	match := re.FindStringSubmatch(itemName)
 	if match != nil {
 		quantity, err = strconv.Atoi(match[4])
