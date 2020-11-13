@@ -22,15 +22,15 @@ type StoreUser struct {
 	DeletedAt gorm.DeletedAt
 
 	// Associations
-	Store Store
-	User  User
+	Preferences StoreUserPreference
+	Store       Store
+	User        User
 }
 
 // AfterCreate hook to handle sending an invite email to a new StoreUser if the
 // email column is not empty (i.e. store invitation by another user)
 func (su *StoreUser) AfterCreate(tx *gorm.DB) (err error) {
-	hasEmail := len(su.Email) > 0
-	if hasEmail {
+	if len(su.Email) > 0 {
 		store := Store{}
 		if err := tx.Select("name, user_id").Where("id = ?", su.StoreID).First(&store).Error; err != nil {
 			return err

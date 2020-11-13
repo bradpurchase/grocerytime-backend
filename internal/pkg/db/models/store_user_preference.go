@@ -17,7 +17,4 @@ type StoreUserPreference struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt
-
-	// Associations
-	StoreUser StoreUser
 }

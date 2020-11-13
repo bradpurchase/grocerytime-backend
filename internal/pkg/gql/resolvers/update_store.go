@@ -19,6 +19,5 @@ func UpdateStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return store, nil
 }

@@ -166,10 +166,9 @@ func (s *Suite) TestAddUserToStore_UserNotFoundInStore() {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
 
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
-	storeUserID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, user.Email).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeUserID))
+		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	_, e := AddUserToStore(user, storeID)
 	require.Error(s.T(), e)
@@ -188,16 +187,20 @@ func (s *Suite) TestAddUserToStore_Success() {
 		WithArgs(storeID, user.Email).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "email"}).AddRow(storeUserID, email))
 
-	s.mock.ExpectBegin()
 	s.mock.ExpectExec("^UPDATE \"store_users\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-	s.mock.ExpectCommit()
+
+	s.mock.ExpectQuery("^INSERT INTO \"store_user_preferences\" (.+)$").
+		WithArgs(storeUserID, false, true, AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"store_user_id"}).AddRow(storeUserID))
 
 	storeUser, err := AddUserToStore(user, storeID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).ID, storeUserID)
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).UserID, user.ID)
-	assert.Equal(s.T(), storeUser.(*models.StoreUser).Email, "")
+	assert.Equal(s.T(), storeUser.ID, storeUserID)
+	assert.Equal(s.T(), storeUser.UserID, user.ID)
+	assert.Equal(s.T(), storeUser.Email, "")
+	assert.Equal(s.T(), storeUser.Preferences.DefaultStore, false)
+	assert.Equal(s.T(), storeUser.Preferences.Notifications, false)
 }
 
 func (s *Suite) TestRetrieveStoreUsers_HasStoreUsers() {

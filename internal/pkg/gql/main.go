@@ -222,6 +222,22 @@ func init() {
 					},
 					Resolve: resolvers.LeaveStoreResolver,
 				},
+				"updateStoreUserPrefs": &graphql.Field{
+					Type:        gql.StoreUserPreferenceType,
+					Description: "Updates the current user's preferences for a store",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"defaultStore": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+						"notifications": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+					},
+					Resolve: resolvers.UpdateStoreUserPrefsResolver,
+				},
 				"deleteItem": &graphql.Field{
 					Type:        gql.ItemType,
 					Description: "Remove an item from a trip",
