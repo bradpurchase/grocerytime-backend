@@ -33,24 +33,11 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 
 	itemCompleted := false
 	itemName := args["name"].(string)
-	var quantity int
+	quantity := 1
 	if args["quantity"] != nil {
 		quantity = args["quantity"].(int)
-	} else {
-		quantity = 1
 	}
-
-	// Handle inline quantity in the item name (e.g. Orange x 5)
-	re := regexp.MustCompile("^(.*)(\\s)x(\\s?)(\\d+)(\\s+)?")
-	match := re.FindStringSubmatch(itemName)
-	if match != nil {
-		quantity, err = strconv.Atoi(match[4])
-		if err != nil {
-			return addedItem, errors.New("inline quantity in item name is malformed")
-		}
-		// Strip the quantity out of the name
-		itemName = re.ReplaceAllString(itemName, "$1")
-	}
+	itemName, quantity = ParseItemName(itemName, quantity)
 
 	item := &models.Item{
 		GroceryTripID: trip.ID,
@@ -145,4 +132,22 @@ func DetermineCategoryName(name string) string {
 		return foundCategory
 	}
 	return "Misc."
+}
+
+// ParseItemName handles inline quantity in the item name (e.g. Orange x 5) and
+// returns a parsed version of both the name and quantity
+func ParseItemName(name string, quantity int) (parsedName string, parsedQuantity int) {
+	re := regexp.MustCompile("^(.*)(\\s)x(\\s?)(\\d+)(\\s+)?")
+	match := re.FindStringSubmatch(name)
+	if match != nil {
+		var err error
+		parsedQuantity, err = strconv.Atoi(match[4])
+		if err != nil {
+			return name, quantity
+		}
+		// Strip the quantity out of the name
+		parsedName = re.ReplaceAllString(name, "$1")
+		return parsedName, parsedQuantity
+	}
+	return name, quantity
 }
