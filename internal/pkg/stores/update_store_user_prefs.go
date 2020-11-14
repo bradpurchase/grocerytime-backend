@@ -27,5 +27,4 @@ func UpdateStoreUserPrefs(storeUserID uuid.UUID, args map[string]interface{}) (s
 		return sup, err
 	}
 	return sup, nil
-	//TODO test this
 }
