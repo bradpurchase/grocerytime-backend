@@ -170,6 +170,10 @@
       "label": "Baking"
     },
     {
+      "text": "almond flour",
+      "label": "Baking"
+    },
+    {
       "text": "molasses",
       "label": "Baking"
     },
@@ -208,6 +212,10 @@
     {
       "text": "graham crackers",
       "label": "Baking"
+    },
+    {
+      "text": "drinks",
+      "label": "Beverages"
     },
     {
       "text": "soda",
@@ -258,7 +266,19 @@
       "label": "Beverages"
     },
     {
+      "text": "spindrift",
+      "label": "Beverages"
+    },
+    {
       "text": "water",
+      "label": "Beverages"
+    },
+    {
+      "text": "energy drinks",
+      "label": "Beverages"
+    },
+    {
+      "text": "red bull",
       "label": "Beverages"
     },
     {
@@ -422,6 +442,10 @@
       "label": "Cleaning"
     },
     {
+      "text": "air freshener",
+      "label": "Cleaning"
+    },
+    {
       "text": "ketchup",
       "label": "Condiments"
     },
@@ -443,6 +467,18 @@
     },
     {
       "text": "sauce",
+      "label": "Condiments"
+    },
+    {
+      "text": "barbecue sauce",
+      "label": "Condiments"
+    },
+    {
+      "text": "bbq sauce",
+      "label": "Condiments"
+    },
+    {
+      "text": "buffalo sauce",
       "label": "Condiments"
     },
     {
@@ -470,7 +506,19 @@
       "label": "Dairy"
     },
     {
+      "text": "creamer",
+      "label": "Dairy"
+    },
+    {
+      "text": "half & half",
+      "label": "Dairy"
+    },
+    {
       "text": "yogurt",
+      "label": "Dairy"
+    },
+    {
+      "text": "yoghurt",
       "label": "Dairy"
     },
     {
@@ -499,6 +547,10 @@
     },
     {
       "text": "sliced cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "cream cheese",
       "label": "Dairy"
     },
     {
@@ -646,6 +698,10 @@
       "label": "Meat"
     },
     {
+      "text": "ground pork",
+      "label": "Meat"
+    },
+    {
       "text": "veal",
       "label": "Meat"
     },
@@ -659,6 +715,18 @@
     },
     {
       "text": "deli",
+      "label": "Meat"
+    },
+    {
+      "text": "lunch meat",
+      "label": "Meat"
+    },
+    {
+      "text": "cold cuts",
+      "label": "Meat"
+    },
+    {
+      "text": "salami",
       "label": "Meat"
     },
     {
@@ -695,6 +763,10 @@
     },
     {
       "text": "nuggets",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "french fries",
       "label": "Frozen Foods"
     },
     {
@@ -802,6 +874,18 @@
       "label": "Pharmacy"
     },
     {
+      "text": "vitamin c",
+      "label": "Pharmacy"
+    },
+    {
+      "text": "vitamin d",
+      "label": "Pharmacy"
+    },
+    {
+      "text": "vitamin b12",
+      "label": "Pharmacy"
+    },
+    {
       "text": "advil",
       "label": "Pharmacy"
     },
@@ -815,6 +899,10 @@
     },
     {
       "text": "fruits",
+      "label": "Produce"
+    },
+    {
+      "text": "greens",
       "label": "Produce"
     },
     {
@@ -855,6 +943,10 @@
     },
     {
       "text": "carrots",
+      "label": "Produce"
+    },
+    {
+      "text": "broccoli",
       "label": "Produce"
     },
     {
@@ -1031,6 +1123,34 @@
     },
     {
       "text": "cucumber",
+      "label": "Produce"
+    },
+    {
+      "text": "okra",
+      "label": "Produce"
+    },
+    {
+      "text": "grapes",
+      "label": "Produce"
+    },
+    {
+      "text": "blueberries",
+      "label": "Produce"
+    },
+    {
+      "text": "raspberries",
+      "label": "Produce"
+    },
+    {
+      "text": "pimento",
+      "label": "Produce"
+    },
+    {
+      "text": "jalapeno",
+      "label": "Produce"
+    },
+    {
+      "text": "zucchini",
       "label": "Produce"
     },
     {
