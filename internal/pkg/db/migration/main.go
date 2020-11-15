@@ -165,10 +165,10 @@ func AutoMigrateService(db *gorm.DB) error {
 			ID: "202010071813_create_store_user_preferences",
 			Migrate: func(tx *gorm.DB) error {
 				type StoreUserPreference struct {
-					ID            uuid.UUID
-					StoreUserID   uuid.UUID
-					DefaultStore  bool
-					Notifications bool
+					ID            uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					StoreUserID   uuid.UUID `gorm:"type:uuid;uniqueIndex;not null"`
+					DefaultStore  bool      `gorm:"default:false;not null"`
+					Notifications bool      `gorm:"default:true;not null"`
 
 					CreatedAt time.Time
 					UpdatedAt time.Time

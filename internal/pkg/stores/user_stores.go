@@ -13,10 +13,11 @@ func RetrieveUserStores(user models.User) (stores []models.Store, err error) {
 	query := db.Manager.
 		Select("stores.*").
 		Joins("INNER JOIN store_users ON store_users.store_id = stores.id").
+		Joins("INNER JOIN store_user_preferences ON store_user_preferences.store_user_id = store_users.id").
 		Joins("LEFT OUTER JOIN grocery_trips ON grocery_trips.store_id = stores.id").
 		Where("store_users.user_id = ?", user.ID).
-		Group("stores.id").
-		Order("MAX(grocery_trips.updated_at) DESC").
+		Group("stores.id, store_user_preferences.default_store").
+		Order("store_user_preferences.default_store DESC, MAX(grocery_trips.updated_at) DESC").
 		Find(&stores).
 		Error
 	if err := query; err != nil {
