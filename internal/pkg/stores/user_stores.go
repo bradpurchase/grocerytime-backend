@@ -81,3 +81,17 @@ func DeleteStore(storeID interface{}, userID uuid.UUID) (deletedStore models.Sto
 	}
 	return store, nil
 }
+
+// RetrieveStoreUserID retrieves the ID of the store_users record associated with a storeID and userID
+func RetrieveStoreUserID(storeID interface{}, userID uuid.UUID) (storeUserID uuid.UUID, err error) {
+	var storeUser models.StoreUser
+	storeUserQuery := db.Manager.
+		Select("id").
+		Where("store_id = ? AND user_id = ?", storeID, userID).
+		Find(&storeUser).
+		Error
+	if err := storeUserQuery; err != nil {
+		return storeUserID, err
+	}
+	return storeUser.ID, nil
+}
