@@ -214,6 +214,10 @@
       "label": "Baking"
     },
     {
+      "text": "pie crust",
+      "label": "Baking"
+    },
+    {
       "text": "drinks",
       "label": "Beverages"
     },
@@ -282,7 +286,111 @@
       "label": "Beverages"
     },
     {
+      "text": "water",
+      "label": "Beverages"
+    },
+    {
+      "text": "bottled water",
+      "label": "Beverages"
+    },
+    {
+      "text": "water bottles",
+      "label": "Beverages"
+    },
+    {
+      "text": "milk",
+      "label": "Dairy"
+    },
+    {
+      "text": "creamer",
+      "label": "Dairy"
+    },
+    {
+      "text": "half & half",
+      "label": "Dairy"
+    },
+    {
+      "text": "yogurt",
+      "label": "Dairy"
+    },
+    {
+      "text": "yoghurt",
+      "label": "Dairy"
+    },
+    {
+      "text": "eggs",
+      "label": "Dairy"
+    },
+    {
+      "text": "egg whites",
+      "label": "Dairy"
+    },
+    {
+      "text": "almond milk",
+      "label": "Dairy"
+    },
+    {
+      "text": "oat milk",
+      "label": "Dairy"
+    },
+    {
+      "text": "butter",
+      "label": "Dairy"
+    },
+    {
+      "text": "margarine",
+      "label": "Dairy"
+    },
+    {
+      "text": "cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "sliced cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "cream cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "parmesan",
+      "label": "Dairy"
+    },
+    {
+      "text": "ricotta",
+      "label": "Dairy"
+    },
+    {
+      "text": "mozzarella",
+      "label": "Dairy"
+    },
+    {
+      "text": "cheddar",
+      "label": "Dairy"
+    },
+    {
+      "text": "cheddar cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "cottage cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "sour cream",
+      "label": "Dairy"
+    },
+    {
+      "text": "cookie dough",
+      "label": "Dairy"
+    },
+    {
       "text": "candy",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "candies",
       "label": "Candy & Snacks"
     },
     {
@@ -291,6 +399,10 @@
     },
     {
       "text": "nuts",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "peanuts",
       "label": "Candy & Snacks"
     },
     {
@@ -303,6 +415,10 @@
     },
     {
       "text": "crackers",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "ritz crackers",
       "label": "Candy & Snacks"
     },
     {
@@ -319,6 +435,18 @@
     },
     {
       "text": "milk chocolate",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "apple sauce",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "pudding",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "pudding cups",
       "label": "Candy & Snacks"
     },
     {
@@ -374,6 +502,10 @@
       "label": "Cereal"
     },
     {
+      "text": "rice krispies",
+      "label": "Cereal"
+    },
+    {
       "text": "cleaning",
       "label": "Cleaning"
     },
@@ -399,10 +531,6 @@
     },
     {
       "text": "paper towel",
-      "label": "Cleaning"
-    },
-    {
-      "text": "toilet paper",
       "label": "Cleaning"
     },
     {
@@ -494,92 +622,20 @@
       "label": "Condiments"
     },
     {
+      "text": "white vinegar",
+      "label": "Condiments"
+    },
+    {
+      "text": "malt vinegar",
+      "label": "Condiments"
+    },
+    {
       "text": "maple syrup",
       "label": "Condiments"
     },
     {
       "text": "syrup",
       "label": "Condiments"
-    },
-    {
-      "text": "milk",
-      "label": "Dairy"
-    },
-    {
-      "text": "creamer",
-      "label": "Dairy"
-    },
-    {
-      "text": "half & half",
-      "label": "Dairy"
-    },
-    {
-      "text": "yogurt",
-      "label": "Dairy"
-    },
-    {
-      "text": "yoghurt",
-      "label": "Dairy"
-    },
-    {
-      "text": "eggs",
-      "label": "Dairy"
-    },
-    {
-      "text": "egg whites",
-      "label": "Dairy"
-    },
-    {
-      "text": "almond milk",
-      "label": "Dairy"
-    },
-    {
-      "text": "butter",
-      "label": "Dairy"
-    },
-    {
-      "text": "margarine",
-      "label": "Dairy"
-    },
-    {
-      "text": "cheese",
-      "label": "Dairy"
-    },
-    {
-      "text": "sliced cheese",
-      "label": "Dairy"
-    },
-    {
-      "text": "cream cheese",
-      "label": "Dairy"
-    },
-    {
-      "text": "parmesan",
-      "label": "Dairy"
-    },
-    {
-      "text": "ricotta",
-      "label": "Dairy"
-    },
-    {
-      "text": "mozzarella",
-      "label": "Dairy"
-    },
-    {
-      "text": "cheddar",
-      "label": "Dairy"
-    },
-    {
-      "text": "cheddar cheese",
-      "label": "Dairy"
-    },
-    {
-      "text": "cottage cheese",
-      "label": "Dairy"
-    },
-    {
-      "text": "sour cream",
-      "label": "Dairy"
     },
     {
       "text": "pasta",
@@ -611,6 +667,18 @@
     },
     {
       "text": "coffee",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "decaf coffee",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "tea",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "decaf tea",
       "label": "Dry Goods"
     },
     {
@@ -730,6 +798,34 @@
       "label": "Meat"
     },
     {
+      "text": "pepperoni",
+      "label": "Meat"
+    },
+    {
+      "text": "bacon",
+      "label": "Meat"
+    },
+    {
+      "text": "turkey bacon",
+      "label": "Meat"
+    },
+    {
+      "text": "sausage",
+      "label": "Meat"
+    },
+    {
+      "text": "sausages",
+      "label": "Meat"
+    },
+    {
+      "text": "breakfast sausages",
+      "label": "Meat"
+    },
+    {
+      "text": "ribs",
+      "label": "Meat"
+    },
+    {
       "text": "frozen",
       "label": "Frozen Foods"
     },
@@ -755,6 +851,10 @@
     },
     {
       "text": "chicken strips",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "chicken fingers",
       "label": "Frozen Foods"
     },
     {
@@ -870,6 +970,10 @@
       "label": "Personal Care"
     },
     {
+      "text": "toilet paper",
+      "label": "Personal Care"
+    },
+    {
       "text": "vitamin",
       "label": "Pharmacy"
     },
@@ -943,6 +1047,10 @@
     },
     {
       "text": "carrots",
+      "label": "Produce"
+    },
+    {
+      "text": "baby carrots",
       "label": "Produce"
     },
     {
