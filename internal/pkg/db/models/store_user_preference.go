@@ -22,7 +22,7 @@ type StoreUserPreference struct {
 // AfterUpdate hook handles some cleanup operations after updating store user prefs
 func (sup *StoreUserPreference) AfterUpdate(tx *gorm.DB) (err error) {
 	if sup.DefaultStore {
-		// Find all other stores belonging to this user and mark them as default_store false
+		// Find all other stores belonging to this user, we need to unmark these as default
 		var storeUsers []StoreUser
 		storeUsersQuery := tx.
 			Select("id").

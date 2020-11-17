@@ -16,6 +16,13 @@ func (s *Suite) TestUpdateStoreUserPrefs_UpdateDefaultStore() {
 	s.mock.ExpectExec("^UPDATE \"store_user_preferences\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
+	// AfterUpdate hook to unmark defaults for other store users
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
+	s.mock.ExpectExec("^UPDATE \"store_user_preferences\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
 	storeID := uuid.NewV4()
 	args := map[string]interface{}{
 		"storeId":      storeID,
@@ -33,6 +40,13 @@ func (s *Suite) TestUpdateStoreUserPrefs_UpdateMultiColumns() {
 		WithArgs(storeUserID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "default_store"}).AddRow(uuid.NewV4(), false))
 
+	s.mock.ExpectExec("^UPDATE \"store_user_preferences\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	// AfterUpdate hook to unmark defaults for other store users
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	s.mock.ExpectExec("^UPDATE \"store_user_preferences\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
