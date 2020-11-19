@@ -12,10 +12,18 @@ import (
 // AddItemsToStore adds an array of items to a store for a user. It creates
 // the store for the user if it doesn't already exist.
 func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems []*models.Item, err error) {
-	storeName := args["storeName"].(string)
-	store, err := FindOrCreateStore(userID, storeName)
-	if err != nil {
-		return addedItems, errors.New("could not find or create store")
+	var store models.Store
+	if args["storeName"] != nil {
+		storeName := args["storeName"].(string)
+		store, err = FindOrCreateStore(userID, storeName)
+		if err != nil {
+			return addedItems, errors.New("could not find or create store")
+		}
+	} else {
+		store, err = FindDefaultStore(userID)
+		if err != nil {
+			return nil, errors.New("could not retrieve default store")
+		}
 	}
 
 	// Fetch the current trip for this store
@@ -55,7 +63,7 @@ func FindOrCreateStore(userID uuid.UUID, name string) (storeRecord models.Store,
 	if err := storeQuery; err != nil {
 		return storeRecord, errors.New("could not find or create store")
 	}
-	return store, err
+	return store, nil
 }
 
 // FindCurrentTripIDInStore retrieves the ID of the most recent trip in the store that hasn't been completed
@@ -72,5 +80,21 @@ func FindCurrentTripIDInStore(storeID uuid.UUID) (tripID uuid.UUID, err error) {
 	if err := tripQuery; err != nil {
 		return tripID, err
 	}
-	return trip.ID, err
+	return trip.ID, nil
+}
+
+// FindDefaultStore retrieves the ID of the store that is set as the default for the userID provided
+func FindDefaultStore(userID uuid.UUID) (store models.Store, err error) {
+	query := db.Manager.
+		Select("stores.id").
+		Joins("INNER JOIN store_users ON store_users.store_id = stores.id").
+		Joins("INNER JOIN store_user_preferences ON store_user_preferences.store_user_id = store_users.id").
+		Where("store_users.user_id = ?", userID).
+		Where("store_user_preferences.default_store = ?", true).
+		Find(&store).
+		Error
+	if err := query; err != nil {
+		return store, err
+	}
+	return store, nil
 }

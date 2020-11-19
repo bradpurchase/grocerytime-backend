@@ -332,7 +332,7 @@ func init() {
 							),
 						},
 						"storeName": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
+							Type: graphql.String,
 						},
 					},
 					Resolve: resolvers.AddItemsToStore,
