@@ -20,6 +20,8 @@ func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems 
 			return addedItems, errors.New("could not find or create store")
 		}
 	} else {
+		// TODO: what if there's no default store set? handle this case...
+		// could fall back to the user's first store added as a hail mary
 		store, err = FindDefaultStore(userID)
 		if err != nil {
 			return nil, errors.New("could not retrieve default store")
