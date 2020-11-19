@@ -13,9 +13,9 @@ import (
 // the store for the user if it doesn't already exist.
 func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems []*models.Item, err error) {
 	var store models.Store
-	if args["storeName"] != nil {
-		storeName := args["storeName"].(string)
-		store, err = FindOrCreateStore(userID, storeName)
+	storeName, val := args["storeName"]
+	if val && args["storeName"] != nil {
+		store, err = FindOrCreateStore(userID, storeName.(string))
 		if err != nil {
 			return addedItems, errors.New("could not find or create store")
 		}
@@ -93,7 +93,7 @@ func FindDefaultStore(userID uuid.UUID) (store models.Store, err error) {
 		Joins("INNER JOIN store_user_preferences ON store_user_preferences.store_user_id = store_users.id").
 		Where("store_users.user_id = ?", userID).
 		Where("store_user_preferences.default_store = ?", true).
-		Find(&store).
+		Last(&store).
 		Error
 	if err := query; err != nil {
 		return store, err
