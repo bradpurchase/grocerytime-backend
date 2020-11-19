@@ -201,11 +201,7 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				// Empty all records in the table
-				var storeUserPrefs []models.StoreUserPreference
-				if err := tx.Delete(&storeUserPrefs).Error; err != nil {
-					return err
-				}
-				return nil
+				return tx.Exec("DELETE FROM store_user_preferences").Error
 			},
 		},
 	})
