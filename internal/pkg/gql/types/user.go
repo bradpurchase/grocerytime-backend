@@ -75,9 +75,9 @@ var UserType = graphql.NewObject(
 					return authToken.AccessToken, nil
 				},
 			},
+			// DEPRECATED in favour of accessToken
 			"token": &graphql.Field{
-				Type:        AuthTokenType,
-				Description: "DEPRECATED in favour of accessToken",
+				Type: AuthTokenType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					userID := p.Source.(*models.User).ID
 					authToken := &models.AuthToken{}
