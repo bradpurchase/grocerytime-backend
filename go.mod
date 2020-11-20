@@ -1,5 +1,3 @@
-// +heroku goVersion 1.15
-
 module github.com/bradpurchase/grocerytime-backend
 
 go 1.15
@@ -21,13 +19,13 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sendgrid/rest v2.6.2+incompatible // indirect
-	github.com/sendgrid/sendgrid-go v3.7.1+incompatible
+	github.com/sendgrid/sendgrid-go v3.7.2+incompatible
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/gjson v1.6.3
 	github.com/trevex/graphql-go-subscription v0.0.0-20170731204342-4a0a4158754b
-	golang.org/x/crypto v0.0.0-20201112155050-0c6587e931a9
+	golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b // indirect
 	gorm.io/driver/postgres v1.0.5
-	gorm.io/gorm v1.20.6
+	gorm.io/gorm v1.20.7
 )

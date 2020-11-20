@@ -52,6 +52,16 @@ func init() {
 					},
 					Resolve: resolvers.StoreResolver,
 				},
+				"storeUserPrefs": &graphql.Field{
+					Type:        gql.StoreUserPreferenceType,
+					Description: "Retrieves the current user's preferences for a store",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.StoreUserPrefsResolver,
+				},
 				"trips": &graphql.Field{
 					Type:        graphql.NewList(gql.GroceryTripType),
 					Description: "Retrieve trip history for a store",
@@ -222,6 +232,22 @@ func init() {
 					},
 					Resolve: resolvers.LeaveStoreResolver,
 				},
+				"updateStoreUserPrefs": &graphql.Field{
+					Type:        gql.StoreUserPreferenceType,
+					Description: "Updates the current user's preferences for a store",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"defaultStore": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+						"notifications": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+					},
+					Resolve: resolvers.UpdateStoreUserPrefsResolver,
+				},
 				"deleteItem": &graphql.Field{
 					Type:        gql.ItemType,
 					Description: "Remove an item from a trip",
@@ -306,7 +332,7 @@ func init() {
 							),
 						},
 						"storeName": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
+							Type: graphql.String,
 						},
 					},
 					Resolve: resolvers.AddItemsToStore,
