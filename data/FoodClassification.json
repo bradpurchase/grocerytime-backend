@@ -74,6 +74,14 @@
       "label": "Bakery"
     },
     {
+      "text": "rye bread",
+      "label": "Bakery"
+    },
+    {
+      "text": "wheat bread",
+      "label": "Bakery"
+    },
+    {
       "text": "bun",
       "label": "Bakery"
     },
@@ -123,6 +131,10 @@
     },
     {
       "text": "wraps",
+      "label": "Bakery"
+    },
+    {
+      "text": "tortillas",
       "label": "Bakery"
     },
     {
@@ -298,6 +310,18 @@
       "label": "Beverages"
     },
     {
+      "text": "orange juice",
+      "label": "Beverages"
+    },
+    {
+      "text": "apple juice",
+      "label": "Beverages"
+    },
+    {
+      "text": "cranberry juice",
+      "label": "Beverages"
+    },
+    {
       "text": "milk",
       "label": "Dairy"
     },
@@ -410,6 +434,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "tortilla chips",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "crisps",
       "label": "Candy & Snacks"
     },
@@ -419,6 +447,10 @@
     },
     {
       "text": "ritz crackers",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "goldfish crackers",
       "label": "Candy & Snacks"
     },
     {
@@ -450,6 +482,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "cookies",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "beans",
       "label": "Canned Goods"
     },
@@ -475,6 +511,18 @@
     },
     {
       "text": "diced tomatoes",
+      "label": "Canned Goods"
+    },
+    {
+      "text": "canned peas",
+      "label": "Canned Goods"
+    },
+    {
+      "text": "canned corn",
+      "label": "Canned Goods"
+    },
+    {
+      "text": "creamed corn",
       "label": "Canned Goods"
     },
     {
@@ -538,6 +586,10 @@
       "label": "Cleaning"
     },
     {
+      "text": "dish soap",
+      "label": "Cleaning"
+    },
+    {
       "text": "sponge",
       "label": "Cleaning"
     },
@@ -571,6 +623,26 @@
     },
     {
       "text": "air freshener",
+      "label": "Cleaning"
+    },
+    {
+      "text": "cleaning brushes",
+      "label": "Cleaning"
+    },
+    {
+      "text": "bottle brush",
+      "label": "Cleaning"
+    },
+    {
+      "text": "gloves",
+      "label": "Cleaning"
+    },
+    {
+      "text": "rubber gloves",
+      "label": "Cleaning"
+    },
+    {
+      "text": "disposable gloves",
       "label": "Cleaning"
     },
     {
@@ -618,6 +690,10 @@
       "label": "Condiments"
     },
     {
+      "text": "cashew butter",
+      "label": "Condiments"
+    },
+    {
       "text": "vinegar",
       "label": "Condiments"
     },
@@ -635,6 +711,14 @@
     },
     {
       "text": "syrup",
+      "label": "Condiments"
+    },
+    {
+      "text": "hot sauce",
+      "label": "Condiments"
+    },
+    {
+      "text": "sriracha",
       "label": "Condiments"
     },
     {
@@ -702,6 +786,34 @@
       "label": "Dry Goods"
     },
     {
+      "text": "bay leaves",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "coriander spice",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "ground pepper",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "black pepper",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "salt",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "sea salt",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "himalayan salt",
+      "label": "Dry Goods"
+    },
+    {
       "text": "meat",
       "label": "Meat"
     },
@@ -750,11 +862,23 @@
       "label": "Meat"
     },
     {
+      "text": "beef jerky",
+      "label": "Meat"
+    },
+    {
+      "text": "jerky",
+      "label": "Meat"
+    },
+    {
       "text": "steak",
       "label": "Meat"
     },
     {
-      "text": "burger",
+      "text": "burgers",
+      "label": "Meat"
+    },
+    {
+      "text": "turkey burgers",
       "label": "Meat"
     },
     {
@@ -767,6 +891,10 @@
     },
     {
       "text": "ground pork",
+      "label": "Meat"
+    },
+    {
+      "text": "bacon",
       "label": "Meat"
     },
     {
@@ -886,6 +1014,14 @@
       "label": "Frozen Foods"
     },
     {
+      "text": "waffles",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "eggos",
+      "label": "Frozen Foods"
+    },
+    {
       "text": "birthday",
       "label": "Paper Products"
     },
@@ -974,6 +1110,10 @@
       "label": "Personal Care"
     },
     {
+      "text": "shaving gel",
+      "label": "Personal Care"
+    },
+    {
       "text": "vitamin",
       "label": "Pharmacy"
     },
@@ -1027,6 +1167,10 @@
     },
     {
       "text": "oranges",
+      "label": "Produce"
+    },
+    {
+      "text": "clementines",
       "label": "Produce"
     },
     {
@@ -1098,6 +1242,14 @@
       "label": "Produce"
     },
     {
+      "text": "sweet potatoes",
+      "label": "Produce"
+    },
+    {
+      "text": "yams",
+      "label": "Produce"
+    },
+    {
       "text": "tomato",
       "label": "Produce"
     },
@@ -1158,6 +1310,14 @@
       "label": "Produce"
     },
     {
+      "text": "jalapeno peppers",
+      "label": "Produce"
+    },
+    {
+      "text": "poblano peppers",
+      "label": "Produce"
+    },
+    {
       "text": "squash",
       "label": "Produce"
     },
@@ -1186,6 +1346,10 @@
       "label": "Produce"
     },
     {
+      "text": "lemons",
+      "label": "Produce"
+    },
+    {
       "text": "mint",
       "label": "Produce"
     },
@@ -1202,6 +1366,10 @@
       "label": "Produce"
     },
     {
+      "text": "limes",
+      "label": "Produce"
+    },
+    {
       "text": "avocado",
       "label": "Produce"
     },
@@ -1211,6 +1379,10 @@
     },
     {
       "text": "cilantro",
+      "label": "Produce"
+    },
+    {
+      "text": "coriander",
       "label": "Produce"
     },
     {
@@ -1231,6 +1403,18 @@
     },
     {
       "text": "cucumber",
+      "label": "Produce"
+    },
+    {
+      "text": "zucchini",
+      "label": "Produce"
+    },
+    {
+      "text": "courgette",
+      "label": "Produce"
+    },
+    {
+      "text": "rutabaga",
       "label": "Produce"
     },
     {
@@ -1259,6 +1443,10 @@
     },
     {
       "text": "zucchini",
+      "label": "Produce"
+    },
+    {
+      "text": "olives",
       "label": "Produce"
     },
     {
