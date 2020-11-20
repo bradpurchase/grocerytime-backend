@@ -59,7 +59,7 @@ var UserType = graphql.NewObject(
 					return nil, nil
 				},
 			},
-			"token": &graphql.Field{
+			"accessToken": &graphql.Field{
 				Type: graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					userID := p.Source.(*models.User).ID
@@ -73,6 +73,18 @@ var UserType = graphql.NewObject(
 						return nil, errors.New("token not found for user")
 					}
 					return authToken.AccessToken, nil
+				},
+			},
+			"token": &graphql.Field{
+				Type:        AuthTokenType,
+				Description: "DEPRECATED in favour of accessToken",
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					userID := p.Source.(*models.User).ID
+					authToken := &models.AuthToken{}
+					if err := db.Manager.Where("user_id = ?", userID).Last(&authToken).Error; err != nil {
+						return nil, errors.New("token not found for user")
+					}
+					return authToken, nil
 				},
 			},
 		},
