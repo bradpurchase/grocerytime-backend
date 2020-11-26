@@ -42,9 +42,14 @@ func LoginResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, errors.New(wrongCredsMsg)
 	}
 
-	authToken := &models.AuthToken{UserID: user.ID, ClientID: apiClient.ID}
-	if err := db.Manager.Where("user_id = ? AND client_id = ?", user.ID, apiClient.ID).Delete(&authToken).Error; err != nil {
-		return nil, errors.New(wrongCredsMsg)
+	var deviceName string
+	if p.Args["deviceName"] != nil {
+		deviceName = p.Args["deviceName"].(string)
+	}
+	authToken := &models.AuthToken{
+		UserID:     user.ID,
+		ClientID:   apiClient.ID,
+		DeviceName: deviceName,
 	}
 	if err := db.Manager.Create(&authToken).Error; err != nil {
 		return nil, errors.New(wrongCredsMsg)

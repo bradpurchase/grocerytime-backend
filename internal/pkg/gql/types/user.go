@@ -67,6 +67,7 @@ var UserType = graphql.NewObject(
 					query := db.Manager.
 						Select("access_token").
 						Where("user_id = ?", userID).
+						Order("created_at DESC").
 						Last(&authToken).
 						Error
 					if err := query; err != nil {
@@ -81,7 +82,12 @@ var UserType = graphql.NewObject(
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					userID := p.Source.(*models.User).ID
 					authToken := &models.AuthToken{}
-					if err := db.Manager.Where("user_id = ?", userID).Last(&authToken).Error; err != nil {
+					query := db.Manager.
+						Where("user_id = ?", userID).
+						Order("created_at DESC").
+						Last(&authToken).
+						Error
+					if err := query; err != nil {
 						return nil, errors.New("token not found for user")
 					}
 					return authToken, nil

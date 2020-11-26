@@ -114,6 +114,9 @@ func init() {
 						"password": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
+						"deviceName": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 					},
 					Resolve: resolvers.LoginResolver,
 				},
@@ -129,6 +132,9 @@ func init() {
 						},
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
+						},
+						"deviceName": &graphql.ArgumentConfig{
+							Type: graphql.String,
 						},
 					},
 					Resolve: resolvers.SignupResolver,

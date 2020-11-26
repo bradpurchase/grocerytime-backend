@@ -204,6 +204,18 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Exec("DELETE FROM store_user_preferences").Error
 			},
 		},
+		{
+			ID: "202011260730_add_device_name_to_auth_tokens",
+			Migrate: func(tx *gorm.DB) error {
+				type AuthToken struct {
+					DeviceName string `gorm:"type:varchar(100)"`
+				}
+				return tx.AutoMigrate(&AuthToken{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("ALTER TABLE auth_tokens DROP COLUMN device_name").Error
+			},
+		},
 	})
 	return m.Migrate()
 }
