@@ -114,6 +114,9 @@ func init() {
 						"password": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
+						"deviceName": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 					},
 					Resolve: resolvers.LoginResolver,
 				},
