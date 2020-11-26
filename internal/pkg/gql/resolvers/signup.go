@@ -26,7 +26,11 @@ func SignupResolver(p graphql.ResolveParams) (interface{}, error) {
 	email := p.Args["email"].(string)
 	password := p.Args["password"].(string)
 	name := p.Args["name"].(string)
-	user, err := user.CreateUser(email, password, name, apiClient.ID)
+	var deviceName string
+	if p.Args["deviceName"] != nil {
+		deviceName = p.Args["deviceName"].(string)
+	}
+	user, err := user.CreateUser(email, password, name, deviceName, apiClient.ID)
 	if err != nil {
 		return nil, err
 	}

@@ -12,7 +12,7 @@ import (
 )
 
 // CreateUser creates a user account with details provided
-func CreateUser(email string, password string, name string, clientID uuid.UUID) (*models.User, error) {
+func CreateUser(email string, password string, name string, deviceName string, clientID uuid.UUID) (*models.User, error) {
 	passhash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func CreateUser(email string, password string, name string, clientID uuid.UUID) 
 		Email:      email,
 		Password:   string(passhash),
 		LastSeenAt: time.Now(),
-		Tokens:     []models.AuthToken{{ClientID: clientID}},
+		Tokens:     []models.AuthToken{{ClientID: clientID, DeviceName: deviceName}},
 	}
 	if err := db.Manager.Create(&user).Error; err != nil {
 		return nil, err
