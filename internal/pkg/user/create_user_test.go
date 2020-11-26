@@ -35,6 +35,9 @@ func (s *Suite) TestCreateUser_UserCreated() {
 		WithArgs(email, sqlmock.AnyArg(), name, nil, nil, AnyTime{}, AnyTime{}, AnyTime{}).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(userID))
 
+	s.mock.ExpectExec("^DELETE FROM \"auth_tokens\"*").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
 	clientID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"auth_tokens\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, AnyTime{}, sqlmock.AnyArg(), sqlmock.AnyArg()).
