@@ -43,9 +43,6 @@ func LoginResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	authToken := &models.AuthToken{UserID: user.ID, ClientID: apiClient.ID}
-	if err := db.Manager.Where("user_id = ? AND client_id = ?", user.ID, apiClient.ID).Delete(&authToken).Error; err != nil {
-		return nil, errors.New(wrongCredsMsg)
-	}
 	if err := db.Manager.Create(&authToken).Error; err != nil {
 		return nil, errors.New(wrongCredsMsg)
 	}
