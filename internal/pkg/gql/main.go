@@ -365,6 +365,16 @@ func init() {
 					},
 					Resolve: resolvers.UpdateTripResolver,
 				},
+				"addDevice": &graphql.Field{
+					Type:        gql.DeviceType,
+					Description: "Stores a device token for the current user for push notifications",
+					Args: graphql.FieldConfigArgument{
+						"token": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.AddDeviceResolver,
+				},
 			},
 		},
 	)

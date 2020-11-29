@@ -12,6 +12,7 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/notifications"
 	uuid "github.com/satori/go.uuid"
 	"github.com/tidwall/gjson"
 	"gorm.io/gorm"
@@ -62,6 +63,9 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 		return addedItem, errors.New("could not find or create grocery trip category")
 	}
 	item.CategoryID = &category.ID
+
+	// Send push notification to anyone this list is shared to (excluding the item creator)
+	notifications.Send()
 
 	if err := db.Manager.Create(&item).Error; err != nil {
 		return addedItem, err

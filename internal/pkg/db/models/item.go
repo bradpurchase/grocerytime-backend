@@ -31,9 +31,8 @@ func (i *Item) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-// AfterCreate hook to touch the associated grocery trip after an item is created
-// so that its UpdatedAt column is updated
 func (i *Item) AfterCreate(tx *gorm.DB) (err error) {
+	// Touch the associated grocery trip after an item is created to touch updated_at
 	tx.Model(&GroceryTrip{}).Where("id = ?", i.GroceryTripID).Update("updated_at", time.Now())
 	return nil
 }

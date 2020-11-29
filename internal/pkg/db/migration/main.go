@@ -16,6 +16,7 @@ func migrate(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&models.ApiClient{},
 		&models.AuthToken{},
+		&models.Device{},
 		&models.GroceryTrip{},
 		&models.GroceryTripCategory{},
 		&models.Item{},
@@ -214,6 +215,25 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Exec("ALTER TABLE auth_tokens DROP COLUMN device_name").Error
+			},
+		},
+		{
+			// Create devices
+			ID: "202011291125_create_devices",
+			Migrate: func(tx *gorm.DB) error {
+				type Device struct {
+					ID     uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					UserID uuid.UUID `gorm:"type:uuid;not null"`
+					Token  string    `gorm:"type:varchar(255);not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
+				}
+				return tx.AutoMigrate(&Device{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("devices")
 			},
 		},
 	})
