@@ -11,7 +11,8 @@ import (
 
 // Send sends a push notification
 func Send() {
-	cert, err := certificate.FromP12File("./certs/dev-cert.p12", os.Getenv("APNS_CERT_PASSWORD"))
+	certFilename := "./certs/" + os.Getenv("APNS_CERT_FILENAME") + ".p12"
+	cert, err := certificate.FromP12File(certFilename, os.Getenv("APNS_CERT_PASSWORD"))
 	if err != nil {
 		fmt.Printf("cert err: %v\n", err)
 	}
@@ -29,8 +30,8 @@ func Send() {
 	}
 
 	if res.Sent() {
-		fmt.Println("Sent:", res.ApnsID)
+		fmt.Println("[notifications/send] notification sent:", res.ApnsID)
 	} else {
-		fmt.Printf("Not Sent: %v %v %v\n", res.StatusCode, res.ApnsID, res.Reason)
+		fmt.Printf("[notifications/send] notification not sent: %v %v %v\n", res.StatusCode, res.ApnsID, res.Reason)
 	}
 }
