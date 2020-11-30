@@ -114,6 +114,10 @@
       "label": "Bakery"
     },
     {
+      "text": "cookies",
+      "label": "Bakery"
+    },
+    {
       "text": "cupcake",
       "label": "Bakery"
     },
@@ -438,6 +442,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "salsa",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "crisps",
       "label": "Candy & Snacks"
     },
@@ -455,6 +463,14 @@
     },
     {
       "text": "bark thins",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "biscuits",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "triscuits",
       "label": "Candy & Snacks"
     },
     {
@@ -483,6 +499,10 @@
     },
     {
       "text": "cookies",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "peek freans",
       "label": "Candy & Snacks"
     },
     {
@@ -719,6 +739,14 @@
     },
     {
       "text": "sriracha",
+      "label": "Condiments"
+    },
+    {
+      "text": "chocolate sauce",
+      "label": "Condiments"
+    },
+    {
+      "text": "chocolate syrup",
       "label": "Condiments"
     },
     {
@@ -1022,6 +1050,10 @@
       "label": "Frozen Foods"
     },
     {
+      "text": "frozen veggies",
+      "label": "Frozen Foods"
+    },
+    {
       "text": "birthday",
       "label": "Paper Products"
     },
@@ -1231,6 +1263,10 @@
     },
     {
       "text": "brown onion",
+      "label": "Produce"
+    },
+    {
+      "text": "green onions",
       "label": "Produce"
     },
     {
