@@ -65,7 +65,8 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 	item.CategoryID = &category.ID
 
 	// Send push notification to anyone this list is shared to (excluding the item creator)
-	notifications.Send()
+	deviceToken := "e9c5c8cc94425b19a6a0126608fcb9e1ea5455101db2d79959e56b9305bc1f41"
+	notifications.Send("Item added", deviceToken)
 
 	if err := db.Manager.Create(&item).Error; err != nil {
 		return addedItem, err

@@ -10,7 +10,7 @@ import (
 )
 
 // Send sends a push notification
-func Send() {
+func Send(message string, token string) {
 	certFilename := "./certs/" + os.Getenv("APNS_CERT_FILENAME") + ".p12"
 	cert, err := certificate.FromP12File(certFilename, os.Getenv("APNS_CERT_PASSWORD"))
 	if err != nil {
@@ -20,8 +20,8 @@ func Send() {
 	client := apns2.NewClient(cert).Development()
 
 	notification := &apns2.Notification{}
-	notification.DeviceToken = "e9c5c8cc94425b19a6a0126608fcb9e1ea5455101db2d79959e56b9305bc1f41"
-	payload := payload.NewPayload().Alert("Test Notification")
+	notification.DeviceToken = token
+	payload := payload.NewPayload().Alert(message)
 	notification.Payload = payload
 
 	res, err := client.Push(notification)
