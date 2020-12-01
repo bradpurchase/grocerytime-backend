@@ -20,6 +20,7 @@ func GraphQLHandler() http.HandlerFunc {
 
 		rootValue := map[string]interface{}{
 			"Authorization": request.Header.Get("Authorization"),
+			"App-Scheme":    request.Header.Get("App-Scheme"),
 		}
 		params := graphql.Params{
 			Schema:         gql.Schema,

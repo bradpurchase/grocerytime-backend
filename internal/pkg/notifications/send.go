@@ -11,8 +11,8 @@ import (
 )
 
 // Send sends a push notification
-func Send(title string, body string, token string) (apnsID string, err error) {
-	certFilename := "./certs/" + os.Getenv("APNS_CERT_FILENAME") + ".p12"
+func Send(title string, body string, token string, scheme string) (apnsID string, err error) {
+	certFilename := fmt.Sprintf("./certs/%v-cert-test.p12", scheme)
 	cert, err := certificate.FromP12File(certFilename, os.Getenv("APNS_CERT_PASSWORD"))
 	if err != nil {
 		fmt.Printf("cert err: %v\n", err)

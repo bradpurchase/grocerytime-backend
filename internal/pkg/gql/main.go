@@ -375,19 +375,6 @@ func init() {
 					},
 					Resolve: resolvers.AddDeviceResolver,
 				},
-				"sendPushNotification": &graphql.Field{
-					Type:        graphql.NewList(gql.PushNotificationType),
-					Description: "Sends a push notification to all devices belonging to the current user",
-					Args: graphql.FieldConfigArgument{
-						"title": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-						"body": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-					},
-					Resolve: resolvers.SendPushNotificationResolver,
-				},
 			},
 		},
 	)
