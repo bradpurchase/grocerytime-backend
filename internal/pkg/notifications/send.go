@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
-	uuid "github.com/satori/go.uuid"
 	"github.com/sideshow/apns2"
 	"github.com/sideshow/apns2/certificate"
 	"github.com/sideshow/apns2/payload"
@@ -38,18 +36,4 @@ func Send(title string, body string, token string) (apnsID string, err error) {
 	}
 	fmt.Printf("[notifications/send] not sent: %v %v %v\n", res.StatusCode, res.ApnsID, res.Reason)
 	return apnsID, errors.New(res.Reason)
-}
-
-// DeviceTokensForUser fetches all the device tokens stored for a user by ID
-func DeviceTokensForUser(userID uuid.UUID) (tokens []string, err error) {
-	query := db.Manager.
-		Table("devices").
-		Select("token").
-		Where("user_id = ?", userID).
-		Find(&tokens).
-		Error
-	if err := query; err != nil {
-		return tokens, err
-	}
-	return tokens, nil
 }

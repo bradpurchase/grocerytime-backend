@@ -18,3 +18,17 @@ func StoreDeviceToken(token string, userID uuid.UUID) (device *models.Device, er
 	}
 	return userDevice, nil
 }
+
+// DeviceTokensForUser fetches all the device tokens stored for a user by ID
+func DeviceTokensForUser(userID uuid.UUID) (tokens []string, err error) {
+	query := db.Manager.
+		Table("devices").
+		Select("token").
+		Where("user_id = ?", userID).
+		Find(&tokens).
+		Error
+	if err := query; err != nil {
+		return tokens, err
+	}
+	return tokens, nil
+}
