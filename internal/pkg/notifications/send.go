@@ -1,7 +1,6 @@
 package notifications
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -11,7 +10,7 @@ import (
 )
 
 // Send sends a push notification
-func Send(title string, body string, token string, scheme string) (apnsID string, err error) {
+func Send(title string, body string, token string, scheme string) {
 	certFilename := fmt.Sprintf("./certs/%v-cert-test.p12", scheme)
 	cert, err := certificate.FromP12File(certFilename, os.Getenv("APNS_CERT_PASSWORD"))
 	if err != nil {
@@ -32,8 +31,7 @@ func Send(title string, body string, token string, scheme string) (apnsID string
 
 	if res.Sent() {
 		fmt.Println("[notifications/send] sent:", res.ApnsID)
-		return res.ApnsID, nil
+	} else {
+		fmt.Printf("[notifications/send] not sent: %v %v %v\n", res.StatusCode, res.ApnsID, res.Reason)
 	}
-	fmt.Printf("[notifications/send] not sent: %v %v %v\n", res.StatusCode, res.ApnsID, res.Reason)
-	return apnsID, errors.New(res.Reason)
 }

@@ -26,10 +26,7 @@ func AddItemToTrip(p graphql.ResolveParams) (interface{}, error) {
 	// the notifications package so it can use the proper apns certificate
 	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
 	if appScheme != nil {
-		// TODO: perform this in the background
-		if err := notifications.ItemAdded(item, appScheme.(string)); err != nil {
-			return nil, err
-		}
+		go notifications.ItemAdded(item, appScheme.(string))
 	}
 
 	return item, nil
