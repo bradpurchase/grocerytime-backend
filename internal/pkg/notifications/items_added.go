@@ -9,28 +9,21 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// ItemAdded sends a push notification to store users about a new item
-func ItemAdded(item *models.Item, appScheme string) {
-	// Fetch the store users excluding the one who created this item
+// ItemsAdded snds a push notification to store users about a new item
+func ItemsAdded(userID uuid.UUID, storeID interface{}, numItemsAdded int, appScheme string) {
 	var store models.Store
-	groceryTripQuery := db.Manager.
-		Select("stores.id, stores.name").
-		Joins("INNER JOIN grocery_trips ON grocery_trips.store_id = stores.id").
-		Where("grocery_trips.id = ?", item.GroceryTripID).
-		First(&store).
-		Error
-	if err := groceryTripQuery; err != nil {
+	if err := db.Manager.Select("id, name").Where("id = ?", storeID).First(&store).Error; err != nil {
 		log.Println(err)
 	}
 
-	storeID := store.ID
-	deviceTokens, err := StoreUserTokens(storeID, item)
+	deviceTokens, err := StoreUserTokens(store.ID, userID)
 	if err != nil {
 		log.Println(err)
 	}
 
 	title := "Trip Updated"
-	body := fmt.Sprintf("%v added to your %v trip", item.Name, store.Name)
+	//items := plural.Selectf(numItemsAdded, "%d",)
+	body := fmt.Sprintf("%d items added to your %v trip", numItemsAdded, store.Name)
 	for i := range deviceTokens {
 		Send(title, body, deviceTokens[i], appScheme)
 	}
@@ -39,13 +32,13 @@ func ItemAdded(item *models.Item, appScheme string) {
 // StoreUserTokens fetches apns device tokens for all store users associated
 // with the item provided, excluding for those users who have disabled
 // notifications in store user preference settings
-func StoreUserTokens(storeID uuid.UUID, item *models.Item) (tokens []string, err error) {
+func StoreUserTokens(storeID uuid.UUID, userID uuid.UUID) (tokens []string, err error) {
 	var storeUsers []models.StoreUser
 	storeUsersQuery := db.Manager.
 		Select("store_users.user_id").
 		Joins("INNER JOIN store_user_preferences ON store_user_preferences.store_user_id = store_users.id").
 		Where("store_users.store_id = ?", storeID).
-		Where("store_users.user_id NOT IN (?)", item.UserID).
+		Where("store_users.user_id NOT IN (?)", userID).
 		Where("store_user_preferences.notifications = ?", true).
 		Find(&storeUsers).
 		Error
