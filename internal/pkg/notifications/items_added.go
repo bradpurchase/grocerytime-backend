@@ -22,8 +22,10 @@ func ItemsAdded(userID uuid.UUID, storeID interface{}, numItemsAdded int, appSch
 	}
 
 	title := "Trip Updated"
-	//items := plural.Selectf(numItemsAdded, "%d",)
 	body := fmt.Sprintf("%d items added to your %v trip", numItemsAdded, store.Name)
+	if numItemsAdded == 1 {
+		body = fmt.Sprintf("An item was added to your %v trip", store.Name)
+	}
 	for i := range deviceTokens {
 		Send(title, body, deviceTokens[i], appScheme)
 	}
