@@ -16,7 +16,10 @@ func Send(title string, body string, token string, scheme string) {
 	if err != nil {
 		fmt.Printf("cert err: %v\n", err)
 	}
-	client := apns2.NewClient(cert).Development()
+	client := apns2.NewClient(cert).Production()
+	if scheme == "Debug" {
+		client = apns2.NewClient(cert).Development()
+	}
 
 	notification := &apns2.Notification{}
 	notification.DeviceToken = token
