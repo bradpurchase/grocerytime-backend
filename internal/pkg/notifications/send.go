@@ -17,7 +17,7 @@ func Send(title string, body string, token string, scheme string) {
 		certType = "test"
 	}
 	certFileName := fmt.Sprintf("%v-cert-%v", scheme, certType)
-	certfile := fmt.Sprintf("./certs/%v.p12", certFileName)
+	certfile := fmt.Sprintf("certs/%v.p12", certFileName)
 	cert, err := certificate.FromP12File(certfile, os.Getenv("APNS_CERT_PASSWORD"))
 	if err != nil {
 		fmt.Printf("cert err: %v\n", err)
