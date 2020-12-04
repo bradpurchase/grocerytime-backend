@@ -365,6 +365,29 @@ func init() {
 					},
 					Resolve: resolvers.UpdateTripResolver,
 				},
+				"addDevice": &graphql.Field{
+					Type:        gql.DeviceType,
+					Description: "Stores a device token for the current user for push notifications",
+					Args: graphql.FieldConfigArgument{
+						"token": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.AddDeviceResolver,
+				},
+				"notifyTripUpdatedItemsAdded": &graphql.Field{
+					Type:        graphql.Boolean,
+					Description: "Notifies store users about a trip being updated after items were added by the current user",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"numItemsAdded": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.Int),
+						},
+					},
+					Resolve: resolvers.NotifyTripUpdatedItemsAddedResolver,
+				},
 			},
 		},
 	)
