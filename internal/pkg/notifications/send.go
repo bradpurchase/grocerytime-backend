@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/sideshow/apns2"
 	"github.com/sideshow/apns2/certificate"
@@ -23,6 +24,8 @@ func Send(title string, body string, token string, scheme string) {
 
 	notification := &apns2.Notification{}
 	notification.DeviceToken = token
+	notificationTopic := GetNotificationTopic(scheme)
+	notification.Topic = notificationTopic
 	payload := payload.NewPayload().AlertTitle(title).AlertBody(body)
 	notification.Payload = payload
 
@@ -51,4 +54,14 @@ func ApnsCertificate(scheme string) (cert tls.Certificate, err error) {
 		return cert, err
 	}
 	return cert, nil
+}
+
+// GetNotificationTopic returns the topic for the notification
+// This should match the bundle ID depending on environment i.e. "bradpurchase.GroceryTime.beta"
+func GetNotificationTopic(scheme string) (topic string) {
+	topic = "bradpurchase.GroceryTime"
+	if scheme != "Release" {
+		topic = fmt.Sprintf("%v.%v", topic, strings.ToLower(scheme))
+	}
+	return topic
 }
