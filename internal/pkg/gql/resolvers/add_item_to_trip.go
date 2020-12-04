@@ -20,6 +20,5 @@ func AddItemToTrip(p graphql.ResolveParams) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return item, nil
 }
