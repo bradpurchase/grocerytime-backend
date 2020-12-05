@@ -49,11 +49,22 @@ func ApnsCertificate(scheme string) (cert tls.Certificate, err error) {
 	}
 	certFileName := fmt.Sprintf("%v-cert-%v", scheme, certType)
 	certfile := fmt.Sprintf("%v/%v.p12", os.Getenv("APNS_CERT_FILEPATH"), certFileName)
-	cert, err = certificate.FromP12File(certfile, os.Getenv("APNS_CERT_PASSWORD"))
+	certPassword := ApnsCertificatePassword(scheme)
+	cert, err = certificate.FromP12File(certfile, certPassword)
 	if err != nil {
 		return cert, err
 	}
 	return cert, nil
+}
+
+// ApnsCertificatePassword determines the credential for the
+// apns cert password depending on environment
+func ApnsCertificatePassword(scheme string) (password string) {
+	cred := "APNS_CERT_PASSWORD"
+	if scheme != "Debug" {
+		cred = fmt.Sprintf("%v_%v", cred, strings.ToUpper(scheme))
+	}
+	return os.Getenv(cred)
 }
 
 // GetNotificationTopic returns the topic for the notification
