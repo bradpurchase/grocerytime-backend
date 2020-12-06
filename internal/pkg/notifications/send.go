@@ -12,7 +12,7 @@ import (
 )
 
 // Send sends a push notification
-func Send(title string, body string, token string, scheme string) {
+func Send(title string, body string, token string, remoteID string, scheme string) {
 	cert, err := ApnsCertificate(scheme)
 	if err != nil {
 		fmt.Printf("cert err: %v\n", err)
@@ -24,10 +24,9 @@ func Send(title string, body string, token string, scheme string) {
 
 	notification := &apns2.Notification{}
 	notification.DeviceToken = token
-	notificationTopic := GetNotificationTopic(scheme)
+	notificationTopic := SetNotificationTopic(scheme)
 	notification.Topic = notificationTopic
-	payload := payload.NewPayload().AlertTitle(title).AlertBody(body)
-	notification.Payload = payload
+	notification.Payload = SetNotificationPayload(title, body, remoteID)
 
 	res, err := client.Push(notification)
 	if err != nil {
@@ -67,12 +66,22 @@ func ApnsCertificatePassword(scheme string) (password string) {
 	return os.Getenv(cred)
 }
 
-// GetNotificationTopic returns the topic for the notification
+// SetNotificationTopic determines the correct topic for the notification
 // This should match the bundle ID depending on environment i.e. "bradpurchase.GroceryTime.beta"
-func GetNotificationTopic(scheme string) (topic string) {
+func SetNotificationTopic(scheme string) (topic string) {
 	topic = "bradpurchase.GroceryTime"
 	if scheme != "Release" {
 		topic = fmt.Sprintf("%v.%v", topic, strings.ToLower(scheme))
 	}
 	return topic
+}
+
+// SetNotificationPayload sets the APNS payload for the
+func SetNotificationPayload(title string, body string, remoteID string) (p *payload.Payload) {
+	p = payload.
+		NewPayload().
+		AlertTitle(title).
+		AlertBody(body).
+		Custom("id", remoteID)
+	return p
 }

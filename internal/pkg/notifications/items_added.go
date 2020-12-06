@@ -27,7 +27,7 @@ func ItemsAdded(userID uuid.UUID, storeID interface{}, numItemsAdded int, appSch
 		body = fmt.Sprintf("An item was added to your %v trip", store.Name)
 	}
 	for i := range deviceTokens {
-		Send(title, body, deviceTokens[i], appScheme)
+		Send(title, body, deviceTokens[i], storeID.(string), appScheme)
 	}
 }
 
