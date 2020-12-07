@@ -40,7 +40,7 @@ func StoreUserTokens(storeID uuid.UUID, userID uuid.UUID) (tokens []string, err 
 		Select("store_users.user_id").
 		Joins("INNER JOIN store_user_preferences ON store_user_preferences.store_user_id = store_users.id").
 		Where("store_users.store_id = ?", storeID).
-		//Where("store_users.user_id NOT IN (?)", userID).
+		Where("store_users.user_id NOT IN (?)", userID).
 		Where("store_user_preferences.notifications = ?", true).
 		Find(&storeUsers).
 		Error
