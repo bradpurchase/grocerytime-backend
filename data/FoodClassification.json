@@ -82,6 +82,10 @@
       "label": "Bakery"
     },
     {
+      "text": "pita bread",
+      "label": "Bakery"
+    },
+    {
       "text": "bun",
       "label": "Bakery"
     },
@@ -139,6 +143,10 @@
     },
     {
       "text": "tortillas",
+      "label": "Bakery"
+    },
+    {
+      "text": "tortilla wraps",
       "label": "Bakery"
     },
     {
@@ -215,6 +223,10 @@
     },
     {
       "text": "sugar",
+      "label": "Baking"
+    },
+    {
+      "text": "brown sugar",
       "label": "Baking"
     },
     {
@@ -674,6 +686,10 @@
       "label": "Condiments"
     },
     {
+      "text": "dijon mustard",
+      "label": "Condiments"
+    },
+    {
       "text": "relish",
       "label": "Condiments"
     },
@@ -750,6 +766,10 @@
       "label": "Condiments"
     },
     {
+      "text": "salad dressing",
+      "label": "Condiments"
+    },
+    {
       "text": "pasta",
       "label": "Dry Goods"
     },
@@ -811,6 +831,22 @@
     },
     {
       "text": "ramen",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "noodles",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "mr. noodle",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "chow mein noodles",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "chow mein",
       "label": "Dry Goods"
     },
     {
@@ -919,6 +955,14 @@
     },
     {
       "text": "ground pork",
+      "label": "Meat"
+    },
+    {
+      "text": "pulled pork",
+      "label": "Meat"
+    },
+    {
+      "text": "smoked meat",
       "label": "Meat"
     },
     {
@@ -1050,7 +1094,15 @@
       "label": "Frozen Foods"
     },
     {
+      "text": "frozen berries",
+      "label": "Frozen Foods"
+    },
+    {
       "text": "frozen veggies",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "stir fry",
       "label": "Frozen Foods"
     },
     {
@@ -1126,6 +1178,14 @@
       "label": "Personal Care"
     },
     {
+      "text": "toothbrush",
+      "label": "Personal Care"
+    },
+    {
+      "text": "toothbrush heads",
+      "label": "Personal Care"
+    },
+    {
       "text": "mouthwash",
       "label": "Personal Care"
     },
@@ -1167,6 +1227,14 @@
     },
     {
       "text": "tylenol",
+      "label": "Pharmacy"
+    },
+    {
+      "text": "tums",
+      "label": "Pharmacy"
+    },
+    {
+      "text": "pepto bismol",
       "label": "Pharmacy"
     },
     {
@@ -1239,6 +1307,10 @@
     },
     {
       "text": "spinach",
+      "label": "Produce"
+    },
+    {
+      "text": "baby spinach",
       "label": "Produce"
     },
     {
@@ -1410,6 +1482,22 @@
       "label": "Produce"
     },
     {
+      "text": "watermelon",
+      "label": "Produce"
+    },
+    {
+      "text": "honeydew",
+      "label": "Produce"
+    },
+    {
+      "text": "honeydew melon",
+      "label": "Produce"
+    },
+    {
+      "text": "melon",
+      "label": "Produce"
+    },
+    {
       "text": "tofu",
       "label": "Produce"
     },
@@ -1507,6 +1595,18 @@
     },
     {
       "text": "bass",
+      "label": "Seafood"
+    },
+    {
+      "text": "shrimp",
+      "label": "Seafood"
+    },
+    {
+      "text": "mussels",
+      "label": "Seafood"
+    },
+    {
+      "text": "oysters",
       "label": "Seafood"
     }
   ]
