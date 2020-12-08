@@ -61,7 +61,7 @@ func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems 
 func FindOrCreateStore(userID uuid.UUID, name string) (storeRecord models.Store, err error) {
 	store := models.Store{}
 	storeQuery := db.Manager.
-		Select("stores.*").
+		Select("stores.id").
 		Joins("INNER JOIN store_users ON store_users.store_id = stores.id").
 		Where("store_users.user_id = ?", userID).
 		Where("stores.name = ?", name).
