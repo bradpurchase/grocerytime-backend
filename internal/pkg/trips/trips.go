@@ -30,16 +30,15 @@ func RetrieveCurrentStoreTripForUser(storeID uuid.UUID, user models.User) (groce
 
 // RetrieveCurrentStoreTrip retrieves the currently active grocery trip in a store
 func RetrieveCurrentStoreTrip(storeID uuid.UUID) (groceryTrip models.GroceryTrip, err error) {
-	var trip models.GroceryTrip
 	query := db.Manager.
 		Where("store_id = ? AND completed = ?", storeID, false).
 		Order("created_at DESC").
-		Last(&trip).
+		Last(&groceryTrip).
 		Error
 	if err := query; err != nil {
 		return groceryTrip, err
 	}
-	return trip, nil
+	return groceryTrip, nil
 }
 
 // RetrieveTrips retrieves grocery trips within a store
