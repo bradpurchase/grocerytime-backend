@@ -67,6 +67,7 @@ func FindOrCreateStore(userID uuid.UUID, name string) (storeRecord models.Store,
 		Where("stores.name = ?", name).
 		First(&store).
 		Error
+	if err := storeQuery; errors.Is(err, gorm.ErrRecordNotFound) {
 		newStore, err := stores.CreateStore(userID, name)
 		if err != nil {
 			return storeRecord, errors.New("could not find or create store")
