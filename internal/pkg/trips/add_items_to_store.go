@@ -6,7 +6,9 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 // AddItemsToStore adds an array of items to a store for a user. It creates
@@ -59,11 +61,17 @@ func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems 
 func FindOrCreateStore(userID uuid.UUID, name string) (storeRecord models.Store, err error) {
 	store := models.Store{}
 	storeQuery := db.Manager.
-		Where(models.Store{UserID: userID, Name: name}).
-		FirstOrCreate(&store).
+		Select("stores.*").
+		Joins("INNER JOIN store_users ON store_users.store_id = stores.id").
+		Where("store_users.user_id = ?", userID).
+		Where("stores.name = ?", name).
+		First(&store).
 		Error
-	if err := storeQuery; err != nil {
-		return storeRecord, errors.New("could not find or create store")
+		newStore, err := stores.CreateStore(userID, name)
+		if err != nil {
+			return storeRecord, errors.New("could not find or create store")
+		}
+		return newStore, nil
 	}
 	return store, nil
 }

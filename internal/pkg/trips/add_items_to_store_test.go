@@ -10,17 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func (s *Suite) TestAddItemsToStore_CannotFindStore() {
-	userID := uuid.NewV4()
-	storeName := "Hanks"
-	items := []string{"Apples", "Oranges", "Pears"}
-	args := map[string]interface{}{"storeName": storeName, "items": items}
-
-	_, err := AddItemsToStore(userID, args)
-	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "could not find or create store")
-}
-
 func (s *Suite) TestAddItemsToStore_CannotFindCurrentTrip() {
 	userID := uuid.NewV4()
 	storeName := "Hanks"
