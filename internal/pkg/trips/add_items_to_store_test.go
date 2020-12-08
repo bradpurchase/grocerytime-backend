@@ -85,29 +85,6 @@ func (s *Suite) TestFindOrCreateStore_StoreCreated() {
 	assert.Equal(s.T(), store.Name, storeName)
 }
 
-func (s *Suite) TestFindCurrentTripIDInStore_NotFound() {
-	storeID := uuid.NewV4()
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
-		WithArgs(storeID, false).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}))
-
-	_, err := FindCurrentTripIDInStore(storeID)
-	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "record not found")
-}
-
-func (s *Suite) TestFindCurrentTripIDInStore_Found() {
-	storeID := uuid.NewV4()
-	tripID := uuid.NewV4()
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
-		WithArgs(storeID, false).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
-
-	currentTripID, err := FindCurrentTripIDInStore(storeID)
-	require.NoError(s.T(), err)
-	assert.Equal(s.T(), currentTripID, tripID)
-}
-
 // TODO: duplicated code with the store model... DRY this up
 func fetchCategories() [20]string {
 	categories := [20]string{

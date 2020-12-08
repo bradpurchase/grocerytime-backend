@@ -9,9 +9,9 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// RetrieveCurrentStoreTrip retrieves the currently active grocery trip in a
+// RetrieveCurrentStoreTripForUser retrieves the currently active grocery trip in a
 // store by storeID if the userID has access to to the store
-func RetrieveCurrentStoreTrip(storeID uuid.UUID, user models.User) (groceryTrip models.GroceryTrip, err error) {
+func RetrieveCurrentStoreTripForUser(storeID uuid.UUID, user models.User) (groceryTrip models.GroceryTrip, err error) {
 	query := db.Manager.
 		Where("store_id = ?", storeID).
 		Where("user_id = ? OR email = ?", user.ID, user.Email).
@@ -21,9 +21,23 @@ func RetrieveCurrentStoreTrip(storeID uuid.UUID, user models.User) (groceryTrip 
 		return groceryTrip, errors.New("user is not a member of this store")
 	}
 
-	trip := models.GroceryTrip{}
-	if err := db.Manager.Where("store_id = ? AND completed = ?", storeID, false).Order("created_at DESC").Find(&trip).Error; err != nil {
+	trip, err := RetrieveCurrentStoreTrip(storeID)
+	if err != nil {
 		return groceryTrip, errors.New("could not find trip associated with this store")
+	}
+	return trip, nil
+}
+
+// RetrieveCurrentStoreTrip retrieves the currently active grocery trip in a store
+func RetrieveCurrentStoreTrip(storeID uuid.UUID) (groceryTrip models.GroceryTrip, err error) {
+	trip := models.GroceryTrip{}
+	query := db.Manager.
+		Where("store_id = ? AND completed = ?", storeID, false).
+		Order("created_at DESC").
+		Last(&trip).
+		Error
+	if err := query; err != nil {
+		return groceryTrip, err
 	}
 	return trip, nil
 }

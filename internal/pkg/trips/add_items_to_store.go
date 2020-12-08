@@ -31,7 +31,7 @@ func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems 
 	}
 
 	// Fetch the current trip for this store
-	tripID, err := FindCurrentTripIDInStore(store.ID)
+	trip, err := RetrieveCurrentStoreTrip(store.ID)
 	if err != nil {
 		return addedItems, errors.New("could not find current trip in store")
 	}
@@ -41,7 +41,7 @@ func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems 
 	for i := range itemNames {
 		itemName := itemNames[i].(string)
 		item, err := AddItem(userID, map[string]interface{}{
-			"tripId":   tripID,
+			"tripId":   trip.ID,
 			"name":     itemName,
 			"quantity": 1,
 		})
@@ -75,23 +75,6 @@ func FindOrCreateStore(userID uuid.UUID, name string) (storeRecord models.Store,
 		return newStore, nil
 	}
 	return store, nil
-}
-
-// FindCurrentTripIDInStore retrieves the ID of the most recent trip in the store that hasn't been completed
-//
-// TODO: DRY this up with trips.RetrieveCurrentStoreTrip
-func FindCurrentTripIDInStore(storeID uuid.UUID) (tripID uuid.UUID, err error) {
-	trip := models.GroceryTrip{}
-	tripQuery := db.Manager.
-		Select("id").
-		Where("store_id = ? AND completed = ?", storeID, false).
-		Order("created_at DESC").
-		Last(&trip).
-		Error
-	if err := tripQuery; err != nil {
-		return tripID, err
-	}
-	return trip.ID, nil
 }
 
 // FindDefaultStore retrieves the ID of the store that is set as the default for the userID provided
