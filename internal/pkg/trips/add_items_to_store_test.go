@@ -10,17 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func (s *Suite) TestAddItemsToStore_CannotFindStore() {
-	userID := uuid.NewV4()
-	storeName := "Hanks"
-	items := []string{"Apples", "Oranges", "Pears"}
-	args := map[string]interface{}{"storeName": storeName, "items": items}
-
-	_, err := AddItemsToStore(userID, args)
-	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "could not find or create store")
-}
-
 func (s *Suite) TestAddItemsToStore_CannotFindCurrentTrip() {
 	userID := uuid.NewV4()
 	storeName := "Hanks"
@@ -63,8 +52,14 @@ func (s *Suite) TestFindOrCreateStore_StoreCreated() {
 	s.mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
 		WithArgs(storeName, AnyTime{}, AnyTime{}, nil, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(storeID, userID))
+
+	storeUserID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), "", true, true, AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeUserID))
+
+	s.mock.ExpectQuery("^INSERT INTO \"store_user_preferences\" (.+)$").
+		WithArgs(storeUserID, false, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
 	categories := fetchCategories()
@@ -88,29 +83,6 @@ func (s *Suite) TestFindOrCreateStore_StoreCreated() {
 	store, err := FindOrCreateStore(userID, storeName)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), store.Name, storeName)
-}
-
-func (s *Suite) TestFindCurrentTripIDInStore_NotFound() {
-	storeID := uuid.NewV4()
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
-		WithArgs(storeID, false).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}))
-
-	_, err := FindCurrentTripIDInStore(storeID)
-	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "record not found")
-}
-
-func (s *Suite) TestFindCurrentTripIDInStore_Found() {
-	storeID := uuid.NewV4()
-	tripID := uuid.NewV4()
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
-		WithArgs(storeID, false).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
-
-	currentTripID, err := FindCurrentTripIDInStore(storeID)
-	require.NoError(s.T(), err)
-	assert.Equal(s.T(), currentTripID, tripID)
 }
 
 // TODO: duplicated code with the store model... DRY this up

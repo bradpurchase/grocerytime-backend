@@ -47,7 +47,7 @@ var ItemType = graphql.NewObject(
 				Type: graphql.NewNonNull(graphql.String),
 			},
 			"quantity": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.Int),
+				Type: graphql.Int,
 			},
 			"position": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.Int),

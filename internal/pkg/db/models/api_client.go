@@ -13,7 +13,7 @@ import (
 
 type ApiClient struct {
 	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	Name      string    `gorm:"type:varchar(100);unique_index;not null"`
+	Name      string    `gorm:"type:varchar(100);uniqueIndex;not null"`
 	Key       string    `gorm:"type:varchar(100);not null"`
 	Secret    string    `gorm:"type:varchar(100);not null"`
 	CreatedAt time.Time

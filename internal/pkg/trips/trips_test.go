@@ -50,27 +50,27 @@ func TestSuite(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
 
-func (s *Suite) TestRetrieveCurrentStoreTrip_UserNotMemberOfStore() {
+func (s *Suite) TestRetrieveCurrentStoreTripForUser_UserNotMemberOfStore() {
 	storeID := uuid.NewV4()
 	user := models.User{ID: uuid.NewV4()}
-	_, err := RetrieveCurrentStoreTrip(storeID, user)
+	_, err := RetrieveCurrentStoreTripForUser(storeID, user)
 	require.Error(s.T(), err)
 	assert.Equal(s.T(), err.Error(), "user is not a member of this store")
 }
 
-func (s *Suite) TestRetrieveCurrentStoreTrip_TripNotAssociatedWithStore() {
+func (s *Suite) TestRetrieveCurrentStoreTripForUser_TripNotAssociatedWithStore() {
 	storeID := uuid.NewV4()
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, user.ID, user.Email).
 		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
-	_, err := RetrieveCurrentStoreTrip(storeID, user)
+	_, err := RetrieveCurrentStoreTripForUser(storeID, user)
 	require.Error(s.T(), err)
 	assert.Equal(s.T(), err.Error(), "could not find trip associated with this store")
 }
 
-func (s *Suite) TestRetrieveCurrentStoreTrip_FoundResult() {
+func (s *Suite) TestRetrieveCurrentStoreTripForUser_FoundResult() {
 	storeID := uuid.NewV4()
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
@@ -83,7 +83,7 @@ func (s *Suite) TestRetrieveCurrentStoreTrip_FoundResult() {
 		WithArgs(storeID, false).
 		WillReturnRows(s.mock.NewRows([]string{"id", "name"}).AddRow(tripID, tripName))
 
-	trip, err := RetrieveCurrentStoreTrip(storeID, user)
+	trip, err := RetrieveCurrentStoreTripForUser(storeID, user)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), trip.Name, tripName)
 }

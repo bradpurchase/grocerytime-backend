@@ -33,27 +33,34 @@ func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (models.Stor
 
 // AddUserToStore properly associates a user with a store by userID by removing
 // the email value and adding the userID value
-func AddUserToStore(user models.User, storeID interface{}) (interface{}, error) {
+func AddUserToStore(user models.User, storeID interface{}) (su models.StoreUser, err error) {
 	store := &models.Store{}
 	if err := db.Manager.Where("id = ?", storeID).First(&store).Error; err != nil {
-		return nil, err
+		return su, err
 	}
 
-	storeUser := &models.StoreUser{}
-	updateStoreUserQuery := db.Manager.
+	var storeUser models.StoreUser
+	storeUserQuery := db.Manager.
 		Where("store_id = ? AND email = ?", storeID, user.Email).
 		Find(&storeUser).
 		Error
-	if err := updateStoreUserQuery; err != nil {
-		return nil, err
+	if err := storeUserQuery; err != nil {
+		return su, err
 	}
 	storeUser.Email = ""
 	storeUser.UserID = user.ID
 	storeUserActive := true
 	storeUser.Active = &storeUserActive
 	if err := db.Manager.Save(&storeUser).Error; err != nil {
-		return nil, err
+		return su, err
 	}
+
+	// Create store_user_preferences record
+	prefs := models.StoreUserPreference{StoreUserID: storeUser.ID}
+	if err := db.Manager.Create(&prefs).Error; err != nil {
+		return su, err
+	}
+
 	return storeUser, nil
 }
 

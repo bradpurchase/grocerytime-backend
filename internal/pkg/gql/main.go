@@ -52,6 +52,16 @@ func init() {
 					},
 					Resolve: resolvers.StoreResolver,
 				},
+				"storeUserPrefs": &graphql.Field{
+					Type:        gql.StoreUserPreferenceType,
+					Description: "Retrieves the current user's preferences for a store",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.StoreUserPrefsResolver,
+				},
 				"trips": &graphql.Field{
 					Type:        graphql.NewList(gql.GroceryTripType),
 					Description: "Retrieve trip history for a store",
@@ -104,6 +114,9 @@ func init() {
 						"password": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
+						"deviceName": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 					},
 					Resolve: resolvers.LoginResolver,
 				},
@@ -119,6 +132,9 @@ func init() {
 						},
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
+						},
+						"deviceName": &graphql.ArgumentConfig{
+							Type: graphql.String,
 						},
 					},
 					Resolve: resolvers.SignupResolver,
@@ -222,6 +238,22 @@ func init() {
 					},
 					Resolve: resolvers.LeaveStoreResolver,
 				},
+				"updateStoreUserPrefs": &graphql.Field{
+					Type:        gql.StoreUserPreferenceType,
+					Description: "Updates the current user's preferences for a store",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"defaultStore": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+						"notifications": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+					},
+					Resolve: resolvers.UpdateStoreUserPrefsResolver,
+				},
 				"deleteItem": &graphql.Field{
 					Type:        gql.ItemType,
 					Description: "Remove an item from a trip",
@@ -306,7 +338,7 @@ func init() {
 							),
 						},
 						"storeName": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
+							Type: graphql.String,
 						},
 					},
 					Resolve: resolvers.AddItemsToStore,
@@ -332,6 +364,29 @@ func init() {
 						},
 					},
 					Resolve: resolvers.UpdateTripResolver,
+				},
+				"addDevice": &graphql.Field{
+					Type:        gql.DeviceType,
+					Description: "Stores a device token for the current user for push notifications",
+					Args: graphql.FieldConfigArgument{
+						"token": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.AddDeviceResolver,
+				},
+				"notifyTripUpdatedItemsAdded": &graphql.Field{
+					Type:        graphql.Boolean,
+					Description: "Notifies store users about a trip being updated after items were added by the current user",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"numItemsAdded": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.Int),
+						},
+					},
+					Resolve: resolvers.NotifyTripUpdatedItemsAddedResolver,
 				},
 			},
 		},

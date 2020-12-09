@@ -16,6 +16,7 @@ func migrate(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&models.ApiClient{},
 		&models.AuthToken{},
+		&models.Device{},
 		&models.GroceryTrip{},
 		&models.GroceryTripCategory{},
 		&models.Item{},
@@ -25,6 +26,7 @@ func migrate(db *gorm.DB) error {
 		&models.RecipeUser{},
 		&models.Store{},
 		&models.StoreUser{},
+		&models.StoreUserPreference{},
 		&models.StoreCategory{},
 		&models.User{},
 	)
@@ -229,6 +231,81 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Migrator().DropTable("meals")
+			},
+		},
+		{
+			// Create store_user_preferences
+			ID: "202010071813_create_store_user_preferences",
+			Migrate: func(tx *gorm.DB) error {
+				type StoreUserPreference struct {
+					ID            uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					StoreUserID   uuid.UUID `gorm:"type:uuid;uniqueIndex;not null"`
+					DefaultStore  bool      `gorm:"default:false;not null"`
+					Notifications bool      `gorm:"default:true;not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
+				}
+				return tx.AutoMigrate(&StoreUserPreference{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("store_user_preferences")
+			},
+		},
+		{
+			// Create missing store_user_preferences records
+			ID: "202010071829_create_store_user_preferences_records",
+			Migrate: func(tx *gorm.DB) error {
+				var storeUsers []models.StoreUser
+				if err := tx.Where("active = ?", true).Find(&storeUsers).Error; err != nil {
+					return err
+				}
+				for i := range storeUsers {
+					storeUserPref := &models.StoreUserPreference{
+						ID:          uuid.NewV4(),
+						StoreUserID: storeUsers[i].ID,
+					}
+					if err := tx.Create(&storeUserPref).Error; err != nil {
+						return err
+					}
+				}
+				return nil
+			},
+			Rollback: func(tx *gorm.DB) error {
+				// Empty all records in the table
+				return tx.Exec("DELETE FROM store_user_preferences").Error
+			},
+		},
+		{
+			ID: "202011260730_add_device_name_to_auth_tokens",
+			Migrate: func(tx *gorm.DB) error {
+				type AuthToken struct {
+					DeviceName string `gorm:"type:varchar(100)"`
+				}
+				return tx.AutoMigrate(&AuthToken{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("ALTER TABLE auth_tokens DROP COLUMN device_name").Error
+			},
+		},
+		{
+			// Create devices
+			ID: "202011291125_create_devices",
+			Migrate: func(tx *gorm.DB) error {
+				type Device struct {
+					ID     uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					UserID uuid.UUID `gorm:"type:uuid;not null"`
+					Token  string    `gorm:"type:varchar(255);not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
+				}
+				return tx.AutoMigrate(&Device{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("devices")
 			},
 		},
 	})

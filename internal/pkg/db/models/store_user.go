@@ -22,16 +22,17 @@ type StoreUser struct {
 	DeletedAt gorm.DeletedAt
 
 	// Associations
-	Store Store
-	User  User
+	Preferences StoreUserPreference
+	Store       Store
+	User        User
 }
 
 // AfterCreate hook to handle sending an invite email to a new StoreUser if the
 // email column is not empty (i.e. store invitation by another user)
-func (lu *StoreUser) AfterCreate(tx *gorm.DB) (err error) {
-	if len(lu.Email) > 0 {
+func (su *StoreUser) AfterCreate(tx *gorm.DB) (err error) {
+	if len(su.Email) > 0 {
 		store := Store{}
-		if err := tx.Select("name, user_id").Where("id = ?", lu.StoreID).First(&store).Error; err != nil {
+		if err := tx.Select("name, user_id").Where("id = ?", su.StoreID).First(&store).Error; err != nil {
 			return err
 		}
 
@@ -40,10 +41,17 @@ func (lu *StoreUser) AfterCreate(tx *gorm.DB) (err error) {
 		if err := tx.Select("name").Where("id = ?", store.UserID).First(&creatorUser).Error; err != nil {
 			return err
 		}
-		_, err := mailer.SendStoreInvitationEmail(store.Name, lu.Email, creatorUser.Name)
+		_, err := mailer.SendStoreInvitationEmail(store.Name, su.Email, creatorUser.Name)
 		if err != nil {
 			return err
 		}
+	} else {
+		// handle creating a StoreUserPreference record for new StoreUser records
+		// that don't have an email attached (invite case)
+		prefs := StoreUserPreference{StoreUserID: su.ID}
+		if err := tx.Create(&prefs).Error; err != nil {
+			return err
+		}
 	}
-	return nil
+	return
 }
