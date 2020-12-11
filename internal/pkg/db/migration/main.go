@@ -218,14 +218,13 @@ func AutoMigrateService(db *gorm.DB) error {
 			ID: "202011112104_create_meals",
 			Migrate: func(tx *gorm.DB) error {
 				type Meal struct {
-					ID          uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-					RecipeID    uuid.UUID `gorm:"type:uuid;not null"`
-					UserID      uuid.UUID `gorm:"type:uuid;not null"`
-					HouseholdID uuid.UUID `gorm:"type:uuid;not null"`
-					Name        string    `gorm:"type:varchar(255);not null;index:idx_meals_name"`
-					MealType    string    `gorm:"type:varchar(10);not null"`
-					Notes       *string   `gorm:"type:text"`
-					Date        time.Time
+					ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					RecipeID uuid.UUID `gorm:"type:uuid;not null"`
+					UserID   uuid.UUID `gorm:"type:uuid;not null"`
+					Name     string    `gorm:"type:varchar(255);not null;index:idx_meals_name"`
+					MealType string    `gorm:"type:varchar(10);not null"`
+					Notes    *string   `gorm:"type:text"`
+					Date     time.Time
 				}
 				return tx.AutoMigrate(&Meal{})
 			},
