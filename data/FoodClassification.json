@@ -25,6 +25,10 @@
       "label": "Alcohol"
     },
     {
+      "text": "bourbon",
+      "label": "Alcohol"
+    },
+    {
       "text": "rum",
       "label": "Alcohol"
     },
@@ -50,6 +54,10 @@
     },
     {
       "text": "prosecco",
+      "label": "Alcohol"
+    },
+    {
+      "text": "white claw",
       "label": "Alcohol"
     },
     {
@@ -87,6 +95,10 @@
     },
     {
       "text": "bun",
+      "label": "Bakery"
+    },
+    {
+      "text": "buns",
       "label": "Bakery"
     },
     {
@@ -338,6 +350,22 @@
       "label": "Beverages"
     },
     {
+      "text": "tonic",
+      "label": "Beverages"
+    },
+    {
+      "text": "tonic water",
+      "label": "Beverages"
+    },
+    {
+      "text": "club soda",
+      "label": "Beverages"
+    },
+    {
+      "text": "kombucha",
+      "label": "Beverages"
+    },
+    {
       "text": "milk",
       "label": "Dairy"
     },
@@ -387,6 +415,10 @@
     },
     {
       "text": "sliced cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "cheese slices",
       "label": "Dairy"
     },
     {
@@ -770,7 +802,15 @@
       "label": "Condiments"
     },
     {
+      "text": "pickles",
+      "label": "Condiments"
+    },
+    {
       "text": "pasta",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "pesto",
       "label": "Dry Goods"
     },
     {
@@ -827,6 +867,10 @@
     },
     {
       "text": "cinnamon",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "paprika",
       "label": "Dry Goods"
     },
     {
@@ -899,6 +943,10 @@
     },
     {
       "text": "chicken breast",
+      "label": "Meat"
+    },
+    {
+      "text": "chicken breasts",
       "label": "Meat"
     },
     {
@@ -1371,6 +1419,26 @@
     },
     {
       "text": "salad",
+      "label": "Produce"
+    },
+    {
+      "text": "salad kit",
+      "label": "Produce"
+    },
+    {
+      "text": "slaw",
+      "label": "Produce"
+    },
+    {
+      "text": "coleslaw",
+      "label": "Produce"
+    },
+    {
+      "text": "cole slaw",
+      "label": "Produce"
+    },
+    {
+      "text": "broccoli slaw",
       "label": "Produce"
     },
     {
