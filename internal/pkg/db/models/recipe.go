@@ -12,7 +12,7 @@ type Recipe struct {
 	ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	Name     string    `gorm:"type:varchar(255);not null;index:idx_recipes_name"`
 	URL      *string   `gorm:"type:varchar(255)"`
-	MealType string    `gorm:"type:varchar(10);not null;index:idx_recipes_meal_type"`
+	MealType *string   `gorm:"type:varchar(10);index:idx_recipes_meal_type"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

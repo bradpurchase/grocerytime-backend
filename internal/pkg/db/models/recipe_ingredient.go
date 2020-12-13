@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// RecipeIngredient defines the model for meal_ingredients
+// RecipeIngredient defines the model for recipe_ingredients
 type RecipeIngredient struct {
 	ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	RecipeID uuid.UUID `gorm:"type:uuid;not null"`
