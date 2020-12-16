@@ -388,6 +388,43 @@ func init() {
 					},
 					Resolve: resolvers.NotifyTripUpdatedItemsAddedResolver,
 				},
+				"createRecipe": &graphql.Field{
+					Type:        gql.RecipeType,
+					Description: "Creates a recipe",
+					Args: graphql.FieldConfigArgument{
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"mealType": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"url": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"ingredients": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.NewList(graphql.NewInputObject(
+								graphql.InputObjectConfig{
+									Name: "RecipeIngredientInput",
+									Fields: graphql.InputObjectConfigFieldMap{
+										"name": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+										"amount": &graphql.InputObjectFieldConfig{
+											Type: graphql.Int,
+										},
+										"units": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+										"quantity": &graphql.InputObjectFieldConfig{
+											Type: graphql.Int,
+										},
+									},
+								},
+							))),
+						},
+					},
+					Resolve: resolvers.CreateRecipeResolver,
+				},
 			},
 		},
 	)

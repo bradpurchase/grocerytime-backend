@@ -19,5 +19,6 @@ type Recipe struct {
 	DeletedAt gorm.DeletedAt
 
 	// Associations
-	Meals []Meal
+	Ingredients []RecipeIngredient
+	Meals       []Meal
 }
