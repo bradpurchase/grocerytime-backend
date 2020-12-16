@@ -412,7 +412,7 @@ func init() {
 										"amount": &graphql.InputObjectFieldConfig{
 											Type: graphql.Int,
 										},
-										"units": &graphql.InputObjectFieldConfig{
+										"unit": &graphql.InputObjectFieldConfig{
 											Type: graphql.String,
 										},
 										"quantity": &graphql.InputObjectFieldConfig{

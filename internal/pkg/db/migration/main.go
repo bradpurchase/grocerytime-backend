@@ -171,9 +171,14 @@ func AutoMigrateService(db *gorm.DB) error {
 			Migrate: func(tx *gorm.DB) error {
 				type Recipe struct {
 					ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					UserID   uuid.UUID `gorm:"type:uuid;not null"`
 					Name     string    `gorm:"type:varchar(255);not null;index:idx_recipes_name"`
 					URL      *string   `gorm:"type:varchar(255)"`
 					MealType string    `gorm:"type:varchar(10);not null;index:idx_recipes_meal_type"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
 				}
 				return tx.AutoMigrate(&Recipe{})
 			},
@@ -189,8 +194,13 @@ func AutoMigrateService(db *gorm.DB) error {
 					ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 					RecipeID uuid.UUID `gorm:"type:uuid;not null"`
 					Name     string    `gorm:"type:varchar(100);not null;index:idx_recipe_ingredients_name"`
-					Amount   int       `gorm:"default:1;not null"`
-					Units    *string   `gorm:"type:varchar(20)"`
+					Amount   *int      `gorm:"default:1"`
+					Unit     *string   `gorm:"type:varchar(20)"`
+					Quantity int       `gorm:"default:1;not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
 				}
 				return tx.AutoMigrate(&RecipeIngredient{})
 			},
@@ -206,6 +216,10 @@ func AutoMigrateService(db *gorm.DB) error {
 					ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 					RecipeID uuid.UUID `gorm:"type:uuid;not null"`
 					UserID   uuid.UUID `gorm:"type:uuid;not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
 				}
 				return tx.AutoMigrate(&RecipeUser{})
 			},
@@ -225,6 +239,10 @@ func AutoMigrateService(db *gorm.DB) error {
 					MealType string    `gorm:"type:varchar(10);not null"`
 					Notes    *string   `gorm:"type:text"`
 					Date     time.Time
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
 				}
 				return tx.AutoMigrate(&Meal{})
 			},
