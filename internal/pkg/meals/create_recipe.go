@@ -1,6 +1,8 @@
 package meals
 
 import (
+	"errors"
+
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
@@ -27,26 +29,26 @@ func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models
 	}
 
 	// Handle ingredients
-	// TODO: move this to a function.. and try to clean up?
+	recipeID := recipe.ID
 	ingredients := args["ingredients"].([]interface{})
-	for i := range ingredients {
-		amount := ingredients[i].(map[string]interface{})["amount"].(int) // TODO: needs to be float (e.g. 3.5 tablespoons)
-		unit := ingredients[i].(map[string]interface{})["unit"]
-		var unitStr string
-		if unit != nil {
-			unitStr = unit.(string)
-		}
-		ingredient := &models.RecipeIngredient{
-			RecipeID: recipe.ID,
-			Name:     ingredients[i].(map[string]interface{})["name"].(string),
-			Amount:   &amount,
-			Unit:     &unitStr,
-			Quantity: ingredients[i].(map[string]interface{})["quantity"].(int),
-		}
-		if err := db.Manager.Create(&ingredient).Error; err != nil {
-			return recipe, err
-		}
+	if err := CreateRecipeIngredients(recipeID, ingredients); err != nil {
+		return recipe, errors.New("could not create ingredients")
 	}
 
 	return recipe, nil
+}
+
+// CreateRecipeIngredients creates recipe_ingredients records associated with a RecipeID
+func CreateRecipeIngredients(recipeID uuid.UUID, ingredients []interface{}) (err error) {
+	for i := range ingredients {
+		ingredient := &models.RecipeIngredient{
+			RecipeID: recipeID,
+			Name:     ingredients[i].(map[string]interface{})["name"].(string),
+			Quantity: ingredients[i].(map[string]interface{})["quantity"].(int),
+		}
+		if err := db.Manager.Create(&ingredient).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }
