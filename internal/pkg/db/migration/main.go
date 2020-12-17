@@ -194,7 +194,8 @@ func AutoMigrateService(db *gorm.DB) error {
 					ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 					RecipeID uuid.UUID `gorm:"type:uuid;not null"`
 					Name     string    `gorm:"type:varchar(255);not null;index:idx_recipe_ingredients_name"`
-					Quantity int       `gorm:"default:1;not null"`
+					Amount   *float64  `gorm:"default:1"`
+					Unit     *string   `gorm:"type:varchar(20)"`
 
 					CreatedAt time.Time
 					UpdatedAt time.Time

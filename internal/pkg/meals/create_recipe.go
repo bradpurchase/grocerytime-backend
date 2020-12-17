@@ -41,10 +41,17 @@ func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models
 // CreateRecipeIngredients creates recipe_ingredients records associated with a RecipeID
 func CreateRecipeIngredients(recipeID uuid.UUID, ingredients []interface{}) (err error) {
 	for i := range ingredients {
+		amount := ingredients[i].(map[string]interface{})["amount"].(float64)
+		unit := ingredients[i].(map[string]interface{})["unit"]
+		var unitStr string
+		if unit != nil {
+			unitStr = unit.(string)
+		}
 		ingredient := &models.RecipeIngredient{
 			RecipeID: recipeID,
 			Name:     ingredients[i].(map[string]interface{})["name"].(string),
-			Quantity: ingredients[i].(map[string]interface{})["quantity"].(int),
+			Amount:   &amount,
+			Unit:     &unitStr,
 		}
 		if err := db.Manager.Create(&ingredient).Error; err != nil {
 			return err
