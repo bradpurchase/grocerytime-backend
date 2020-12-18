@@ -415,6 +415,9 @@ func init() {
 										"unit": &graphql.InputObjectFieldConfig{
 											Type: graphql.String,
 										},
+										"notes": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
 									},
 								},
 							))),

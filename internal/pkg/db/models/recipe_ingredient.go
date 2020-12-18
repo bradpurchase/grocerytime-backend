@@ -14,6 +14,7 @@ type RecipeIngredient struct {
 	Name     string    `gorm:"type:varchar(255);not null;index:idx_recipe_ingredients_name"`
 	Amount   *float64  `gorm:"default:1"`
 	Unit     *string   `gorm:"type:varchar(20)"`
+	Notes    *string   `gorm:"type:varchar(255);"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
