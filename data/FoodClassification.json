@@ -118,6 +118,10 @@
       "label": "Bakery"
     },
     {
+      "text": "croissants",
+      "label": "Bakery"
+    },
+    {
       "text": "ciabatta",
       "label": "Bakery"
     },
@@ -171,6 +175,10 @@
     },
     {
       "text": "crepes",
+      "label": "Bakery"
+    },
+    {
+      "text": "brownies",
       "label": "Bakery"
     },
     {
@@ -290,6 +298,10 @@
       "label": "Beverages"
     },
     {
+      "text": "ginger ale",
+      "label": "Beverages"
+    },
+    {
       "text": "dr pepper",
       "label": "Beverages"
     },
@@ -374,6 +386,10 @@
       "label": "Dairy"
     },
     {
+      "text": "heavy cream",
+      "label": "Dairy"
+    },
+    {
       "text": "half & half",
       "label": "Dairy"
     },
@@ -398,7 +414,15 @@
       "label": "Dairy"
     },
     {
+      "text": "soy milk",
+      "label": "Dairy"
+    },
+    {
       "text": "oat milk",
+      "label": "Dairy"
+    },
+    {
+      "text": "egg nog",
       "label": "Dairy"
     },
     {
@@ -590,6 +614,10 @@
       "label": "Canned Goods"
     },
     {
+      "text": "soup",
+      "label": "Canned Goods"
+    },
+    {
       "text": "cereal",
       "label": "Cereal"
     },
@@ -647,6 +675,18 @@
     },
     {
       "text": "dishwashing liquid",
+      "label": "Cleaning"
+    },
+    {
+      "text": "dishwasher pods",
+      "label": "Cleaning"
+    },
+    {
+      "text": "tide pods",
+      "label": "Cleaning"
+    },
+    {
+      "text": "dish detergent",
       "label": "Cleaning"
     },
     {
@@ -802,7 +842,23 @@
       "label": "Condiments"
     },
     {
+      "text": "balsamic dressing",
+      "label": "Condiments"
+    },
+    {
+      "text": "balsamic vinegar",
+      "label": "Condiments"
+    },
+    {
+      "text": "balsamic glaze",
+      "label": "Condiments"
+    },
+    {
       "text": "pickles",
+      "label": "Condiments"
+    },
+    {
+      "text": "cheese whiz",
       "label": "Condiments"
     },
     {
@@ -851,6 +907,14 @@
     },
     {
       "text": "decaf tea",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "green tea",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "earl grey tea",
       "label": "Dry Goods"
     },
     {
@@ -955,6 +1019,10 @@
     },
     {
       "text": "chicken cutlets",
+      "label": "Meat"
+    },
+    {
+      "text": "ground chicken",
       "label": "Meat"
     },
     {
@@ -1186,6 +1254,10 @@
       "label": "Personal Care"
     },
     {
+      "text": "hand soap",
+      "label": "Personal Care"
+    },
+    {
       "text": "hand cream",
       "label": "Personal Care"
     },
@@ -1247,6 +1319,14 @@
     },
     {
       "text": "toilet paper",
+      "label": "Personal Care"
+    },
+    {
+      "text": "tissues",
+      "label": "Personal Care"
+    },
+    {
+      "text": "preparation h",
       "label": "Personal Care"
     },
     {
@@ -1315,6 +1395,10 @@
     },
     {
       "text": "oranges",
+      "label": "Produce"
+    },
+    {
+      "text": "mandarins",
       "label": "Produce"
     },
     {
