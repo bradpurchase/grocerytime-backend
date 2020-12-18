@@ -19,7 +19,11 @@ func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models
 		mealType = args["mealType"].(string)
 	}
 
-	ingredients, err := CompileRecipeIngredients(args["ingredients"].([]interface{}))
+	ingredientsArg := args["ingredients"]
+	if ingredientsArg == nil {
+		return recipe, errors.New("cannot create a meal with no ingredients")
+	}
+	ingredients, err := CompileRecipeIngredients(ingredientsArg.([]interface{}))
 	if err != nil {
 		return recipe, errors.New("could not create ingredients")
 	}
@@ -29,6 +33,7 @@ func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models
 		URL:         &url,
 		MealType:    &mealType,
 		Ingredients: ingredients,
+		Users:       []models.RecipeUser{{UserID: userID}},
 	}
 	if err := db.Manager.Create(&recipe).Error; err != nil {
 		return recipe, err
@@ -39,16 +44,26 @@ func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models
 // CompileRecipeIngredients compiles []models.RecipeIngredient for insertion in a recipe
 func CompileRecipeIngredients(ingArg []interface{}) (ingredients []models.RecipeIngredient, err error) {
 	for i := range ingArg {
-		amount := ingArg[i].(map[string]interface{})["amount"].(float64)
-		unit := ingArg[i].(map[string]interface{})["unit"]
+		ing := ingArg[i].(map[string]interface{})
+
+		amount := ing["amount"].(float64)
+
+		unit := ing["unit"]
 		var unitStr string
 		if unit != nil {
 			unitStr = unit.(string)
 		}
+
+		notes := ing["notes"]
+		var notesStr string
+		if notes != nil {
+			notesStr = notes.(string)
+		}
 		ingredient := models.RecipeIngredient{
-			Name:   ingArg[i].(map[string]interface{})["name"].(string),
+			Name:   ing["name"].(string),
 			Amount: &amount,
 			Unit:   &unitStr,
+			Notes:  &notesStr,
 		}
 		ingredients = append(ingredients, ingredient)
 	}

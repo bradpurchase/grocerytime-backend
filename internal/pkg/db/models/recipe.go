@@ -21,15 +21,15 @@ type Recipe struct {
 
 	// Associations
 	Ingredients []RecipeIngredient
-	RecipeUsers []RecipeUser
+	Users       []RecipeUser
 	Meals       []Meal
 }
 
 // AfterCreate hook adds the recipe creator to recipe_users
-func (r *Recipe) AfterCreate(tx *gorm.DB) (err error) {
-	recipeUser := RecipeUser{RecipeID: r.ID, UserID: r.UserID}
-	if err := tx.Create(&recipeUser).Error; err != nil {
-		return err
-	}
-	return nil
-}
+// func (r *Recipe) AfterCreate(tx *gorm.DB) (err error) {
+// 	recipeUser := RecipeUser{RecipeID: r.ID, UserID: r.UserID}
+// 	if err := tx.Create(&recipeUser).Error; err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
