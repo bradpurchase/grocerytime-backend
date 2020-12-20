@@ -95,6 +95,11 @@ func init() {
 					},
 					Resolve: resolvers.ItemSearchResolver,
 				},
+				"recipes": &graphql.Field{
+					Type:        graphql.NewList(gql.RecipeType),
+					Description: "Retrieve recipes added by the current user",
+					Resolve:     resolvers.RecipesResolver,
+				},
 			},
 		},
 	)

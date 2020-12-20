@@ -17,9 +17,12 @@ var RecipeIngredientType = graphql.NewObject(
 				Type: graphql.NewNonNull(graphql.String),
 			},
 			"amount": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.Int),
+				Type: graphql.NewNonNull(graphql.Float),
 			},
-			"units": &graphql.Field{
+			"unit": &graphql.Field{
+				Type: graphql.String,
+			},
+			"notes": &graphql.Field{
 				Type: graphql.String,
 			},
 		},

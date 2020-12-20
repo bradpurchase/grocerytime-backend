@@ -1,6 +1,9 @@
 package gql
 
-import "github.com/graphql-go/graphql"
+import (
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/graphql-go/graphql"
+)
 
 // RecipeType defines the gql type for Recipe
 var RecipeType = graphql.NewObject(
@@ -20,7 +23,10 @@ var RecipeType = graphql.NewObject(
 				Type: graphql.String,
 			},
 			"ingredients": &graphql.Field{
-				Type: RecipeIngredientType,
+				Type: graphql.NewList(RecipeIngredientType),
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					return p.Source.(models.Recipe).Ingredients, nil
+				},
 			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
