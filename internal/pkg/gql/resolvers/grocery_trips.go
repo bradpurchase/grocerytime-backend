@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
 )
@@ -16,7 +15,7 @@ func GroceryTripsResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	storeID := p.Args["storeId"]
-	userID := user.(models.User).ID
+	userID := user.ID
 	completed := p.Args["completed"].(bool)
 	trips, err := trips.RetrieveTrips(storeID, userID, completed)
 	if err != nil {

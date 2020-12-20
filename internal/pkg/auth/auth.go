@@ -8,10 +8,10 @@ import (
 )
 
 // FetchAuthenticatedUser retrieves the user to satisfy AuthenticatedUserResolver
-func FetchAuthenticatedUser(header string) (interface{}, error) {
+func FetchAuthenticatedUser(header string) (user models.User, err error) {
 	token, err := RetrieveAccessToken(header)
 	if err != nil {
-		return nil, err
+		return user, err
 	}
 	authToken := &models.AuthToken{}
 	query := db.Manager.
@@ -20,7 +20,7 @@ func FetchAuthenticatedUser(header string) (interface{}, error) {
 		Last(&authToken).
 		Error
 	if err := query; err != nil {
-		return nil, errors.New("token invalid/expired")
+		return user, errors.New("token invalid/expired")
 	}
 	return authToken.User, nil
 }

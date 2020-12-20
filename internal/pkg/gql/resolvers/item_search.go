@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
 )
@@ -16,7 +15,7 @@ func ItemSearchResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	name := p.Args["name"].(string)
-	userID := user.(models.User).ID
+	userID := user.ID
 	item, err := trips.SearchForItemByName(name, userID)
 	if err != nil {
 		return nil, err

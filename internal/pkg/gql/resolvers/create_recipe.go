@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/meals"
 	"github.com/graphql-go/graphql"
 )
@@ -15,7 +14,7 @@ func CreateRecipeResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	userID := user.(models.User).ID
+	userID := user.ID
 	recipe, err := meals.CreateRecipe(userID, p.Args)
 	if err != nil {
 		return nil, err

@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
@@ -17,7 +16,7 @@ func LeaveStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 
 	// Verify that the store with the ID provided exists
 	storeID := p.Args["storeId"]
-	storeUser, err := stores.RemoveUserFromStore(user.(models.User), storeID)
+	storeUser, err := stores.RemoveUserFromStore(user, storeID)
 	if err != nil {
 		return nil, err
 	}

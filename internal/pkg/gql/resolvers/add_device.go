@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/notifications"
 	"github.com/graphql-go/graphql"
 )
@@ -16,7 +15,7 @@ func AddDeviceResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	token := p.Args["token"].(string)
-	userID := user.(models.User).ID
+	userID := user.ID
 	device, err := notifications.StoreDeviceToken(token, userID)
 	if err != nil {
 		return nil, err

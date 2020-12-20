@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
@@ -15,7 +14,7 @@ func StoresResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	userStores, err := stores.RetrieveUserStores(user.(models.User))
+	userStores, err := stores.RetrieveUserStores(user)
 	if err != nil {
 		return nil, err
 	}

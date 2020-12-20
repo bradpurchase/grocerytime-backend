@@ -18,7 +18,7 @@ func InviteToStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	userEmail := user.(models.User).Email
+	userEmail := user.Email
 
 	// Verify that the store with the ID provided exists
 	storeID := p.Args["storeId"]

@@ -2,12 +2,11 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/meals"
 	"github.com/graphql-go/graphql"
 )
 
-// RecipesResolver returns Store records for the current user
+// RecipesResolver resolves the recipes query
 func RecipesResolver(p graphql.ResolveParams) (interface{}, error) {
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(header.(string))
@@ -15,7 +14,7 @@ func RecipesResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	userID := user.(models.User).ID
+	userID := user.ID
 	recipes, err := meals.RetrieveRecipes(userID)
 	if err != nil {
 		return nil, err
