@@ -94,7 +94,4 @@ func (s *Suite) TestCreateRecipe_FullDetails() {
 	assert.Equal(s.T(), recipe.Ingredients[2].Amount, &amount)
 	assert.Equal(s.T(), recipe.Ingredients[2].Unit, &unit2)
 	assert.Equal(s.T(), recipe.Ingredients[2].Notes, &notes1)
-
-	assert.Equal(s.T(), len(recipe.Users), 1)
-	assert.Equal(s.T(), recipe.Users[0].UserID, userID)
 }
