@@ -33,7 +33,6 @@ func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models
 		URL:         &url,
 		MealType:    &mealType,
 		Ingredients: ingredients,
-		Users:       []models.RecipeUser{{UserID: userID}},
 	}
 	if err := db.Manager.Create(&recipe).Error; err != nil {
 		return recipe, err

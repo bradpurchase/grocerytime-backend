@@ -21,6 +21,5 @@ type Recipe struct {
 
 	// Associations
 	Ingredients []RecipeIngredient
-	Users       []RecipeUser
 	Meals       []Meal
 }

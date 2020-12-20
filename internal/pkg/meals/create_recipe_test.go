@@ -74,11 +74,6 @@ func (s *Suite) TestCreateRecipe_FullDetails() {
 		WithArgs(recipeID, ingName, amount, unit, notes, AnyTime{}, AnyTime{}, nil, recipeID, ingName1, amount, unit1, notes1, AnyTime{}, AnyTime{}, nil, recipeID, ingName2, amount, unit2, notes1, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
-	recipeUserID := uuid.NewV4()
-	s.mock.ExpectQuery("^INSERT INTO \"recipe_users\" (.+)$").
-		WithArgs(recipeID, userID, AnyTime{}, AnyTime{}, nil).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(recipeUserID))
-
 	recipe, err := CreateRecipe(userID, args)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), recipe.ID, recipeID)

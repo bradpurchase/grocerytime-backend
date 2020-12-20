@@ -23,6 +23,7 @@ type Meal struct {
 	DeletedAt gorm.DeletedAt
 
 	// Associations
+	Users  []MealUser
 	Recipe Recipe
 	User   User
 }
