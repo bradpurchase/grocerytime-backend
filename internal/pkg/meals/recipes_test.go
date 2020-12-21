@@ -9,7 +9,6 @@ import (
 
 func (s *Suite) TestRetrieveRecipes_NoRecipes() {
 	userID := uuid.NewV4()
-
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipes\"*").
 		WithArgs(userID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
@@ -34,4 +33,29 @@ func (s *Suite) TestRetrieveRecipes_WithRecipes() {
 	assert.Equal(s.T(), len(recipes), 1)
 	assert.Equal(s.T(), recipes[0].UserID, userID)
 	assert.Equal(s.T(), len(recipes[0].Ingredients), 1)
+}
+
+func (s *Suite) TestRetrieveRecipe_NotFound() {
+	recipeID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipes\"*").
+		WithArgs(recipeID).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
+	_, e := RetrieveRecipe(recipeID)
+	require.Error(s.T(), e)
+	assert.Equal(s.T(), e.Error(), "record not found")
+}
+
+func (s *Suite) TestRetrieveRecipe_Found() {
+	recipeID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipes\"*").
+		WithArgs(recipeID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(recipeID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipe_ingredients\"*").
+		WithArgs(recipeID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "recipe_id"}).AddRow(uuid.NewV4(), recipeID))
+
+	recipe, err := RetrieveRecipe(recipeID)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), recipe.ID, recipeID)
 }

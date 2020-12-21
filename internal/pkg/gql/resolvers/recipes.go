@@ -21,3 +21,13 @@ func RecipesResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 	return recipes, nil
 }
+
+// RecipeResolver resolves the recipe query
+func RecipeResolver(p graphql.ResolveParams) (interface{}, error) {
+	recipeID := p.Args["id"]
+	recipe, err := meals.RetrieveRecipe(recipeID)
+	if err != nil {
+		return nil, err
+	}
+	return recipe, nil
+}

@@ -8,7 +8,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// CreateRecipe creates a recipe record and associated  records
+// CreateRecipe creates a recipe record and associated records
 func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models.Recipe, err error) {
 	var url string
 	if args["url"] != nil {

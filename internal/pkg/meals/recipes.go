@@ -19,3 +19,17 @@ func RetrieveRecipes(userID uuid.UUID) (recipes []models.Recipe, err error) {
 	}
 	return recipes, nil
 }
+
+// RetrieveRecipe retrieves a recipe by ID
+func RetrieveRecipe(id interface{}) (recipe models.Recipe, err error) {
+	query := db.Manager.
+		Preload("Ingredients").
+		Where("id = ?", id).
+		Order("created_at DESC").
+		Last(&recipe).
+		Error
+	if err := query; err != nil {
+		return recipe, err
+	}
+	return recipe, nil
+}
