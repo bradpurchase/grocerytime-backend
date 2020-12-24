@@ -9,7 +9,6 @@ import (
 // RetrieveRecipes retrieves recipes added by userID
 func RetrieveRecipes(userID uuid.UUID) (recipes []models.Recipe, err error) {
 	query := db.Manager.
-		Preload("Ingredients").
 		Where("user_id = ?", userID).
 		Order("created_at DESC").
 		Find(&recipes).

@@ -441,7 +441,7 @@ func init() {
 					Resolve: resolvers.CreateRecipeResolver,
 				},
 				"planMeal": &graphql.Field{
-					Type:        gql.RecipeType,
+					Type:        gql.MealType,
 					Description: "Creates a planned meal of a recipe",
 					Args: graphql.FieldConfigArgument{
 						"recipeId": &graphql.ArgumentConfig{
@@ -458,6 +458,21 @@ func init() {
 						},
 						"date": &graphql.ArgumentConfig{
 							Type: graphql.DateTime,
+						},
+						"items": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.NewList(graphql.NewInputObject(
+								graphql.InputObjectConfig{
+									Name: "MealItemInput",
+									Fields: graphql.InputObjectConfigFieldMap{
+										"name": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+										"quantity": &graphql.InputObjectFieldConfig{
+											Type: graphql.Int,
+										},
+									},
+								},
+							))),
 						},
 					},
 					Resolve: resolvers.PlanMealResolver,
