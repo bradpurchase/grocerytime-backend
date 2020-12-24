@@ -24,15 +24,11 @@ func (s *Suite) TestRetrieveRecipes_WithRecipes() {
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipes\"*").
 		WithArgs(userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(recipeID, userID))
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipe_ingredients\"*").
-		WithArgs(recipeID).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "recipe_id"}).AddRow(uuid.NewV4(), recipeID))
 
 	recipes, err := RetrieveRecipes(userID)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), len(recipes), 1)
 	assert.Equal(s.T(), recipes[0].UserID, userID)
-	assert.Equal(s.T(), len(recipes[0].Ingredients), 1)
 }
 
 func (s *Suite) TestRetrieveRecipe_NotFound() {
