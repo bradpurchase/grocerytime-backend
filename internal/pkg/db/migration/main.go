@@ -213,8 +213,9 @@ func AutoMigrateService(db *gorm.DB) error {
 					UserID   uuid.UUID `gorm:"type:uuid;not null"`
 					Name     string    `gorm:"type:varchar(255);not null;index:idx_meals_name"`
 					MealType string    `gorm:"type:varchar(10);not null"`
+					Servings int       `gorm:"default:1;not null"`
 					Notes    *string   `gorm:"type:text"`
-					Date     time.Time
+					Date     string    `gorm:"type:varchar(255);not null"`
 
 					CreatedAt time.Time
 					UpdatedAt time.Time
@@ -301,6 +302,19 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Migrator().DropTable("devices")
+			},
+		},
+		{
+			// Add meal_id to items
+			ID: "202012281946_add_meal_id_to_items",
+			Migrate: func(tx *gorm.DB) error {
+				type Item struct {
+					MealID *uuid.UUID `gorm:"type:uuid"`
+				}
+				return tx.AutoMigrate(&Item{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropColumn("items", "meal_id")
 			},
 		},
 	})

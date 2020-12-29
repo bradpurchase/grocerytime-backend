@@ -25,7 +25,7 @@ var MealType = graphql.NewObject(
 				Type: graphql.String,
 			},
 			"date": &graphql.Field{
-				Type: graphql.NewNonNull(graphql.DateTime),
+				Type: graphql.NewNonNull(graphql.String),
 			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,

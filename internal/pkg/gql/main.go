@@ -456,8 +456,11 @@ func init() {
 						"notes": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
+						"servings": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
 						"date": &graphql.ArgumentConfig{
-							Type: graphql.DateTime,
+							Type: graphql.NewNonNull(graphql.String),
 						},
 						"items": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.NewList(graphql.NewInputObject(
