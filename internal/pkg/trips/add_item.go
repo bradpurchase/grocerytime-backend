@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"regexp"
 	"strconv"
@@ -116,13 +115,13 @@ func CreateGroceryTripCategory(tripID uuid.UUID, name string) (category models.G
 func DetermineCategoryName(name string) string {
 	jsonFile, err := os.Open("data/FoodClassification.json")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	defer jsonFile.Close()
 
 	json, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	jsonString := string(json)
 
