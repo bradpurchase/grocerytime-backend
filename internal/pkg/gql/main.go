@@ -447,6 +447,9 @@ func init() {
 						"recipeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
+						"storeName": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},
