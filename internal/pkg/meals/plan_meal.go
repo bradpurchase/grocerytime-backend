@@ -26,6 +26,10 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 	if err != nil {
 		return meal, errors.New("recipeId arg not a UUID")
 	}
+	storeID, err := uuid.FromString(args["storeId"].(string))
+	if err != nil {
+		return meal, errors.New("storeId arg not a UUID")
+	}
 
 	db.Manager.Transaction(func(tx *gorm.DB) error {
 		meal = &models.Meal{
@@ -42,10 +46,6 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 		}
 
 		// Add the associated items to the current trip in the store
-		storeID, err := uuid.FromString(args["storeId"].(string))
-		if err != nil {
-			return errors.New("storeId arg not a UUID")
-		}
 		items := args["items"].([]interface{})
 		_, e := AddMealIngredientsToStore(storeID, userID, meal.ID, items)
 		if e != nil {
