@@ -93,7 +93,8 @@ func AddMealIngredientsToStore(storeID uuid.UUID, userID uuid.UUID, mealID uuid.
 	// Note: Ideally, I'd like this to be done at the time of adding the items to avoid
 	// a second query to update them to attribute meal_id. The challenge here is that
 	// the mutation that calls trips.AddItemsToStore cannot be easily updated to modify
-	// the shape of its "items" argument, since we cannot rely on every user updating the app.
+	// the shape of its "items" argument (such as to allow a meal_id or quantity parameter),
+	// since we cannot rely on every user updating the app.
 	var itemIds []uuid.UUID
 	for i := range itemsAdded {
 		itemIds = append(itemIds, itemsAdded[i].ID)

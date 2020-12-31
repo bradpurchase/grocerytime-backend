@@ -20,6 +20,8 @@ import (
 // AddItem adds an item to a trip and handles things like permission checks
 func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.Item, err error) {
 	tripID := args["tripId"]
+	// TODO: also accept trip to avoid this query
+	// For example, in AddItemsToStore, we fetch the trip, then fetch it again here by ID. this is pointless
 	trip := &models.GroceryTrip{}
 	if err := db.Manager.Where("id = ?", tripID).Find(&trip).Error; err != nil {
 		return addedItem, errors.New("trip does not exist")

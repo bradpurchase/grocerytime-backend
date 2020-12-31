@@ -9,8 +9,10 @@ import (
 
 func (s *Suite) TestPlanMeal_InvalidRecipeID() {
 	userID := uuid.NewV4()
+	storeID := uuid.NewV4()
 	args := map[string]interface{}{
 		"recipeId": "invalid",
+		"storeId":  storeID,
 		"name":     "PB&J",
 		"mealType": "Lunch",
 		"servings": 1,
@@ -23,20 +25,50 @@ func (s *Suite) TestPlanMeal_InvalidRecipeID() {
 
 func (s *Suite) TestPlanMeal_Valid() {
 	userID := uuid.NewV4()
+	storeID := uuid.NewV4()
 	recipeID := uuid.NewV4()
 	args := map[string]interface{}{
 		"recipeId": recipeID.String(),
+		"storeId":  storeID.String(),
 		"name":     "PB&J",
 		"mealType": "Snack",
 		"servings": 1,
 		"date":     "2020-12-30",
 		"notes":    "with the crusts cut off!",
+		"items": []interface{}{
+			map[string]interface{}{
+				"name":     "Peanut Butter",
+				"quantity": 1,
+			},
+		},
 	}
 
 	mealID := uuid.NewV4()
+	s.mock.ExpectBegin()
+
 	s.mock.ExpectQuery("^INSERT INTO \"meals\" (.+)$").
 		WithArgs(recipeID, userID, args["name"], args["mealType"], args["servings"], args["notes"], args["date"], AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(mealID))
+
+	storeName := "Test Store"
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(storeID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(storeID, storeName))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(userID, storeName).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id", "name"}).AddRow(storeID, userID, storeName))
+	tripID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(storeID, false).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id"}).AddRow(tripID, storeID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(tripID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id"}).AddRow(tripID, storeID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(storeID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), storeID, userID))
+
+	s.mock.ExpectCommit()
 
 	meal, err := PlanMeal(userID, args)
 	require.NoError(s.T(), err)
