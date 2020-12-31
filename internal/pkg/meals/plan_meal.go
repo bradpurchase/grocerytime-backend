@@ -42,14 +42,18 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 		}
 
 		// Add the associated items to the current trip in the store
-		storeName := args["storeName"].(string)
+		storeID, err := uuid.FromString(args["storeId"].(string))
+		if err != nil {
+			return errors.New("storeId arg not a UUID")
+		}
 		items := args["items"].([]interface{})
-		_, e := AddMealIngredientsToStore(storeName, userID, meal.ID, items)
+		_, e := AddMealIngredientsToStore(storeID, userID, meal.ID, items)
 		if e != nil {
 			return e
 		}
 
 		// TODO: populate meal_users
+		//mealUser := &models.MealUser{}
 
 		return nil
 	})
@@ -58,17 +62,25 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 }
 
 // AddMealIngredientsToStore will add the items associated with this meal to the user's selected store
-func AddMealIngredientsToStore(storeName string, userID uuid.UUID, mealID uuid.UUID, itemsArg []interface{}) (addedItems []*models.Item, err error) {
+func AddMealIngredientsToStore(storeID uuid.UUID, userID uuid.UUID, mealID uuid.UUID, itemsArg []interface{}) (addedItems []*models.Item, err error) {
 	var items []interface{}
 	for i := range itemsArg {
 		item := itemsArg[i].(map[string]interface{})
 		quantity := item["quantity"].(int)
 		if quantity > 0 {
+			// TODO: attribute meal_id somehow (probably need to refactor AddItemsToStore "items" arg to support quantity and meal_id etc)
 			items = append(items, fmt.Sprintf("%s x %d", item["name"], item["quantity"]))
 		}
 	}
+
+	// Fetch store name
+	var store models.Store
+	if err := db.Manager.Select("name").Where("id = ?", storeID).First(&store).Error; err != nil {
+		return addedItems, errors.New("store not found for storeId")
+	}
+
 	args := map[string]interface{}{
-		"storeName": storeName,
+		"storeName": store.Name,
 		"items":     items,
 	}
 	itemsAdded, err := trips.AddItemsToStore(userID, args)
