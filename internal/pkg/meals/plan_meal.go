@@ -87,5 +87,25 @@ func AddMealIngredientsToStore(storeID uuid.UUID, userID uuid.UUID, mealID uuid.
 	if err != nil {
 		return addedItems, err
 	}
+
+	// Update items to attribute meal_id
+	//
+	// Note: Ideally, I'd like this to be done at the time of adding the items to avoid
+	// a second query to update them to attribute meal_id. The challenge here is that
+	// the mutation that calls trips.AddItemsToStore cannot be easily updated to modify
+	// the shape of its "items" argument, since we cannot rely on every user updating the app.
+	var itemIds []uuid.UUID
+	for i := range itemsAdded {
+		itemIds = append(itemIds, itemsAdded[i].ID)
+	}
+	updateQuery := db.Manager.
+		Model(&models.Item{}).
+		Where("id IN (?)", itemIds).
+		Update("meal_id", mealID).
+		Error
+	if err := updateQuery; err != nil {
+		return addedItems, err
+	}
+
 	return itemsAdded, nil
 }
