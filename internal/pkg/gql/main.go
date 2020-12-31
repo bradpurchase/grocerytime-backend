@@ -110,6 +110,19 @@ func init() {
 					},
 					Resolve: resolvers.RecipeResolver,
 				},
+				"plannedMeals": &graphql.Field{
+					Type:        graphql.NewList(gql.MealType),
+					Description: "Retrieve planned meals for the current user within the provided time period",
+					Args: graphql.FieldConfigArgument{
+						"year": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+						"weekNumber": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+					},
+					Resolve: resolvers.PlannedMealsResolver,
+				},
 			},
 		},
 	)
@@ -447,8 +460,8 @@ func init() {
 						"recipeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
-						"storeName": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
 						},
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
