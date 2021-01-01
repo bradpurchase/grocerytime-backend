@@ -6,6 +6,7 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
@@ -31,6 +32,16 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 		return meal, errors.New("storeId arg not a UUID")
 	}
 
+	// Populate meal users by fetching users in the associated store
+	storeUsers, err := stores.RetrieveStoreUsers(storeID)
+	if err != nil {
+		return meal, err
+	}
+	var mealUsers []models.MealUser
+	for _, storeUser := range storeUsers {
+		mealUsers = append(mealUsers, models.MealUser{UserID: storeUser.UserID})
+	}
+
 	db.Manager.Transaction(func(tx *gorm.DB) error {
 		meal = &models.Meal{
 			RecipeID: recipeID,
@@ -40,6 +51,7 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 			Servings: args["servings"].(int),
 			Notes:    &notes,
 			Date:     date,
+			Users:    mealUsers,
 		}
 		if err := db.Manager.Create(&meal).Error; err != nil {
 			return err
@@ -51,9 +63,6 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 		if e != nil {
 			return e
 		}
-
-		// TODO: populate meal_users
-		//mealUser := &models.MealUser{}
 
 		return nil
 	})

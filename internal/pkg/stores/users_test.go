@@ -230,8 +230,8 @@ func (s *Suite) TestRetrieveStoreUsers_HasStoreUsers() {
 
 	storeUsers, err := RetrieveStoreUsers(store.ID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), len(storeUsers.([]models.StoreUser)), 2)
-	assert.Equal(s.T(), storeUsers.([]models.StoreUser)[0].StoreID, store.ID)
+	assert.Equal(s.T(), len(storeUsers), 2)
+	assert.Equal(s.T(), storeUsers[0].StoreID, store.ID)
 }
 
 func (s *Suite) TestRetrieveStoreCreator_StoreUserNotFound() {
