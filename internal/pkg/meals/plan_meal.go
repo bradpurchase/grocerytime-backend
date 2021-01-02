@@ -32,17 +32,17 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 		return meal, errors.New("storeId arg not a UUID")
 	}
 
-	// Populate meal users by fetching users in the associated store
-	storeUsers, err := stores.RetrieveStoreUsers(storeID)
-	if err != nil {
-		return meal, err
-	}
-	var mealUsers []models.MealUser
-	for _, storeUser := range storeUsers {
-		mealUsers = append(mealUsers, models.MealUser{UserID: storeUser.UserID})
-	}
-
 	db.Manager.Transaction(func(tx *gorm.DB) error {
+		// Populate meal users by fetching users in the associated store
+		storeUsers, err := stores.RetrieveStoreUsers(storeID)
+		if err != nil {
+			return err
+		}
+		var mealUsers []models.MealUser
+		for _, storeUser := range storeUsers {
+			mealUsers = append(mealUsers, models.MealUser{UserID: storeUser.UserID})
+		}
+
 		meal = &models.Meal{
 			RecipeID: recipeID,
 			UserID:   userID,
@@ -111,7 +111,7 @@ func AddMealIngredientsToStore(storeID uuid.UUID, userID uuid.UUID, mealID uuid.
 	updateQuery := db.Manager.
 		Model(&models.Item{}).
 		Where("id IN (?)", itemIds).
-		Update("meal_id", mealID).
+		UpdateColumn("meal_id", mealID). // UpdateColumn to avoid hooks
 		Error
 	if err := updateQuery; err != nil {
 		return addedItems, err
