@@ -1,8 +1,6 @@
 package meals
 
 import (
-	"time"
-
 	"github.com/DATA-DOG/go-sqlmock"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
@@ -22,11 +20,8 @@ func (s *Suite) TestPlannedMeals_NoMeals() {
 	userID := uuid.NewV4()
 	weekNumber := 1
 	year := 2021
-
-	weekFirstDay := time.Date(2021, time.January, 04, 0, 0, 0, 0, time.UTC)
-	weekLastDay := time.Date(2021, time.January, 10, 0, 0, 0, 0, time.UTC)
 	s.mock.ExpectQuery("^SELECT meals.* FROM \"meals\"*").
-		WithArgs(userID, weekFirstDay, weekLastDay).
+		WithArgs(userID, "2021-01-04", "2021-01-10").
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	meals, err := PlannedMeals(userID, weekNumber, year)
@@ -39,16 +34,13 @@ func (s *Suite) TestPlannedMeals_ExistingMeals() {
 	weekNumber := 1
 	year := 2021
 
-	weekFirstDay := time.Date(2021, time.January, 04, 0, 0, 0, 0, time.UTC)
-	weekLastDay := time.Date(2021, time.January, 10, 0, 0, 0, 0, time.UTC)
-
 	meal1ID := uuid.NewV4()
 	meal2ID := uuid.NewV4()
 	mealRows := sqlmock.NewRows([]string{"id"}).
 		AddRow(meal1ID).
 		AddRow(meal2ID)
 	s.mock.ExpectQuery("^SELECT meals.* FROM \"meals\"*").
-		WithArgs(userID, weekFirstDay, weekLastDay).
+		WithArgs(userID, "2021-01-04", "2021-01-10").
 		WillReturnRows(mealRows)
 
 	mealUserRows := sqlmock.NewRows([]string{"id", "meal_id", "user_id"}).

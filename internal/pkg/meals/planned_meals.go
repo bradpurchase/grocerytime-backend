@@ -16,8 +16,8 @@ func PlannedMeals(userID uuid.UUID, weekNumber int, year int) (meals []models.Me
 		return meals, err
 	}
 	days := week.Days
-	weekFirstDay := days[0]
-	weekLastDay := days[len(days)-1]
+	weekFirstDay := days[0].Format("2006-01-02")
+	weekLastDay := days[len(days)-1].Format("2006-01-02")
 
 	query := db.Manager.
 		Preload("Users").
