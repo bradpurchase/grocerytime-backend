@@ -24,6 +24,9 @@ var MealType = graphql.NewObject(
 			"mealType": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.String),
 			},
+			"servings": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.Int),
+			},
 			"notes": &graphql.Field{
 				Type: graphql.String,
 			},
