@@ -24,7 +24,7 @@ func PlannedMeals(userID uuid.UUID, weekNumber int, year int) (meals []models.Me
 		Select("meals.*").
 		Joins("INNER JOIN meal_users ON meal_users.meal_id = meals.id").
 		Where("meal_users.user_id = ?", userID).
-		Where("meals.created_at BETWEEN ? AND ?", weekFirstDay, weekLastDay).
+		Where("CAST(meals.created_at AS date) BETWEEN ? AND ?", weekFirstDay, weekLastDay).
 		Order("meals.created_at DESC").
 		Find(&meals).
 		Error
