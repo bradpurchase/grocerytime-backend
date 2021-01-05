@@ -110,7 +110,7 @@ func init() {
 					},
 					Resolve: resolvers.RecipeResolver,
 				},
-				"plannedMeals": &graphql.Field{
+				"meals": &graphql.Field{
 					Type:        graphql.NewList(gql.MealType),
 					Description: "Retrieve planned meals for the current user within the provided time period",
 					Args: graphql.FieldConfigArgument{
@@ -121,7 +121,7 @@ func init() {
 							Type: graphql.Int,
 						},
 					},
-					Resolve: resolvers.PlannedMealsResolver,
+					Resolve: resolvers.MealsResolver,
 				},
 			},
 		},

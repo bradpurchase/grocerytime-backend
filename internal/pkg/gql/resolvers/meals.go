@@ -8,8 +8,8 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// PlannedMealsResolver resolves the plannedMeals query
-func PlannedMealsResolver(p graphql.ResolveParams) (interface{}, error) {
+// MealsResolver resolves the meals query
+func MealsResolver(p graphql.ResolveParams) (interface{}, error) {
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(header.(string))
 	if err != nil {

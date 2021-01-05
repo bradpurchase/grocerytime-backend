@@ -317,6 +317,28 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Migrator().DropColumn("items", "meal_id")
 			},
 		},
+		{
+			// Add indices for meals and meal_users columns
+			ID: "202101041619_meals_and_meal_users_indices",
+			Migrate: func(tx *gorm.DB) error {
+				if err := tx.Exec("CREATE INDEX idx_meals_created_at ON meals (created_at)").Error; err != nil {
+					return err
+				}
+				if err := tx.Exec("CREATE INDEX idx_meal_users_user_id ON meal_users (user_id)").Error; err != nil {
+					return err
+				}
+				return nil
+			},
+			Rollback: func(tx *gorm.DB) error {
+				if err := tx.Exec("DROP INDEX idx_meals_created_at").Error; err != nil {
+					return err
+				}
+				if err := tx.Exec("DROP INDEX idx_meal_users_user_id").Error; err != nil {
+					return err
+				}
+				return nil
+			},
+		},
 	})
 	return m.Migrate()
 }
