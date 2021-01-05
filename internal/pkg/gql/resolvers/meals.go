@@ -23,7 +23,7 @@ func MealsResolver(p graphql.ResolveParams) (interface{}, error) {
 		t := time.Now()
 		year, weekNumber = t.ISOWeek()
 	}
-	meals, err := meals.PlannedMeals(user.ID, weekNumber.(int), year.(int))
+	meals, err := meals.RetrieveMeals(user.ID, weekNumber.(int), year.(int))
 	if err != nil {
 		return nil, err
 	}

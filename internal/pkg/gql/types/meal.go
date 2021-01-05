@@ -48,6 +48,22 @@ var MealType = graphql.NewObject(
 					return users, nil
 				},
 			},
+			"recipe": &graphql.Field{
+				Type: RecipeType,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					var recipe models.Recipe
+					recipeID := p.Source.(models.Meal).RecipeID
+					query := db.Manager.
+						Preload("Ingredients").
+						Where("id = ?", recipeID).
+						Last(&recipe).
+						Error
+					if err := query; err != nil {
+						return nil, err
+					}
+					return recipe, nil
+				},
+			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},

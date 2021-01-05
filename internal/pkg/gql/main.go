@@ -123,6 +123,16 @@ func init() {
 					},
 					Resolve: resolvers.MealsResolver,
 				},
+				"meal": &graphql.Field{
+					Type:        gql.MealType,
+					Description: "Retrieve meal",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.MealResolver,
+				},
 			},
 		},
 	)
