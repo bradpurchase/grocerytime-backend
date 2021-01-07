@@ -95,6 +95,44 @@ func init() {
 					},
 					Resolve: resolvers.ItemSearchResolver,
 				},
+				"recipes": &graphql.Field{
+					Type:        graphql.NewList(gql.RecipeType),
+					Description: "Retrieve recipes added by the current user",
+					Resolve:     resolvers.RecipesResolver,
+				},
+				"recipe": &graphql.Field{
+					Type:        gql.RecipeType,
+					Description: "Retrieve recipe",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.RecipeResolver,
+				},
+				"meals": &graphql.Field{
+					Type:        graphql.NewList(gql.MealType),
+					Description: "Retrieve planned meals for the current user within the provided time period",
+					Args: graphql.FieldConfigArgument{
+						"year": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+						"weekNumber": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+					},
+					Resolve: resolvers.MealsResolver,
+				},
+				"meal": &graphql.Field{
+					Type:        gql.MealType,
+					Description: "Retrieve meal",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.MealResolver,
+				},
 			},
 		},
 	)
@@ -387,6 +425,86 @@ func init() {
 						},
 					},
 					Resolve: resolvers.NotifyTripUpdatedItemsAddedResolver,
+				},
+				"createRecipe": &graphql.Field{
+					Type:        gql.RecipeType,
+					Description: "Creates a recipe",
+					Args: graphql.FieldConfigArgument{
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"mealType": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"url": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"ingredients": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.NewList(graphql.NewInputObject(
+								graphql.InputObjectConfig{
+									Name: "RecipeIngredientInput",
+									Fields: graphql.InputObjectConfigFieldMap{
+										"name": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+										"amount": &graphql.InputObjectFieldConfig{
+											Type: graphql.Float,
+										},
+										"unit": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+										"notes": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+									},
+								},
+							))),
+						},
+					},
+					Resolve: resolvers.CreateRecipeResolver,
+				},
+				"planMeal": &graphql.Field{
+					Type:        gql.MealType,
+					Description: "Creates a planned meal of a recipe",
+					Args: graphql.FieldConfigArgument{
+						"recipeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"mealType": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"notes": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"servings": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+						"date": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"items": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.NewList(graphql.NewInputObject(
+								graphql.InputObjectConfig{
+									Name: "MealItemInput",
+									Fields: graphql.InputObjectConfigFieldMap{
+										"name": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+										"quantity": &graphql.InputObjectFieldConfig{
+											Type: graphql.Int,
+										},
+									},
+								},
+							))),
+						},
+					},
+					Resolve: resolvers.PlanMealResolver,
 				},
 			},
 		},

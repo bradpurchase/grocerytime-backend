@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
@@ -17,7 +16,7 @@ func DeleteStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	storeID := p.Args["storeId"]
-	store, err := stores.DeleteStore(storeID, user.(models.User).ID)
+	store, err := stores.DeleteStore(storeID, user.ID)
 	if err != nil {
 		return nil, err
 	}

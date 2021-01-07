@@ -37,7 +37,7 @@ var StoreType = graphql.NewObject(
 					}
 
 					storeID := p.Source.(models.Store).ID
-					trip, err := trips.RetrieveCurrentStoreTripForUser(storeID, user.(models.User))
+					trip, err := trips.RetrieveCurrentStoreTripForUser(storeID, user)
 					if err != nil {
 						return nil, err
 					}

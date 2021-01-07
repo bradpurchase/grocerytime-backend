@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
 )
@@ -15,7 +14,7 @@ func MarkItemAsCompletedResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	userID := user.(models.User).ID
+	userID := user.ID
 	name := p.Args["name"].(string)
 	item, err := trips.MarkItemAsCompleted(name, userID)
 	if err != nil {

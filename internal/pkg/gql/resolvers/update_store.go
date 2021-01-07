@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
 )
@@ -15,7 +14,7 @@ func UpdateStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	store, err := stores.UpdateStoreForUser(user.(models.User).ID, p.Args)
+	store, err := stores.UpdateStoreForUser(user.ID, p.Args)
 	if err != nil {
 		return nil, err
 	}

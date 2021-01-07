@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/notifications"
 	"github.com/graphql-go/graphql"
 )
@@ -21,7 +20,7 @@ func NotifyTripUpdatedItemsAddedResolver(p graphql.ResolveParams) (interface{}, 
 	// the notifications package so it can use the proper apns certificate
 	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
 	if appScheme != nil {
-		userID := user.(models.User).ID
+		userID := user.ID
 		storeID := p.Args["storeId"]
 		numItemsAdded := p.Args["numItemsAdded"].(int)
 		go notifications.ItemsAdded(userID, storeID, numItemsAdded, appScheme.(string))
