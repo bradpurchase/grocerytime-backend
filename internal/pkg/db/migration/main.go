@@ -111,6 +111,16 @@ func AutoMigrateService(db *gorm.DB) error {
 				return nil
 			},
 		},
+		{
+			// Add index idx_auth_tokens_access_token
+			ID: "202101091252_add_idx_auth_tokens_access_token",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Exec("CREATE INDEX idx_auth_tokens_access_token ON auth_tokens (access_token)").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("DROP INDEX idx_auth_tokens_access_token").Error
+			},
+		},
 	})
 	return m.Migrate()
 }
