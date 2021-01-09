@@ -11,7 +11,7 @@ import (
 type MealUser struct {
 	ID     uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	MealID uuid.UUID `gorm:"type:uuid;not null"`
-	UserID uuid.UUID `gorm:"type:uuid;not null"`
+	UserID uuid.UUID `gorm:"type:uuid;not null;index:idx_meal_users_user_id"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

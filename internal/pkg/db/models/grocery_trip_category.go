@@ -9,8 +9,8 @@ import (
 
 type GroceryTripCategory struct {
 	ID              uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	GroceryTripID   uuid.UUID `gorm:"type:uuid;not null"`
-	StoreCategoryID uuid.UUID `gorm:"type:uuid;not null"`
+	GroceryTripID   uuid.UUID `gorm:"type:uuid;not null;index:idx_grocery_trip_categories_grocery_trip_id"`
+	StoreCategoryID uuid.UUID `gorm:"type:uuid;not null;index:idx_grocery_trip_categories_store_category_id"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
