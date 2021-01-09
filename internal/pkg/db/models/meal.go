@@ -17,7 +17,7 @@ type Meal struct {
 	MealType *string   `gorm:"type:varchar(10)"`
 	Servings int       `gorm:"default:1;not null"`
 	Notes    *string   `gorm:"type:text"`
-	Date     string    `gorm:"type:varchar(255);not null"`
+	Date     string    `gorm:"type:varchar(255);not null;index:idx_meals_date"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

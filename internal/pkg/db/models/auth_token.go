@@ -15,7 +15,7 @@ type AuthToken struct {
 	ID           uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	ClientID     uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();not null"`
 	UserID       uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();not null"`
-	AccessToken  string    `gorm:"type:varchar(100);not null"`
+	AccessToken  string    `gorm:"type:varchar(100);not null;index:idx_auth_tokens_access_token"`
 	RefreshToken string    `gorm:"type:varchar(100);not null"`
 	ExpiresIn    time.Time `gorm:"not null"`
 	DeviceName   string    `gorm:"type:varchar(100)"`

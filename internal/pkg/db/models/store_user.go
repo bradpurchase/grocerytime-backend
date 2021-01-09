@@ -11,7 +11,7 @@ import (
 
 type StoreUser struct {
 	ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	StoreID uuid.UUID `gorm:"type:uuid;not null"`
+	StoreID uuid.UUID `gorm:"type:uuid;not null;index:idx_store_users_store_id"`
 	UserID  uuid.UUID `gorm:"type:uuid"`
 	Email   string    `gorm:"type:varchar(100)"`
 	Creator *bool     `gorm:"default:false;not null"`
