@@ -4,7 +4,6 @@ import (
 	"github.com/graphql-go/graphql"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/resolvers"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/subscriptions"
 	gql "github.com/bradpurchase/grocerytime-backend/internal/pkg/gql/types"
 )
 
@@ -510,49 +509,11 @@ func init() {
 		},
 	)
 
-	// Define the root subscription type
-	subscriptionType := graphql.NewObject(graphql.ObjectConfig{
-		Name: "Subscription",
-		Fields: graphql.Fields{
-			"newItem": &graphql.Field{
-				Type:        gql.ItemType,
-				Description: "Retrieve a new item in a trip",
-				Args: graphql.FieldConfigArgument{
-					"tripId": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(graphql.ID),
-					},
-				},
-				Resolve: subscriptions.NewItem,
-			},
-			// "updatedItem": &graphql.Field{
-			// 	Type:        gql.ItemType,
-			// 	Description: "Retrieve an update to an item",
-			// 	Args: graphql.FieldConfigArgument{
-			// 		"tripId": &graphql.ArgumentConfig{
-			// 			Type: graphql.NewNonNull(graphql.ID),
-			// 		},
-			// 	},
-			// 	Resolve: subscriptions.UpdatedItem,
-			// },
-			// "deletedItem": &graphql.Field{
-			// 	Type:        gql.ItemType,
-			// 	Description: "Retrieve the deletion of an item",
-			// 	Args: graphql.FieldConfigArgument{
-			// 		"tripId": &graphql.ArgumentConfig{
-			// 			Type: graphql.NewNonNull(graphql.ID),
-			// 		},
-			// 	},
-			// 	Resolve: subscriptions.DeletedItem,
-			// },
-		},
-	})
-
 	var err error
 	Schema, err = graphql.NewSchema(
 		graphql.SchemaConfig{
-			Query:        queryType,
-			Mutation:     mutationType,
-			Subscription: subscriptionType,
+			Query:    queryType,
+			Mutation: mutationType,
 		},
 	)
 	if err != nil {
