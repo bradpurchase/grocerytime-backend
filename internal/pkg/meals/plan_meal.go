@@ -46,6 +46,7 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 		meal = &models.Meal{
 			RecipeID: recipeID,
 			UserID:   userID,
+			StoreID:  storeID,
 			Name:     args["name"].(string),
 			MealType: &mealType,
 			Servings: args["servings"].(int),
