@@ -9,7 +9,6 @@ require (
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/gofrs/uuid v3.3.0+incompatible // indirect
 	github.com/gorilla/mux v1.8.0
-	github.com/gorilla/websocket v1.4.2
 	github.com/graphql-go/graphql v0.7.9
 	github.com/graphql-go/handler v0.2.3
 	github.com/grsmv/goweek v0.0.0-20170103202425-523a631ad28c
@@ -25,7 +24,6 @@ require (
 	github.com/sideshow/apns2 v0.20.0
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/gjson v1.6.3
-	github.com/trevex/graphql-go-subscription v0.0.0-20170731204342-4a0a4158754b
 	golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 	golang.org/x/text v0.3.4 // indirect
