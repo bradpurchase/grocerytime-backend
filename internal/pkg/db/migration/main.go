@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -112,13 +113,16 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 		},
 		{
-			// Add index idx_auth_tokens_access_token
-			ID: "202101091252_add_idx_auth_tokens_access_token",
+			// Add column store_id to meals
+			ID: "202101100852_add_store_id_to_meals",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.Exec("CREATE INDEX idx_auth_tokens_access_token ON auth_tokens (access_token)").Error
+				type Meal struct {
+					StoreID uuid.UUID `gorm:"type:uuid;not null"`
+				}
+				return tx.AutoMigrate(&Meal{})
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Exec("DROP INDEX idx_auth_tokens_access_token").Error
+				return tx.Exec("ALTER TABLE meals DROP COLUMN store_id").Error
 			},
 		},
 	})

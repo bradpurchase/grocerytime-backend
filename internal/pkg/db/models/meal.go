@@ -13,6 +13,7 @@ type Meal struct {
 	ID       uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
 	RecipeID uuid.UUID `gorm:"type:uuid;not null"`
 	UserID   uuid.UUID `gorm:"type:uuid;not null"`
+	StoreID  uuid.UUID `gorm:"type:uuid;not null"`
 	Name     string    `gorm:"type:varchar(255);not null;index:idx_meals_name"`
 	MealType *string   `gorm:"type:varchar(10)"`
 	Servings int       `gorm:"default:1;not null"`

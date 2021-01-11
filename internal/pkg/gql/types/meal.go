@@ -18,6 +18,9 @@ var MealType = graphql.NewObject(
 			"recipeId": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.ID),
 			},
+			"storeId": &graphql.Field{
+				Type: graphql.NewNonNull(graphql.ID),
+			},
 			"name": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.String),
 			},
@@ -46,6 +49,17 @@ var MealType = graphql.NewObject(
 						return nil, err
 					}
 					return users, nil
+				},
+			},
+			"store": &graphql.Field{
+				Type: StoreType,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					var store models.Store
+					storeID := p.Source.(models.Meal).StoreID
+					if err := db.Manager.Where("id = ?", storeID).Last(&store).Error; err != nil {
+						return nil, err
+					}
+					return store, nil
 				},
 			},
 			"recipe": &graphql.Field{

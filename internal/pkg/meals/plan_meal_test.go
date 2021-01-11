@@ -81,7 +81,7 @@ func (s *Suite) TestPlanMeal_Valid() {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), storeID, userID))
 
 	s.mock.ExpectQuery("^INSERT INTO \"meals\" (.+)$").
-		WithArgs(recipeID, userID, args["name"], args["mealType"], args["servings"], args["notes"], args["date"], AnyTime{}, AnyTime{}, nil).
+		WithArgs(recipeID, userID, storeID, args["name"], args["mealType"], args["servings"], args["notes"], args["date"], AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(mealID))
 
 	s.mock.ExpectQuery("^INSERT INTO \"meal_users\" (.+)$").
