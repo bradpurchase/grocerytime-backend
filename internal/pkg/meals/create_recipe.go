@@ -20,12 +20,12 @@ func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models
 	}
 
 	ingredientsArg := args["ingredients"]
-	if ingredientsArg == nil {
-		return recipe, errors.New("cannot create a meal with no ingredients")
-	}
-	ingredients, err := CompileRecipeIngredients(ingredientsArg.([]interface{}))
-	if err != nil {
-		return recipe, errors.New("could not create ingredients")
+	var ingredients []models.RecipeIngredient
+	if ingredientsArg != nil {
+		ingredients, err = CompileRecipeIngredients(ingredientsArg.([]interface{}))
+		if err != nil {
+			return recipe, errors.New("could not create ingredients")
+		}
 	}
 	recipe = &models.Recipe{
 		UserID:      userID,
@@ -46,7 +46,6 @@ func CompileRecipeIngredients(ingArg []interface{}) (ingredients []models.Recipe
 		ing := ingArg[i].(map[string]interface{})
 
 		amount := ing["amount"].(float64)
-
 		unit := ing["unit"]
 		var unitStr string
 		if unit != nil {
