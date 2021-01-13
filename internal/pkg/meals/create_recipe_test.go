@@ -9,14 +9,29 @@ import (
 
 func (s *Suite) TestCreateRecipe_NoIngredients() {
 	userID := uuid.NewV4()
+
 	args := map[string]interface{}{
-		"name":     "PB&J",
-		"mealType": "Snack",
-		"url":      "https://www.food.com/recipe/traditional-peanut-butter-and-jelly-243965",
+		"name":        "PB&J",
+		"mealType":    "Snack",
+		"url":         "https://www.food.com/recipe/traditional-peanut-butter-and-jelly-243965",
+		"ingredients": nil,
 	}
-	_, e := CreateRecipe(userID, args)
-	require.Error(s.T(), e)
-	assert.Equal(s.T(), e.Error(), "cannot create a meal with no ingredients")
+
+	recipeID := uuid.NewV4()
+	s.mock.ExpectQuery("^INSERT INTO \"recipes\" (.+)$").
+		WithArgs(sqlmock.AnyArg(), args["name"], args["url"], args["mealType"], AnyTime{}, AnyTime{}, nil).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(recipeID))
+
+	recipe, err := CreateRecipe(userID, args)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), recipe.ID, recipeID)
+	assert.Equal(s.T(), recipe.Name, args["name"])
+	mealType := args["mealType"].(string)
+	assert.Equal(s.T(), recipe.MealType, &mealType)
+	url := args["url"].(string)
+	assert.Equal(s.T(), recipe.URL, &url)
+
+	assert.Equal(s.T(), len(recipe.Ingredients), 0)
 }
 
 func (s *Suite) TestCreateRecipe_FullDetails() {

@@ -439,7 +439,7 @@ func init() {
 							Type: graphql.String,
 						},
 						"ingredients": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.NewList(graphql.NewInputObject(
+							Type: graphql.NewList(graphql.NewInputObject(
 								graphql.InputObjectConfig{
 									Name: "RecipeIngredientInput",
 									Fields: graphql.InputObjectConfigFieldMap{
@@ -457,7 +457,7 @@ func init() {
 										},
 									},
 								},
-							))),
+							)),
 						},
 					},
 					Resolve: resolvers.CreateRecipeResolver,
