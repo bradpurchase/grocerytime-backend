@@ -21,13 +21,13 @@ func MealPlanned(meal *models.Meal, appScheme string) {
 	}
 
 	title := "Meal Planned"
-	body := fmt.Sprintf("%v added to your meal plan", user.Name)
+	body := fmt.Sprintf("%v added a meal to your meal plan", user.Name)
 	deviceTokens, err := MealUserTokens(meal)
 	if err != nil {
 		log.Println(err)
 	}
 	for i := range deviceTokens {
-		Send(title, body, deviceTokens[i], meal.ID.String(), appScheme)
+		Send(title, body, deviceTokens[i], "Meal", meal.ID.String(), appScheme)
 	}
 }
 
