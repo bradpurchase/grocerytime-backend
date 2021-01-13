@@ -9,7 +9,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// ItemsAdded snds a push notification to store users about a new item
+// ItemsAdded sends a push notification to store users about a new item
 func ItemsAdded(userID uuid.UUID, storeID interface{}, numItemsAdded int, appScheme string) {
 	var store models.Store
 	if err := db.Manager.Select("id, name").Where("id = ?", storeID).First(&store).Error; err != nil {
@@ -27,7 +27,7 @@ func ItemsAdded(userID uuid.UUID, storeID interface{}, numItemsAdded int, appSch
 		body = fmt.Sprintf("An item was added to your %v trip", store.Name)
 	}
 	for i := range deviceTokens {
-		Send(title, body, deviceTokens[i], storeID.(string), appScheme)
+		Send(title, body, deviceTokens[i], "Store", storeID.(string), appScheme)
 	}
 }
 

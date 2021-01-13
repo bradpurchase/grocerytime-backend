@@ -12,7 +12,7 @@ import (
 )
 
 // Send sends a push notification
-func Send(title string, body string, token string, remoteID string, scheme string) {
+func Send(title string, body string, token string, entityName string, entityID string, scheme string) {
 	cert, err := ApnsCertificate(scheme)
 	if err != nil {
 		fmt.Printf("cert err: %v\n", err)
@@ -26,7 +26,7 @@ func Send(title string, body string, token string, remoteID string, scheme strin
 	notification.DeviceToken = token
 	notificationTopic := SetNotificationTopic(scheme)
 	notification.Topic = notificationTopic
-	notification.Payload = SetNotificationPayload(title, body, remoteID)
+	notification.Payload = SetNotificationPayload(title, body, entityName, entityID)
 
 	res, err := client.Push(notification)
 	if err != nil {
@@ -77,11 +77,11 @@ func SetNotificationTopic(scheme string) (topic string) {
 }
 
 // SetNotificationPayload sets the APNS payload for the
-func SetNotificationPayload(title string, body string, remoteID string) (p *payload.Payload) {
-	p = payload.
+func SetNotificationPayload(title string, body string, entityName string, entityID string) (p *payload.Payload) {
+	return payload.
 		NewPayload().
 		AlertTitle(title).
 		AlertBody(body).
-		Custom("id", remoteID)
-	return p
+		Custom("entity", entityName).
+		Custom("id", entityID)
 }
