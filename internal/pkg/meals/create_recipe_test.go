@@ -30,7 +30,6 @@ func (s *Suite) TestCreateRecipe_NoIngredients() {
 	assert.Equal(s.T(), recipe.MealType, &mealType)
 	url := args["url"].(string)
 	assert.Equal(s.T(), recipe.URL, &url)
-
 	assert.Equal(s.T(), len(recipe.Ingredients), 0)
 }
 
