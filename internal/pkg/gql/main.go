@@ -505,6 +505,16 @@ func init() {
 					},
 					Resolve: resolvers.PlanMealResolver,
 				},
+				"deleteMeal": &graphql.Field{
+					Type:        gql.MealType,
+					Description: "Deletes a planned meal for the current user and anyone the meal is shared with",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.DeleteMealResolver,
+				},
 			},
 		},
 	)

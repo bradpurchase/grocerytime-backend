@@ -29,3 +29,18 @@ type Meal struct {
 	Recipe Recipe
 	User   User
 }
+
+// AfterDelete hook handles deleting associated records after meal is soft-deleted
+func (m *Meal) AfterDelete(tx *gorm.DB) (err error) {
+	// Delete meal users
+	if err := tx.Where("meal_id = ?", m.ID).Delete(&MealUser{}).Error; err != nil {
+		return err
+	}
+
+	// Remove meal_id assocation on items
+	if err := tx.Model(&Item{}).Where("meal_id = ?", m.ID).Update("meal_id", nil).Error; err != nil {
+		return err
+	}
+
+	return
+}
