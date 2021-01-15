@@ -38,7 +38,7 @@ func (m *Meal) AfterDelete(tx *gorm.DB) (err error) {
 	}
 
 	// Remove meal_id assocation on items
-	if err := tx.Model(&Item{}).Where("meal_id = ?", m.ID).Update("meal_id", nil).Error; err != nil {
+	if err := tx.Model(&Item{}).Where("meal_id = ?", m.ID).UpdateColumn("meal_id", nil).Error; err != nil {
 		return err
 	}
 
