@@ -16,9 +16,11 @@ func DeleteMealResolver(p graphql.ResolveParams) (interface{}, error) {
 
 	mealID := p.Args["id"]
 	userID := user.ID
-	meal, err := meals.DeleteMeal(mealID, userID)
+	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
+	meal, err := meals.DeleteMeal(mealID, userID, appScheme.(string))
 	if err != nil {
 		return nil, err
 	}
+
 	return meal, err
 }

@@ -21,10 +21,7 @@ func PlanMealResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
-	if appScheme == nil {
-		return meal, err
-	}
-	go notifications.MealPlanned(meal, appScheme.(string))
+	go notifications.NewMeal(meal, appScheme.(string))
 
 	return meal, nil
 }

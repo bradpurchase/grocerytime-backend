@@ -14,7 +14,7 @@ func (s *Suite) TestDeleteMeal_MealNotFound() {
 		WithArgs(mealID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	_, e := DeleteMeal(mealID, userID)
+	_, e := DeleteMeal(mealID, userID, "Debug")
 	require.Error(s.T(), e)
 	assert.Equal(s.T(), e.Error(), "record not found")
 }
@@ -33,7 +33,7 @@ func (s *Suite) TestDeleteMeal_MealFound() {
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(0, 0))
 
-	meal, err := DeleteMeal(mealID, userID)
+	meal, err := DeleteMeal(mealID, userID, "Debug")
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), meal.ID, mealID)
 	assert.NotNil(s.T(), meal.DeletedAt)
