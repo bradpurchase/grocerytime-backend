@@ -10,8 +10,9 @@ import (
 func DeleteMeal(mealID interface{}, userID uuid.UUID) (deletedMeal models.Meal, err error) {
 	var meal models.Meal
 	query := db.Manager.
+		Joins("INNER JOIN meal_users ON meal_users.meal_id = meals.id").
 		Where("meals.id = ?", mealID).
-		Where("meals.user_id = ?", userID).
+		Where("meal_users.user_id = ?", userID).
 		Last(&meal).
 		Error
 	if err := query; err != nil {
