@@ -3,25 +3,24 @@ package resolvers
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/meals"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/notifications"
 	"github.com/graphql-go/graphql"
 )
 
-// PlanMealResolver resolves the planMeal mutation
-func PlanMealResolver(p graphql.ResolveParams) (interface{}, error) {
+// DeleteMealResolver resolves the deleteMeal mutation
+func DeleteMealResolver(p graphql.ResolveParams) (interface{}, error) {
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(header.(string))
 	if err != nil {
 		return nil, err
 	}
 
-	meal, err := meals.PlanMeal(user.ID, p.Args)
+	mealID := p.Args["id"]
+	userID := user.ID
+	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
+	meal, err := meals.DeleteMeal(mealID, userID, appScheme.(string))
 	if err != nil {
 		return nil, err
 	}
 
-	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
-	go notifications.NewMeal(meal, appScheme.(string))
-
-	return meal, nil
+	return meal, err
 }

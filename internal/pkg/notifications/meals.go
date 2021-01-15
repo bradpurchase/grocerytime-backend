@@ -6,10 +6,11 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/utils"
 )
 
-// MealPlanned sends a push notification to store users about a new item
-func MealPlanned(meal *models.Meal, appScheme string) {
+// NewMeal sends a push notification about a new meal
+func NewMeal(meal *models.Meal, appScheme string) {
 	var user models.User
 	userQuery := db.Manager.
 		Select("name").
@@ -23,6 +24,30 @@ func MealPlanned(meal *models.Meal, appScheme string) {
 	title := "Meal Planned"
 	body := fmt.Sprintf("%v added a meal to your meal plan", user.Name)
 	deviceTokens, err := MealUserTokens(meal)
+	if err != nil {
+		log.Println(err)
+	}
+	for i := range deviceTokens {
+		Send(title, body, deviceTokens[i], "Meal", meal.ID.String(), appScheme)
+	}
+}
+
+// MealRemoved sends a push notification about a meal being removed from a meal plan
+func MealRemoved(meal models.Meal, appScheme string) {
+	var user models.User
+	userQuery := db.Manager.
+		Select("name").
+		Where("id = ?", meal.UserID).
+		Last(&user).
+		Error
+	if err := userQuery; err != nil {
+		log.Println(err)
+	}
+
+	title := "Meal Removed"
+	nameTruncated := utils.TruncateString(meal.Name, 12)
+	body := fmt.Sprintf("%v removed \"%v\" from your meal plan", user.Name, nameTruncated)
+	deviceTokens, err := MealUserTokens(&meal)
 	if err != nil {
 		log.Println(err)
 	}

@@ -12,3 +12,15 @@ func RandString(length int) string {
 	}
 	return string(b)
 }
+
+// TruncateString returns a truncated version of a string by maxLength with ellipsis
+func TruncateString(str string, maxLength int) string {
+	truncated := str
+	if len(str) > maxLength {
+		if maxLength > 3 {
+			maxLength -= 3
+		}
+		truncated = str[0:maxLength] + "..."
+	}
+	return truncated
+}
