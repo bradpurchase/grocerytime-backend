@@ -6,10 +6,9 @@ import (
 )
 
 // UpdateMeal updates an item by itemID
-func UpdateMeal(args map[string]interface{}, appScheme string) (interface{}, error) {
-	var meal models.Meal
+func UpdateMeal(args map[string]interface{}) (meal models.Meal, err error) {
 	if err := db.Manager.Where("id = ?", args["id"]).First(&meal).Error; err != nil {
-		return nil, err
+		return meal, err
 	}
 
 	if args["name"] != nil {
@@ -31,7 +30,7 @@ func UpdateMeal(args map[string]interface{}, appScheme string) (interface{}, err
 	}
 
 	if err := db.Manager.Save(&meal).Error; err != nil {
-		return nil, err
+		return meal, err
 	}
 	return meal, nil
 }
