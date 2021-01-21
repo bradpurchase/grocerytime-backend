@@ -5,7 +5,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 )
 
-// UpdateMeal updates an item by itemID
+// UpdateMeal updates a meal with the arguments provided
 func UpdateMeal(args map[string]interface{}) (meal models.Meal, err error) {
 	if err := db.Manager.Where("id = ?", args["id"]).First(&meal).Error; err != nil {
 		return meal, err
