@@ -515,6 +515,31 @@ func init() {
 					},
 					Resolve: resolvers.DeleteMealResolver,
 				},
+				"updateMeal": &graphql.Field{
+					Type:        gql.MealType,
+					Description: "Updates a planned meal for the current user and anyone the meal is shared with",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"mealType": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"notes": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"servings": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+						"date": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+					},
+					Resolve: resolvers.UpdateMealResolver,
+				},
 			},
 		},
 	)

@@ -56,6 +56,30 @@ func MealRemoved(meal models.Meal, appScheme string) {
 	}
 }
 
+// MealUpdated sends a push notification about a meal being updated in a meal plan
+func MealUpdated(meal models.Meal, origMealName string, appScheme string) {
+	var user models.User
+	userQuery := db.Manager.
+		Select("name").
+		Where("id = ?", meal.UserID).
+		Last(&user).
+		Error
+	if err := userQuery; err != nil {
+		log.Println(err)
+	}
+
+	title := "Meal Updated"
+	nameTruncated := utils.TruncateString(origMealName, 12)
+	body := fmt.Sprintf("%v updated \"%v\" in your meal plan", user.Name, nameTruncated)
+	deviceTokens, err := MealUserTokens(&meal)
+	if err != nil {
+		log.Println(err)
+	}
+	for i := range deviceTokens {
+		Send(title, body, deviceTokens[i], "Meal", meal.ID.String(), appScheme)
+	}
+}
+
 // MealUserTokens fetches apns device tokens for all meal users
 func MealUserTokens(meal *models.Meal) (tokens []string, err error) {
 	var mealUsers []models.MealUser
