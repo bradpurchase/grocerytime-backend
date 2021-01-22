@@ -210,6 +210,10 @@
       "label": "Bakery"
     },
     {
+      "text": "croutons",
+      "label": "Bakery"
+    },
+    {
       "text": "baking",
       "label": "Baking"
     },
@@ -442,7 +446,15 @@
       "label": "Dairy"
     },
     {
+      "text": "buttermilk",
+      "label": "Dairy"
+    },
+    {
       "text": "yogurt",
+      "label": "Dairy"
+    },
+    {
+      "text": "greek yogurt",
       "label": "Dairy"
     },
     {
@@ -538,6 +550,18 @@
       "label": "Dairy"
     },
     {
+      "text": "feta",
+      "label": "Dairy"
+    },
+    {
+      "text": "feta cheese",
+      "label": "Dairy"
+    },
+    {
+      "text": "goat cheese",
+      "label": "Dairy"
+    },
+    {
       "text": "candy",
       "label": "Candy & Snacks"
     },
@@ -574,6 +598,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "blue corn chips",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "salsa",
       "label": "Candy & Snacks"
     },
@@ -591,6 +619,14 @@
     },
     {
       "text": "ritz crackers",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "ritz bitz",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "pretzels",
       "label": "Candy & Snacks"
     },
     {
@@ -638,6 +674,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "oreo",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "peek freans",
       "label": "Candy & Snacks"
     },
@@ -655,6 +695,18 @@
     },
     {
       "text": "rx bars",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "clif bars",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "wheat thins",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "veggie straws",
       "label": "Candy & Snacks"
     },
     {
@@ -715,6 +767,10 @@
     },
     {
       "text": "vegetable broth",
+      "label": "Canned Goods"
+    },
+    {
+      "text": "beef broth",
       "label": "Canned Goods"
     },
     {
@@ -798,6 +854,10 @@
       "label": "Cleaning"
     },
     {
+      "text": "dishwasher soap",
+      "label": "Cleaning"
+    },
+    {
       "text": "sponge",
       "label": "Cleaning"
     },
@@ -862,6 +922,10 @@
     },
     {
       "text": "disposable gloves",
+      "label": "Cleaning"
+    },
+    {
+      "text": "sponges",
       "label": "Cleaning"
     },
     {
@@ -1065,6 +1129,14 @@
       "label": "Dry Goods"
     },
     {
+      "text": "quinoa",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "couscous",
+      "label": "Dry Goods"
+    },
+    {
       "text": "coffee",
       "label": "Dry Goods"
     },
@@ -1093,6 +1165,14 @@
       "label": "Dry Goods"
     },
     {
+      "text": "taco spice",
+      "label": "Dry Goods"
+    },
+    {
+      "text": "taco seasoning",
+      "label": "Dry Goods"
+    },
+    {
       "text": "cayenne pepper",
       "label": "Dry Goods"
     },
@@ -1117,7 +1197,7 @@
       "label": "Dry Goods"
     },
     {
-      "text": "mr. noodle",
+      "text": "mr. noodles",
       "label": "Dry Goods"
     },
     {
@@ -1229,6 +1309,10 @@
       "label": "Meat"
     },
     {
+      "text": "roast beef",
+      "label": "Meat"
+    },
+    {
       "text": "beef jerky",
       "label": "Meat"
     },
@@ -1254,6 +1338,10 @@
     },
     {
       "text": "pork chops",
+      "label": "Meat"
+    },
+    {
+      "text": "pork shoulder",
       "label": "Meat"
     },
     {
@@ -1421,7 +1509,19 @@
       "label": "Frozen Foods"
     },
     {
+      "text": "frozen edamame",
+      "label": "Frozen Foods"
+    },
+    {
       "text": "stir fry",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "frozen pizza",
+      "label": "Frozen Foods"
+    },
+    {
+      "text": "pierogies",
       "label": "Frozen Foods"
     },
     {
@@ -1557,6 +1657,10 @@
       "label": "Pharmacy"
     },
     {
+      "text": "vitamins",
+      "label": "Pharmacy"
+    },
+    {
       "text": "vitamin c",
       "label": "Pharmacy"
     },
@@ -1662,6 +1766,14 @@
     },
     {
       "text": "lettuce",
+      "label": "Produce"
+    },
+    {
+      "text": "iceberg lettuce",
+      "label": "Produce"
+    },
+    {
+      "text": "romaine lettuce",
       "label": "Produce"
     },
     {
@@ -1953,6 +2065,10 @@
       "label": "Produce"
     },
     {
+      "text": "berries",
+      "label": "Produce"
+    },
+    {
       "text": "blueberries",
       "label": "Produce"
     },
@@ -1982,6 +2098,14 @@
     },
     {
       "text": "rosemary",
+      "label": "Produce"
+    },
+    {
+      "text": "cherries",
+      "label": "Produce"
+    },
+    {
+      "text": "green beans",
       "label": "Produce"
     },
     {
