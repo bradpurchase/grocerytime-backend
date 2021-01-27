@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -113,16 +112,16 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 		},
 		{
-			// Add column store_id to meals
-			ID: "202101100852_add_store_id_to_meals",
+			// Add column notes to items
+			ID: "202101260809_add_notes_to_items",
 			Migrate: func(tx *gorm.DB) error {
-				type Meal struct {
-					StoreID uuid.UUID `gorm:"type:uuid;not null"`
+				type Item struct {
+					Notes *string `gorm:"type:varchar(255)"`
 				}
-				return tx.AutoMigrate(&Meal{})
+				return tx.AutoMigrate(&Item{})
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Exec("ALTER TABLE meals DROP COLUMN store_id").Error
+				return tx.Exec("ALTER TABLE items DROP COLUMN notes").Error
 			},
 		},
 	})
