@@ -30,11 +30,12 @@ func (s *Suite) TestRetrieveItems_HasItems() {
 			"name",
 			"quantity",
 			"completed",
+			"notes",
 			"created_at",
 			"updated_at",
 		}).
-		AddRow(uuid.NewV4(), tripID, "Apples", 5, false, time.Now(), time.Now()).
-		AddRow(uuid.NewV4(), tripID, "Bananas", 2, false, time.Now(), time.Now())
+		AddRow(uuid.NewV4(), tripID, "Apples", 5, false, nil, time.Now(), time.Now()).
+		AddRow(uuid.NewV4(), tripID, "Bananas", 2, false, nil, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(tripID).
 		WillReturnRows(itemRows)
@@ -69,11 +70,12 @@ func (s *Suite) TestRetrieveItemsInCategory_HasItems() {
 			"name",
 			"quantity",
 			"completed",
+			"notes",
 			"created_at",
 			"updated_at",
 		}).
-		AddRow(uuid.NewV4(), tripID, "Apples", 5, false, time.Now(), time.Now()).
-		AddRow(uuid.NewV4(), tripID, "Bananas", 2, false, time.Now(), time.Now())
+		AddRow(uuid.NewV4(), tripID, "Apples", 5, false, nil, time.Now(), time.Now()).
+		AddRow(uuid.NewV4(), tripID, "Bananas", 2, false, nil, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(tripID, categoryID).
 		WillReturnRows(itemRows)

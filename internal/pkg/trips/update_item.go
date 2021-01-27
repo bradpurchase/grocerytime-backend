@@ -27,6 +27,10 @@ func UpdateItem(args map[string]interface{}) (interface{}, error) {
 	if args["position"] != nil {
 		item.Position = args["position"].(int)
 	}
+	if args["notes"] != nil {
+		notes := args["notes"].(string)
+		item.Notes = &notes
+	}
 	if args["categoryId"] != nil {
 		categoryID := args["categoryId"].(uuid.UUID)
 		item.CategoryID = &categoryID
