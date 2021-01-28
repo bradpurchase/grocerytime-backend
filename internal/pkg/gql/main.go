@@ -317,6 +317,9 @@ func init() {
 						"quantity": &graphql.ArgumentConfig{
 							Type: graphql.Int,
 						},
+						"notes": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 						"position": &graphql.ArgumentConfig{
 							Type: graphql.Int,
 						},

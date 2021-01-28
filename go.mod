@@ -7,7 +7,7 @@ require (
 	github.com/denisenkom/go-mssqldb v0.0.0-20201104001602-427686ac8ec1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
-	github.com/gofrs/uuid v3.3.0+incompatible
+	github.com/gofrs/uuid v3.3.0+incompatible // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/graphql-go/graphql v0.7.9
 	github.com/graphql-go/handler v0.2.3
