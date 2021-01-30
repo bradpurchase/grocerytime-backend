@@ -10,7 +10,7 @@ import (
 
 type GroceryTrip struct {
 	ID                 uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	StoreID            uuid.UUID `gorm:"type:uuid;not null;index:idx_store_categories_store_id"`
+	StoreID            uuid.UUID `gorm:"type:uuid;not null;index"`
 	Name               string    `gorm:"type:varchar(100);not null"`
 	Completed          bool      `gorm:"default:false;not null"`
 	CopyRemainingItems bool      `gorm:"default:false;not null"`
