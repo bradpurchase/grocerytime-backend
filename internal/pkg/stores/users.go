@@ -13,20 +13,36 @@ import (
 //
 // The store user will be considered pending until the invitation is accepted
 // by the user in the app, at which point they are associated by userID instead.
-func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (models.StoreUser, error) {
+func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (storeUser models.StoreUser, err error) {
 	store := &models.Store{}
 	if err := db.Manager.Where("id = ?", storeID).First(&store).Error; err != nil {
-		return models.StoreUser{}, err
+		return storeUser, err
+	}
+
+	// Check whether this user is already in this store
+	var count int64
+	existsQuery := db.Manager.
+		Model(&models.StoreUser{}).
+		Joins("INNER JOIN users ON users.id = store_users.user_id").
+		Where("store_users.store_id = ?", storeID).
+		Where("store_users.email = ? OR users.email = ?", invitedEmail, invitedEmail).
+		Count(&count).
+		Error
+	if err := existsQuery; err != nil {
+		return storeUser, err
+	}
+	if count > 0 {
+		return storeUser, errors.New("this store is already being shared with this user")
 	}
 
 	storeUserActive := false
-	storeUser := models.StoreUser{
+	storeUser = models.StoreUser{
 		StoreID: store.ID,
 		Email:   invitedEmail,
 		Active:  &storeUserActive,
 	}
 	if err := db.Manager.Where(storeUser).FirstOrCreate(&storeUser).Error; err != nil {
-		return models.StoreUser{}, err
+		return storeUser, err
 	}
 	return storeUser, nil
 }
