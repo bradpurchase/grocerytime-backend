@@ -2,6 +2,7 @@ package meals
 
 import (
 	"errors"
+	"log"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -10,6 +11,7 @@ import (
 
 // CreateRecipe creates a recipe record and associated records
 func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models.Recipe, err error) {
+	log.Println("gets here")
 	var url string
 	if args["url"] != nil {
 		url = args["url"].(string)
@@ -45,23 +47,24 @@ func CompileRecipeIngredients(ingArg []interface{}) (ingredients []models.Recipe
 	for i := range ingArg {
 		ing := ingArg[i].(map[string]interface{})
 
-		amount := ing["amount"].(float64)
-		unit := ing["unit"]
-		var unitStr string
-		if unit != nil {
-			unitStr = unit.(string)
+		var amount float64
+		if ing["amount"] != nil {
+			amount = ing["amount"].(float64)
+		}
+		var unit string
+		if ing["unit"] != nil {
+			unit = ing["unit"].(string)
 		}
 
-		notes := ing["notes"]
-		var notesStr string
-		if notes != nil {
-			notesStr = notes.(string)
+		var notes string
+		if ing["notes"] != nil {
+			notes = ing["notes"].(string)
 		}
 		ingredient := models.RecipeIngredient{
 			Name:   ing["name"].(string),
 			Amount: &amount,
-			Unit:   &unitStr,
-			Notes:  &notesStr,
+			Unit:   &unit,
+			Notes:  &notes,
 		}
 		ingredients = append(ingredients, ingredient)
 	}
