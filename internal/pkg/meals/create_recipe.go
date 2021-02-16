@@ -2,7 +2,6 @@ package meals
 
 import (
 	"errors"
-	"log"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -11,7 +10,6 @@ import (
 
 // CreateRecipe creates a recipe record and associated records
 func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models.Recipe, err error) {
-	log.Println("gets here")
 	var url string
 	if args["url"] != nil {
 		url = args["url"].(string)
