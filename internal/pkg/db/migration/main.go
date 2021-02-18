@@ -124,6 +124,26 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Exec("ALTER TABLE items DROP COLUMN notes").Error
 			},
 		},
+		{
+			// Change recipe_ingredients.amount from numeric to varchar
+			ID: "202102171913_change_recipe_ingredients_amount_to_string",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Exec("ALTER TABLE recipe_ingredients ALTER COLUMN amount TYPE varchar(255)").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("ALTER TABLE recipe_ingredients ALTER COLUMN amount TYPE numeric").Error
+			},
+		},
+		{
+			// Drop default value in recipe_ingredients.amount
+			ID: "202102171920_recipe_ingredients_amount_drop_default_value",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Exec("ALTER TABLE recipe_ingredients ALTER COLUMN amount DROP DEFAULT").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("ALTER TABLE recipe_ingredients ALTER COLUMN amount SET DEFAULT 1").Error
+			},
+		},
 	})
 	return m.Migrate()
 }
