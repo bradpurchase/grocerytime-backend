@@ -57,7 +57,7 @@ func (s *Suite) TestAddItem_AddsItemToTripWithCategoryName() {
 
 	itemID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"items\" (.+)$").
-		WithArgs(trip.ID, sqlmock.AnyArg(), userID, nil, "Apples", 5, false, 1, nil, AnyTime{}, AnyTime{}, nil).
+		WithArgs(trip.ID, sqlmock.AnyArg(), userID, "Apples", 5, false, 1, nil, nil, nil, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 
 	item, err := AddItem(userID, args)
@@ -86,7 +86,7 @@ func (s *Suite) TestAddItem_NoQuantityArg() {
 
 	itemID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"items\" (.+)$").
-		WithArgs(trip.ID, sqlmock.AnyArg(), userID, nil, "Kleenex", 1, false, 1, nil, AnyTime{}, AnyTime{}, nil).
+		WithArgs(trip.ID, sqlmock.AnyArg(), userID, "Kleenex", 1, false, 1, nil, nil, nil, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 
 	item, err := AddItem(userID, args)
@@ -116,7 +116,7 @@ func (s *Suite) TestAddItem_InlineQuantityInItemName() {
 
 	itemID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"items\" (.+)$").
-		WithArgs(trip.ID, sqlmock.AnyArg(), userID, nil, "Apples", 6, false, 1, nil, AnyTime{}, AnyTime{}, nil).
+		WithArgs(trip.ID, sqlmock.AnyArg(), userID, "Apples", 6, false, 1, nil, nil, nil, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 
 	item, err := AddItem(userID, args)
