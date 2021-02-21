@@ -62,12 +62,18 @@ var ItemType = graphql.NewObject(
 				Type: UserType,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					userID := p.Source.(models.Item).UserID
-					user := &models.User{}
+					var user models.User
 					if err := db.Manager.Where("id = ?", userID).First(&user).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 						return nil, err
 					}
 					return user, nil
 				},
+			},
+			"mealId": &graphql.Field{
+				Type: graphql.ID,
+			},
+			"mealName": &graphql.Field{
+				Type: graphql.String,
 			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
