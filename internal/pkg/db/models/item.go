@@ -13,12 +13,13 @@ type Item struct {
 	GroceryTripID uuid.UUID  `gorm:"type:uuid;not null;index:idx_items_grocery_trip_id_name"`
 	CategoryID    *uuid.UUID `gorm:"type:uuid;not null"`
 	UserID        uuid.UUID  `gorm:"type:uuid;not null"`
-	MealID        *uuid.UUID `gorm:"type:uuid"`
 	Name          string     `gorm:"type:varchar(100);not null;index:idx_items_grocery_trip_id_name"`
 	Quantity      int        `gorm:"default:1;not null"`
 	Completed     *bool      `gorm:"default:false;not null"`
 	Position      int        `gorm:"default:1;not null"`
 	Notes         *string    `gorm:"type:varchar(255)"`
+	MealID        *uuid.UUID `gorm:"type:uuid"`
+	MealName      *string    `gorm:"type:varchar(255)"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

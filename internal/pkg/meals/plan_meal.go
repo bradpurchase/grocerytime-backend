@@ -60,7 +60,7 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 
 		// Add the associated items to the current trip in the store
 		items := args["items"].([]interface{})
-		_, e := AddMealIngredientsToStore(storeID, userID, meal.ID, items)
+		_, e := AddMealIngredientsToStore(meal, storeID, userID, items)
 		if e != nil {
 			return e
 		}
@@ -72,7 +72,7 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 }
 
 // AddMealIngredientsToStore will add the items associated with this meal to the user's selected store
-func AddMealIngredientsToStore(storeID uuid.UUID, userID uuid.UUID, mealID uuid.UUID, itemsArg []interface{}) (addedItems []*models.Item, err error) {
+func AddMealIngredientsToStore(meal *models.Meal, storeID uuid.UUID, userID uuid.UUID, itemsArg []interface{}) (addedItems []*models.Item, err error) {
 	var items []interface{}
 	for i := range itemsArg {
 		item := itemsArg[i].(map[string]interface{})
@@ -98,7 +98,7 @@ func AddMealIngredientsToStore(storeID uuid.UUID, userID uuid.UUID, mealID uuid.
 		return addedItems, err
 	}
 
-	// Update items to attribute meal_id
+	// Update items to attribute meal (meal_id + item note)
 	//
 	// Note: Ideally, I'd like this to be done at the time of adding the items to avoid
 	// a second query to update them to attribute meal_id. The challenge here is that
@@ -112,7 +112,7 @@ func AddMealIngredientsToStore(storeID uuid.UUID, userID uuid.UUID, mealID uuid.
 	updateQuery := db.Manager.
 		Model(&models.Item{}).
 		Where("id IN (?)", itemIds).
-		UpdateColumn("meal_id", mealID). // UpdateColumn to avoid hooks
+		UpdateColumns(models.Item{MealID: &meal.ID, MealName: &meal.Name}). // UpdateColumns to avoid hooks
 		Error
 	if err := updateQuery; err != nil {
 		return addedItems, err
