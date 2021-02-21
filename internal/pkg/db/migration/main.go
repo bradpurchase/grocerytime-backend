@@ -124,6 +124,19 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Exec("ALTER TABLE items DROP COLUMN notes").Error
 			},
 		},
+		{
+			// Add column meal_name to items
+			ID: "202102211048_add_meal_name_to_items",
+			Migrate: func(tx *gorm.DB) error {
+				type Item struct {
+					MealName *string `gorm:"type:varchar(255)"`
+				}
+				return tx.AutoMigrate(&Item{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("ALTER TABLE items DROP COLUMN meal_name").Error
+			},
+		},
 	})
 	return m.Migrate()
 }

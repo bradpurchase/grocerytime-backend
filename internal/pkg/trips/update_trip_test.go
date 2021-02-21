@@ -171,7 +171,7 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 		WithArgs(newTripID, storeCategoryID).
 		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	s.mock.ExpectQuery("^INSERT INTO \"items\" (.+)$").
-		WithArgs(newTripID, sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), 1, false, 1, nil, AnyTime{}, AnyTime{}, nil).
+		WithArgs(newTripID, sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), 1, false, 1, nil, sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
