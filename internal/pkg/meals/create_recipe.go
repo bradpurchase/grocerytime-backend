@@ -45,9 +45,9 @@ func CompileRecipeIngredients(ingArg []interface{}) (ingredients []models.Recipe
 	for i := range ingArg {
 		ing := ingArg[i].(map[string]interface{})
 
-		var amount float64
+		var amount string
 		if ing["amount"] != nil {
-			amount = ing["amount"].(float64)
+			amount = ing["amount"].(string)
 		}
 		var unit string
 		if ing["unit"] != nil {
