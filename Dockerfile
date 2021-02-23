@@ -1,4 +1,4 @@
-FROM golang:1.15-alpine AS build
+FROM golang:1.16-alpine AS build
 RUN apk --no-cache add gcc g++ make git
 WORKDIR /go/src/app
 COPY . .
