@@ -45,23 +45,24 @@ func CompileRecipeIngredients(ingArg []interface{}) (ingredients []models.Recipe
 	for i := range ingArg {
 		ing := ingArg[i].(map[string]interface{})
 
-		amount := ing["amount"].(float64)
-		unit := ing["unit"]
-		var unitStr string
-		if unit != nil {
-			unitStr = unit.(string)
+		var amount string
+		if ing["amount"] != nil {
+			amount = ing["amount"].(string)
+		}
+		var unit string
+		if ing["unit"] != nil {
+			unit = ing["unit"].(string)
 		}
 
-		notes := ing["notes"]
-		var notesStr string
-		if notes != nil {
-			notesStr = notes.(string)
+		var notes string
+		if ing["notes"] != nil {
+			notes = ing["notes"].(string)
 		}
 		ingredient := models.RecipeIngredient{
 			Name:   ing["name"].(string),
 			Amount: &amount,
-			Unit:   &unitStr,
-			Notes:  &notesStr,
+			Unit:   &unit,
+			Notes:  &notes,
 		}
 		ingredients = append(ingredients, ingredient)
 	}

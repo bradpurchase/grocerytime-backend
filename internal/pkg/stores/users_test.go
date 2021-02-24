@@ -18,6 +18,9 @@ func (s *Suite) TestInviteToStoreByEmail_UserExistsNotYetAdded() {
 
 	email := "test@example.com"
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(storeID, email, email).
+		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(0))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, email, false).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
@@ -43,15 +46,13 @@ func (s *Suite) TestInviteToStoreByEmail_UserExistsAlreadyAdded() {
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
 
 	email := "test@example.com"
-	storeUserID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
-		WithArgs(storeID, email, false).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeUserID))
+		WithArgs(storeID, email, email).
+		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
 
-	storeUser, err := InviteToStoreByEmail(storeID, email)
-	require.NoError(s.T(), err)
-	assert.Equal(s.T(), storeUser.ID, storeUserID)
-	assert.Equal(s.T(), storeUser.Email, email)
+	_, err := InviteToStoreByEmail(storeID, email)
+	require.Error(s.T(), err)
+	assert.Equal(s.T(), err.Error(), "this store is already being shared with this user")
 }
 
 func (s *Suite) TestRemoveUserFromStore_StoreNotFound() {

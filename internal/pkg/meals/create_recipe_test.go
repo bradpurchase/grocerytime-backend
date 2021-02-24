@@ -38,7 +38,7 @@ func (s *Suite) TestCreateRecipe_FullDetails() {
 
 	// Ingredients
 	ingName := "Bread"
-	amount := 2.0
+	amount := "2.0"
 	var unit string
 	var notes string
 	ingName1 := "Peanut Butter"
