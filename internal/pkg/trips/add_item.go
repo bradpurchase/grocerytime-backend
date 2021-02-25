@@ -1,10 +1,9 @@
 package trips
 
 import (
+	_ "embed"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -15,6 +14,9 @@ import (
 	"github.com/tidwall/gjson"
 	"gorm.io/gorm"
 )
+
+//go:embed FoodClassification.json
+var foods string
 
 // AddItem adds an item to a trip and handles things like permission checks
 func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.Item, err error) {
@@ -113,21 +115,9 @@ func CreateGroceryTripCategory(tripID uuid.UUID, name string) (category models.G
 // DetermineCategoryName opens the FoodClassification.json file and
 // scans it for the classification associated with the food item very quickly using gson
 func DetermineCategoryName(name string) string {
-	jsonFile, err := os.Open("data/FoodClassification.json")
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer jsonFile.Close()
-
-	json, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		fmt.Println(err)
-	}
-	jsonString := string(json)
-
 	properName := strings.TrimSpace(strings.ToLower(name))
 	search := fmt.Sprintf("foods.#(text%%\"%s*\").label", properName)
-	value := gjson.Get(jsonString, search)
+	value := gjson.Get(foods, search)
 	foundCategory := value.String()
 	if len(foundCategory) > 0 {
 		return foundCategory

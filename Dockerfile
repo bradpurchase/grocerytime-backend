@@ -1,4 +1,4 @@
-FROM golang:1.15-alpine AS build
+FROM golang:1.16-alpine AS build
 RUN apk --no-cache add gcc g++ make git
 WORKDIR /go/src/app
 COPY . .
@@ -9,7 +9,6 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /usr/bin
 COPY --from=build /go/src/app/bin /go/bin
-COPY --from=build /go/src/app/data ./data
 COPY --from=build /go/src/app/certs ./certs
 EXPOSE 8080
 ENTRYPOINT /go/bin/api --port 8080
