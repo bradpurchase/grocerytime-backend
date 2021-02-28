@@ -14,6 +14,7 @@ require (
 	github.com/grsmv/goweek v0.0.0-20170103202425-523a631ad28c
 	github.com/joho/godotenv v1.3.0
 	github.com/kr/text v0.2.0 // indirect
+	github.com/lestrrat-go/jwx v1.1.3 // indirect
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
@@ -24,7 +25,7 @@ require (
 	github.com/sideshow/apns2 v0.20.0
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/gjson v1.6.3
-	golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9
+	golang.org/x/crypto v0.0.0-20201217014255-9d1352758620
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 	golang.org/x/text v0.3.4 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
