@@ -184,6 +184,9 @@ func init() {
 							Description: "JWT containing relevant information about user's authentication",
 							Type:        graphql.NewNonNull(graphql.String),
 						},
+						"nonce": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
 						"email": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},

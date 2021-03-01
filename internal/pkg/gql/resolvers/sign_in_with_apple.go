@@ -19,15 +19,13 @@ func SignInWithAppleResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	// token, err := jwt.Parse(identityToken, func(t *jwt.Token) ([]byte, error) {
-	// 	fmt.Println(t)
-	// 	return nil, nil
-	// })
+	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
 
 	identityToken := p.Args["identityToken"].(string)
+	nonce := p.Args["nonce"].(string)
 	email := p.Args["email"].(string)
 	name := p.Args["name"].(string)
-	user, err := auth.SignInWithApple(identityToken, email, name)
+	user, err := auth.SignInWithApple(identityToken, nonce, email, name, appScheme)
 	if err != nil {
 		return nil, err
 	}
