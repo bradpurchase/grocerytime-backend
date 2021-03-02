@@ -25,7 +25,7 @@ func SignInWithAppleResolver(p graphql.ResolveParams) (interface{}, error) {
 	nonce := p.Args["nonce"].(string)
 	email := p.Args["email"].(string)
 	name := p.Args["name"].(string)
-	user, err := auth.SignInWithApple(identityToken, nonce, email, name, appScheme)
+	user, err := auth.SignInWithApple(identityToken, nonce, email, name, appScheme.(string))
 	if err != nil {
 		return nil, err
 	}

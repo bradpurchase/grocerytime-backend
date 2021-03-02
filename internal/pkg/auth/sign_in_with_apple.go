@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/lestrrat-go/jwx/jwk"
@@ -23,29 +24,9 @@ func SignInWithApple(identityToken, nonce, email, name, appScheme string) (inter
 	if err != nil {
 		return nil, err
 	}
-	claims := token.Claims.(jwt.MapClaims)
-	for key, val := range claims {
-		fmt.Printf("%s\t%v\n", key, val)
 
-		// Verify the identity token
-		// see: https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/verifying_a_user
-		switch field := key; field {
-		case "nonce":
-			nonceClaim := val.(string)
-			if err := VerifyNonce(nonceClaim, nonce); err != nil {
-				return nil, err
-			}
-		case "iss":
-			iss := val.(string)
-			if err := VerifyIss(iss); err != nil {
-				return nil, err
-			}
-		case "aud":
-			aud := val.(string)
-			if err := VerifyAud(aud, appScheme); err != nil {
-				return nil, err
-			}
-		}
+	if err := VerifyIdentityToken(token, nonce, appScheme); err != nil {
+		return nil, err
 	}
 	return nil, nil
 }
@@ -77,13 +58,46 @@ func VerifyTokenSignature(token *jwt.Token) (interface{}, error) {
 	return rawKey, nil
 }
 
+// VerifyIdentityToken verifies the identity token following the creteria specified by Apple
+// see: https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/verifying_a_user
+func VerifyIdentityToken(token *jwt.Token, nonce string, appScheme string) (err error) {
+	claims := token.Claims.(jwt.MapClaims)
+	for key, val := range claims {
+		fmt.Printf("%s\t%v\n", key, val)
+
+		switch field := key; field {
+		case "nonce":
+			nonceClaim := val.(string)
+			if err := VerifyNonce(nonceClaim, nonce); err != nil {
+				return err
+			}
+		case "iss":
+			iss := val.(string)
+			if err := VerifyIss(iss); err != nil {
+				return err
+			}
+		case "aud":
+			aud := val.(string)
+			if err := VerifyAud(aud, appScheme); err != nil {
+				return err
+			}
+		case "exp":
+			exp := val.(int64)
+			if err := VerifyExp(exp); err != nil {
+				return err
+			}
+		}
+	}
+	return
+}
+
 // VerifyNonce verifies that there is a match between the nonce in the JWT claims
 // and the nonce value passed down to the server from the SIWA request
 func VerifyNonce(nonceClaim, nonceValue string) (err error) {
 	if nonceClaim != nonceValue {
 		return errors.New("invalid signin (nonce mismatch)")
 	}
-	return nil
+	return
 }
 
 // VerifyIss verifies that the iss field in the claims contains https://appleid.apple.com
@@ -91,7 +105,7 @@ func VerifyIss(iss string) (err error) {
 	if !strings.Contains(iss, issAppleID) {
 		return errors.New("invalid signin (invalid iss)")
 	}
-	return nil
+	return
 }
 
 // VerifyAud verifies that the aud field in the claims matches the app's bundle identifier
@@ -104,5 +118,15 @@ func VerifyAud(aud, appScheme string) (err error) {
 	if aud != bundleID {
 		return errors.New("invalid signin (aud mismatch)")
 	}
-	return nil
+	return
+}
+
+// VerifyExp verifies that the exp field, repesenting expiration time, has not passed
+func VerifyExp(exp int64) (err error) {
+	expTime := time.Unix(exp, 0)
+	time := time.Now()
+	if time.After(expTime) {
+		return errors.New("invalid signin (identity token expired)")
+	}
+	return
 }
