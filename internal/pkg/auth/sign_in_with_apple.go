@@ -15,6 +15,7 @@ import (
 )
 
 var (
+	jwksURL    = "https://appleid.apple.com/auth/keys"
 	issAppleID = "https://appleid.apple.com"
 	bundleID   = os.Getenv("APP_BUNDLE_IDENTIFIER")
 )
@@ -41,7 +42,6 @@ func SignInWithApple(identityToken, nonce, email, name, appScheme string) (user 
 // VerifyTokenSignature fetches Apple's public key for verifying the ID token signature
 // see: https://stackoverflow.com/questions/41077953/go-language-and-verify-jwt
 func VerifyTokenSignature(token *jwt.Token) (interface{}, error) {
-	jwksURL := "https://appleid.apple.com/auth/keys"
 	keySet, err := jwk.Fetch(context.Background(), jwksURL)
 	if err != nil {
 		log.Printf("failed to parse JWK: %s", err)
