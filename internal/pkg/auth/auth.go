@@ -13,7 +13,7 @@ func FetchAuthenticatedUser(header string) (user models.User, err error) {
 	if err != nil {
 		return user, err
 	}
-	authToken := &models.AuthToken{}
+	var authToken models.AuthToken
 	query := db.Manager.
 		Preload("User").
 		Where("access_token = ?", token).
