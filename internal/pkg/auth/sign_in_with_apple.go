@@ -26,20 +26,20 @@ var (
 )
 
 // SignInWithApple will verify an identityToken
-func SignInWithApple(identityToken, nonce, email, name, appScheme string, clientID uuid.UUID) (user models.User, err error) {
+func SignInWithApple(identityToken, nonce, email, name, appScheme string, clientID uuid.UUID) (user *models.User, err error) {
 	token, err := jwt.Parse(identityToken, VerifyTokenSignature)
 	if err != nil {
-		return user, err
+		return nil, err
 	}
 
 	claims := token.Claims.(jwt.MapClaims)
 	if err := VerifyIdentityToken(claims, nonce, appScheme); err != nil {
-		return user, err
+		return nil, err
 	}
 
 	user, err = FindOrCreateUserFromIdentityToken(claims, name, clientID)
 	if err != nil {
-		return user, err
+		return nil, err
 	}
 	return user, nil
 }
@@ -148,23 +148,22 @@ func VerifyExp(exp float64) (err error) {
 }
 
 // FindOrCreateUserFromIdentityToken finds or creates a user from the identity token
-func FindOrCreateUserFromIdentityToken(claims map[string]interface{}, userName string, clientID uuid.UUID) (user models.User, err error) {
+func FindOrCreateUserFromIdentityToken(claims map[string]interface{}, userName string, clientID uuid.UUID) (user *models.User, err error) {
 	// Check if there's a user that matches the sub (siwa_id) included in the token
 	sub := claims["sub"].(string)
-	if err := db.Manager.Where("siwa_id = ?", sub).First(&user).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return user, err
+	if user, err = FindUserBySub(sub); err != nil {
+		return nil, err
 	}
 
 	// Checking to see if the email matches an existing user
 	email := claims["email"].(string)
-	if err := db.Manager.Where("email = ?", email).First(&user).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return user, err
+	if user, err = FindUserByEmail(email); err != nil {
+		return nil, err
 	}
 
 	// If no user was found, we create one and associate the siwa_id for further logins
-	user, err = CreateUserFromIdentityToken(sub, userName, email, clientID)
-	if err != nil {
-		return user, err
+	if user, err = CreateUserFromIdentityToken(sub, userName, email, clientID); err != nil {
+		return nil, err
 	}
 
 	// Create an access token on our side
@@ -174,20 +173,36 @@ func FindOrCreateUserFromIdentityToken(claims map[string]interface{}, userName s
 		DeviceName: "SIWA",
 	}
 	if err := db.Manager.Create(&authToken).Error; err != nil {
-		return user, err
+		return nil, err
 	}
 	return user, nil
 }
 
+func FindUserBySub(sub string) (user *models.User, err error) {
+	var foundUser models.User
+	if err := db.Manager.Where("siwa_id = ?", sub).First(&foundUser).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+	return &foundUser, nil
+}
+
+func FindUserByEmail(email string) (user *models.User, err error) {
+	var foundUser models.User
+	if err := db.Manager.Where("email = ?", email).First(&foundUser).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+	return &foundUser, nil
+}
+
 // CreateUserFromIdentityToken creates a user from identity token claims
-func CreateUserFromIdentityToken(sub, userName, email string, clientID uuid.UUID) (user models.User, err error) {
+func CreateUserFromIdentityToken(sub, userName, email string, clientID uuid.UUID) (user *models.User, err error) {
 	password := utils.RandString(16) // fake password to persist the user
 	passhash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return user, err
+		return nil, err
 	}
 
-	user = models.User{
+	user = &models.User{
 		Name:       userName,
 		Email:      email,
 		Password:   string(passhash),
@@ -195,8 +210,7 @@ func CreateUserFromIdentityToken(sub, userName, email string, clientID uuid.UUID
 		SiwaID:     &sub,
 	}
 	if err := db.Manager.Create(&user).Error; err != nil {
-		return user, err
+		return nil, err
 	}
-
 	return user, nil
 }

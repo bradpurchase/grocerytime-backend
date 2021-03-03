@@ -34,7 +34,7 @@ func LoginResolver(p graphql.ResolveParams) (interface{}, error) {
 
 	//TODO i18n
 	wrongCredsMsg := "Could not log you in with those details. Please try again!"
-	var user models.User
+	user := &models.User{}
 	if err := db.Manager.Where("email = ?", email.(string)).First(&user).Error; err != nil {
 		return nil, errors.New(wrongCredsMsg)
 	}

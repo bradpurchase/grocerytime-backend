@@ -62,7 +62,7 @@ var UserType = graphql.NewObject(
 			"accessToken": &graphql.Field{
 				Type: graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					userID := p.Source.(models.User).ID
+					userID := p.Source.(*models.User).ID
 					var authToken models.AuthToken
 					query := db.Manager.
 						Select("access_token").
