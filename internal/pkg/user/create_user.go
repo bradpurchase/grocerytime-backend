@@ -12,22 +12,22 @@ import (
 )
 
 // CreateUser creates a user account with details provided
-func CreateUser(email string, password string, name string, deviceName string, clientID uuid.UUID) (*models.User, error) {
+func CreateUser(email string, password string, name string, deviceName string, clientID uuid.UUID) (user models.User, err error) {
 	passhash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return user, err
 	}
 
 	// Check for dupe email
 	var dupeCount int64
 	if err := db.Manager.Model(&models.User{}).Where("email = ?", email).Count(&dupeCount).Error; err != nil {
-		return nil, err
+		return user, err
 	}
 	if dupeCount > 0 {
-		return nil, errors.New("An account with this email address already exists")
+		return user, errors.New("An account with this email address already exists")
 	}
 
-	user := &models.User{
+	user = models.User{
 		Name:       name,
 		Email:      email,
 		Password:   string(passhash),
@@ -35,13 +35,13 @@ func CreateUser(email string, password string, name string, deviceName string, c
 		Tokens:     []models.AuthToken{{ClientID: clientID, DeviceName: deviceName}},
 	}
 	if err := db.Manager.Create(&user).Error; err != nil {
-		return nil, err
+		return user, err
 	}
 
 	// Send an email upon user creation
 	_, mailErr := mailer.SendNewUserEmail(user.Email)
 	if mailErr != nil {
-		return nil, mailErr
+		return user, mailErr
 	}
 
 	return user, nil

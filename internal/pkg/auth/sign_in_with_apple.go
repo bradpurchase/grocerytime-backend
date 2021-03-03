@@ -9,9 +9,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/lestrrat-go/jwx/jwk"
+	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 var (
@@ -21,7 +26,7 @@ var (
 )
 
 // SignInWithApple will verify an identityToken
-func SignInWithApple(identityToken, nonce, email, name, appScheme string) (user models.User, err error) {
+func SignInWithApple(identityToken, nonce, email, name, appScheme string, clientID uuid.UUID) (user models.User, err error) {
 	token, err := jwt.Parse(identityToken, VerifyTokenSignature)
 	if err != nil {
 		return user, err
@@ -32,7 +37,7 @@ func SignInWithApple(identityToken, nonce, email, name, appScheme string) (user 
 		return user, err
 	}
 
-	user, err = FindOrCreateUserFromIdentityToken(claims)
+	user, err = FindOrCreateUserFromIdentityToken(claims, name, clientID)
 	if err != nil {
 		return user, err
 	}
@@ -143,11 +148,55 @@ func VerifyExp(exp float64) (err error) {
 }
 
 // FindOrCreateUserFromIdentityToken finds or creates a user from the identity token
-// First checks if there's a user that matches the sub (siwa_id) included in the token,
-// and then checking to see if the email matches an existing user. Finally, if no user
-// was found, we create one and associate the siwa_id for further logins
-func FindOrCreateUserFromIdentityToken(claims map[string]interface{}) (user models.User, err error) {
+func FindOrCreateUserFromIdentityToken(claims map[string]interface{}, userName string, clientID uuid.UUID) (user models.User, err error) {
+	// Check if there's a user that matches the sub (siwa_id) included in the token
 	sub := claims["sub"].(string)
-	fmt.Printf("siwa_id: %v", sub)
-	return user, errors.New("TODO")
+	if err := db.Manager.Where("siwa_id = ?", sub).First(&user).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return user, err
+	}
+
+	// Checking to see if the email matches an existing user
+	email := claims["email"].(string)
+	if err := db.Manager.Where("email = ?", email).First(&user).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return user, err
+	}
+
+	// If no user was found, we create one and associate the siwa_id for further logins
+	user, err = CreateUserFromIdentityToken(sub, userName, email, clientID)
+	if err != nil {
+		return user, err
+	}
+
+	// Create an access token on our side
+	authToken := &models.AuthToken{
+		UserID:     user.ID,
+		ClientID:   clientID,
+		DeviceName: "SIWA",
+	}
+	if err := db.Manager.Create(&authToken).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+// CreateUserFromIdentityToken creates a user from identity token claims
+func CreateUserFromIdentityToken(sub, userName, email string, clientID uuid.UUID) (user models.User, err error) {
+	password := utils.RandString(16) // fake password to persist the user
+	passhash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return user, err
+	}
+
+	user = models.User{
+		Name:       userName,
+		Email:      email,
+		Password:   string(passhash),
+		LastSeenAt: time.Now(),
+		SiwaID:     &sub,
+	}
+	if err := db.Manager.Create(&user).Error; err != nil {
+		return user, err
+	}
+
+	return user, nil
 }
