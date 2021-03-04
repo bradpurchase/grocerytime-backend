@@ -16,7 +16,6 @@ import (
 	"github.com/lestrrat-go/jwx/jwk"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 var (
@@ -149,16 +148,11 @@ func VerifyExp(exp float64) (err error) {
 
 // FindOrCreateUserFromIdentityToken finds or creates a user from the identity token
 func FindOrCreateUserFromIdentityToken(claims map[string]interface{}, userName string, clientID uuid.UUID) (user *models.User, err error) {
-	// Check if there's a user that matches the sub (siwa_id) included in the token
+	// Check if there's a user that matches the sub (siwa_id) or email included in the token claims
 	sub := claims["sub"].(string)
-	if user, err = FindUserBySub(sub); err != nil {
-		return nil, err
-	}
-
-	// Checking to see if the email matches an existing user
 	email := claims["email"].(string)
-	if user, err = FindUserByEmail(email); err != nil {
-		return nil, err
+	if user := FindUserBySubOrEmail(sub, email); user != nil {
+		return user, nil
 	}
 
 	// If no user was found, we create one and associate the siwa_id for further logins
@@ -178,20 +172,13 @@ func FindOrCreateUserFromIdentityToken(claims map[string]interface{}, userName s
 	return user, nil
 }
 
-func FindUserBySub(sub string) (user *models.User, err error) {
+// FindUserBySubOrEmail tries to find a user with the sub (ID from Apple's side) or email
+func FindUserBySubOrEmail(sub, email string) (user *models.User) {
 	var foundUser models.User
-	if err := db.Manager.Where("siwa_id = ?", sub).First(&foundUser).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
+	if err := db.Manager.Where("siwa_id = ?", sub).Or("email = ?", email).First(&foundUser).Error; err != nil {
+		return nil
 	}
-	return &foundUser, nil
-}
-
-func FindUserByEmail(email string) (user *models.User, err error) {
-	var foundUser models.User
-	if err := db.Manager.Where("email = ?", email).First(&foundUser).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
-	}
-	return &foundUser, nil
+	return &foundUser
 }
 
 // CreateUserFromIdentityToken creates a user from identity token claims
