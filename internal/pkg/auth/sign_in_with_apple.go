@@ -11,6 +11,7 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/lestrrat-go/jwx/jwk"
@@ -199,5 +200,12 @@ func CreateUserFromIdentityToken(sub, userName, email string, clientID uuid.UUID
 	if err := db.Manager.Create(&user).Error; err != nil {
 		return nil, err
 	}
+
+	// Send an email upon user creation
+	_, mailErr := mailer.SendNewUserEmail(email)
+	if mailErr != nil {
+		return nil, mailErr
+	}
+
 	return user, nil
 }
