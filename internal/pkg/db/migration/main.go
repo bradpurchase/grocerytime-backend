@@ -157,6 +157,19 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Exec("ALTER TABLE items DROP COLUMN meal_name").Error
 			},
 		},
+		{
+			// Add column siwa_id to users
+			ID: "202103020748_add_siwa_id_to_users",
+			Migrate: func(tx *gorm.DB) error {
+				type User struct {
+					SiwaID *string `gorm:"type:varchar(255);uniqueIndex"`
+				}
+				return tx.AutoMigrate(&User{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("ALTER TABLE users DROP COLUMN siwa_id").Error
+			},
+		},
 	})
 	return m.Migrate()
 }
