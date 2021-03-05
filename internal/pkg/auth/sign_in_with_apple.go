@@ -74,8 +74,6 @@ func VerifyTokenSignature(token *jwt.Token) (interface{}, error) {
 // see: https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api/verifying_a_user
 func VerifyIdentityToken(claims map[string]interface{}, nonce string, appScheme string) (err error) {
 	for key, val := range claims {
-		fmt.Printf("%s\t%v\n", key, val)
-
 		switch field := key; field {
 		case "nonce":
 			nonceClaim := val.(string)
