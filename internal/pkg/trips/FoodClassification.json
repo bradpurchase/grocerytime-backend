@@ -310,6 +310,10 @@
       "label": "Baking"
     },
     {
+      "text": "garlic bread",
+      "label": "Baking"
+    },
+    {
       "text": "drinks",
       "label": "Beverages"
     },
@@ -510,6 +514,10 @@
       "label": "Dairy"
     },
     {
+      "text": "kraft singles",
+      "label": "Dairy"
+    },
+    {
       "text": "shredded cheese",
       "label": "Dairy"
     },
@@ -590,6 +598,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "pecans",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "almonds",
       "label": "Candy & Snacks"
     },
@@ -599,6 +611,10 @@
     },
     {
       "text": "peanuts",
+      "label": "Candy & Snacks"
+    },
+    {
+      "text": "cashews",
       "label": "Candy & Snacks"
     },
     {
@@ -746,6 +762,10 @@
       "label": "Candy & Snacks"
     },
     {
+      "text": "fruit rollups",
+      "label": "Candy & Snacks"
+    },
+    {
       "text": "beans",
       "label": "Canned Goods"
     },
@@ -826,6 +846,10 @@
       "label": "Canned Goods"
     },
     {
+      "text": "beef stock",
+      "label": "Canned Goods"
+    },
+    {
       "text": "vegetable broth",
       "label": "Canned Goods"
     },
@@ -883,6 +907,10 @@
     },
     {
       "text": "detergent",
+      "label": "Cleaning"
+    },
+    {
+      "text": "laundry detergent",
       "label": "Cleaning"
     },
     {
@@ -1083,6 +1111,10 @@
     },
     {
       "text": "franks red hot",
+      "label": "Condiments"
+    },
+    {
+      "text": "frank's red hot",
       "label": "Condiments"
     },
     {
@@ -1378,6 +1410,10 @@
       "label": "Meat"
     },
     {
+      "text": "whole chicken",
+      "label": "Meat"
+    },
+    {
       "text": "wings",
       "label": "Meat"
     },
@@ -1387,6 +1423,10 @@
     },
     {
       "text": "turkey",
+      "label": "Meat"
+    },
+    {
+      "text": "sliced turkey",
       "label": "Meat"
     },
     {
@@ -1458,6 +1498,10 @@
       "label": "Meat"
     },
     {
+      "text": "sliced ham",
+      "label": "Meat"
+    },
+    {
       "text": "smoked meat",
       "label": "Meat"
     },
@@ -1523,6 +1567,10 @@
     },
     {
       "text": "ribs",
+      "label": "Meat"
+    },
+    {
+      "text": "hot dogs",
       "label": "Meat"
     },
     {
@@ -1918,6 +1966,14 @@
       "label": "Produce"
     },
     {
+      "text": "red cabbage",
+      "label": "Produce"
+    },
+    {
+      "text": "green cabbage",
+      "label": "Produce"
+    },
+    {
       "text": "mushrooms",
       "label": "Produce"
     },
@@ -2087,6 +2143,10 @@
     },
     {
       "text": "beet",
+      "label": "Produce"
+    },
+    {
+      "text": "beets",
       "label": "Produce"
     },
     {
@@ -2263,6 +2323,18 @@
     },
     {
       "text": "cod",
+      "label": "Seafood"
+    },
+    {
+      "text": "halibut",
+      "label": "Seafood"
+    },
+    {
+      "text": "haddock",
+      "label": "Seafood"
+    },
+    {
+      "text": "tilapia",
       "label": "Seafood"
     },
     {

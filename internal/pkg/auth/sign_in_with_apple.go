@@ -159,6 +159,16 @@ func FindOrCreateUserFromIdentityToken(claims map[string]interface{}, userName s
 		return nil, err
 	}
 
+	// Update the user to associate siwa_id
+	updateUserQuery := db.Manager.
+		Model(&user).
+		Where("id = ?", user.ID).
+		Updates(&models.User{SiwaID: &sub}).
+		Error
+	if err := updateUserQuery; err != nil {
+		return nil, err
+	}
+
 	// Create an access token on our side
 	authToken := &models.AuthToken{
 		UserID:     user.ID,
