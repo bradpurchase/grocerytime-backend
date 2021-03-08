@@ -159,16 +159,6 @@ func FindOrCreateUserFromIdentityToken(claims map[string]interface{}, userName s
 		return nil, err
 	}
 
-	// Update the user to associate siwa_id
-	updateUserQuery := db.Manager.
-		Model(&user).
-		Where("id = ?", user.ID).
-		Updates(&models.User{SiwaID: &sub}).
-		Error
-	if err := updateUserQuery; err != nil {
-		return nil, err
-	}
-
 	// Create an access token on our side
 	authToken := &models.AuthToken{
 		UserID:     user.ID,
@@ -185,6 +175,16 @@ func FindOrCreateUserFromIdentityToken(claims map[string]interface{}, userName s
 func FindUserBySubOrEmail(sub, email string) (user *models.User) {
 	var foundUser models.User
 	if err := db.Manager.Where("siwa_id = ?", sub).Or("email = ?", email).First(&foundUser).Error; err != nil {
+		return nil
+	}
+
+	// Update the user to associate siwa_id
+	updateUserQuery := db.Manager.
+		Model(&foundUser).
+		Where("id = ?", foundUser.ID).
+		Updates(&models.User{SiwaID: &sub}).
+		Error
+	if err := updateUserQuery; err != nil {
 		return nil
 	}
 	return &foundUser
