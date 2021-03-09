@@ -13,7 +13,7 @@ import (
 )
 
 // PlanMeal creates a meal record and associated records
-func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal, err error) {
+func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal models.Meal, err error) {
 	var mealType string
 	if args["mealType"] != nil {
 		mealType = args["mealType"].(string)
@@ -43,7 +43,7 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 			mealUsers = append(mealUsers, models.MealUser{UserID: storeUser.UserID})
 		}
 
-		meal = &models.Meal{
+		meal = models.Meal{
 			RecipeID: recipeID,
 			UserID:   userID,
 			StoreID:  storeID,
@@ -72,7 +72,7 @@ func PlanMeal(userID uuid.UUID, args map[string]interface{}) (meal *models.Meal,
 }
 
 // AddMealIngredientsToStore will add the items associated with this meal to the user's selected store
-func AddMealIngredientsToStore(meal *models.Meal, storeID uuid.UUID, userID uuid.UUID, itemsArg []interface{}) (addedItems []*models.Item, err error) {
+func AddMealIngredientsToStore(meal models.Meal, storeID uuid.UUID, userID uuid.UUID, itemsArg []interface{}) (addedItems []*models.Item, err error) {
 	var items []interface{}
 	for i := range itemsArg {
 		item := itemsArg[i].(map[string]interface{})
