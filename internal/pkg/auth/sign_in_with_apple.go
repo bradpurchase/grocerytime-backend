@@ -126,10 +126,11 @@ func VerifyAud(aud, appScheme string) (err error) {
 	// if you try two SIWA attempts in quick succession, the bundleID already has the scheme
 	// (not sure if this would happen in practice, need more testing to verify)
 	appScheme = strings.ToLower(appScheme)
+	fmt.Printf("[SIWA/VerifyAud] appScheme: %v\n", appScheme)
 	if appScheme != "release" && !strings.Contains(bundleID, appScheme) {
 		bundleID = fmt.Sprintf("%v.%v", bundleID, appScheme)
 	}
-	fmt.Printf("[SIWA/VerifyAud] %v/%v", aud, bundleID)
+	fmt.Printf("[SIWA/VerifyAud] aud: %v/ bundleID: %v\n", aud, bundleID)
 	if aud != bundleID {
 		return errors.New("invalid signin (aud mismatch)")
 	}
