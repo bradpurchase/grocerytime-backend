@@ -129,6 +129,7 @@ func VerifyAud(aud, appScheme string) (err error) {
 	if appScheme != "release" && !strings.Contains(bundleID, appScheme) {
 		bundleID = fmt.Sprintf("%v.%v", bundleID, appScheme)
 	}
+	fmt.Printf("[SIWA/VerifyAud] %v/%v", aud, bundleID)
 	if aud != bundleID {
 		return errors.New("invalid signin (aud mismatch)")
 	}
