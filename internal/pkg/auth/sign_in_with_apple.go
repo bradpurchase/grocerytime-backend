@@ -126,11 +126,9 @@ func VerifyAud(aud, appScheme string) (err error) {
 	// (not sure if this would happen in practice, need more testing to verify)
 	bundleID := os.Getenv("APP_BUNDLE_IDENTIFIER")
 	appScheme = strings.ToLower(appScheme)
-	fmt.Printf("[SIWA/VerifyAud] appScheme: %v\n", appScheme)
 	if appScheme != "release" && !strings.Contains(bundleID, appScheme) {
 		bundleID = fmt.Sprintf("%v.%v", bundleID, appScheme)
 	}
-	fmt.Printf("[SIWA/VerifyAud] aud: %v/ bundleID: %v\n", aud, bundleID)
 	if aud != bundleID {
 		return errors.New("invalid signin (aud mismatch)")
 	}
