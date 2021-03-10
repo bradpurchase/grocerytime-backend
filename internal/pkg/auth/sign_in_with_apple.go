@@ -22,7 +22,6 @@ import (
 var (
 	jwksURL    = "https://appleid.apple.com/auth/keys"
 	issAppleID = "https://appleid.apple.com"
-	bundleID   = os.Getenv("APP_BUNDLE_IDENTIFIER")
 )
 
 // SignInWithApple will verify an identityToken
@@ -125,6 +124,7 @@ func VerifyAud(aud, appScheme string) (err error) {
 	// Note: we check if the scheme is already contained in the bundleID because
 	// if you try two SIWA attempts in quick succession, the bundleID already has the scheme
 	// (not sure if this would happen in practice, need more testing to verify)
+	bundleID := os.Getenv("APP_BUNDLE_IDENTIFIER")
 	appScheme = strings.ToLower(appScheme)
 	if appScheme != "release" && !strings.Contains(bundleID, appScheme) {
 		bundleID = fmt.Sprintf("%v.%v", bundleID, appScheme)
