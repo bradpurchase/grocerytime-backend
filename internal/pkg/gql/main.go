@@ -176,6 +176,26 @@ func init() {
 					},
 					Resolve: resolvers.SignupResolver,
 				},
+				"signInWithApple": &graphql.Field{
+					Type:        gql.UserType,
+					Description: "Sign in or sign up a new user account from the Sign In with Apple flow",
+					Args: graphql.FieldConfigArgument{
+						"identityToken": &graphql.ArgumentConfig{
+							Description: "JWT containing relevant information about user's authentication",
+							Type:        graphql.NewNonNull(graphql.String),
+						},
+						"nonce": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"email": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.SignInWithAppleResolver,
+				},
 				"forgotPassword": &graphql.Field{
 					Type:        gql.UserType,
 					Description: "Sends an email to a user to set a new password",
@@ -435,10 +455,16 @@ func init() {
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},
+						"description": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 						"mealType": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
 						"url": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"imageUrl": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
 						"ingredients": &graphql.ArgumentConfig{

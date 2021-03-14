@@ -19,7 +19,7 @@ func (s *Suite) TestCreateRecipe_NoIngredients() {
 
 	recipeID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"recipes\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), args["name"], args["url"], args["mealType"], AnyTime{}, AnyTime{}, nil).
+		WithArgs(sqlmock.AnyArg(), args["name"], "", args["mealType"], args["url"], "", AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(recipeID))
 
 	recipe, err := CreateRecipe(userID, args)
@@ -48,9 +48,11 @@ func (s *Suite) TestCreateRecipe_FullDetails() {
 	unit2 := "tsp"
 
 	args := map[string]interface{}{
-		"name":     "PB&J",
-		"mealType": "Snack",
-		"url":      "https://www.food.com/recipe/traditional-peanut-butter-and-jelly-243965",
+		"name":        "PB&J",
+		"description": "Nothing fancy, just a classic. Either smooth or crunch peanut butter is acceptable. Classically, the jelly is either strawberry or grape.",
+		"mealType":    "Lunch",
+		"url":         "https://www.food.com/recipe/traditional-peanut-butter-and-jelly-243965",
+		"imageUrl":    "https://img.sndimg.com/food/image/upload/c_thumb,q_80,w_596,h_335/v1/img/recipes/24/39/65/picIDMFir.jpg",
 		"ingredients": []interface{}{
 			map[string]interface{}{
 				"name":   ingName,
@@ -73,7 +75,7 @@ func (s *Suite) TestCreateRecipe_FullDetails() {
 
 	recipeID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"recipes\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), args["name"], args["url"], args["mealType"], AnyTime{}, AnyTime{}, nil).
+		WithArgs(sqlmock.AnyArg(), args["name"], args["description"], args["mealType"], args["url"], args["imageUrl"], AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(recipeID))
 
 	// Note: because we are creating the recipe_ingredients using the association,
@@ -86,10 +88,14 @@ func (s *Suite) TestCreateRecipe_FullDetails() {
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), recipe.ID, recipeID)
 	assert.Equal(s.T(), recipe.Name, args["name"])
+	description := args["description"].(string)
+	assert.Equal(s.T(), recipe.Description, &description)
 	mealType := args["mealType"].(string)
 	assert.Equal(s.T(), recipe.MealType, &mealType)
 	url := args["url"].(string)
 	assert.Equal(s.T(), recipe.URL, &url)
+	imageURL := args["imageUrl"].(string)
+	assert.Equal(s.T(), recipe.ImageURL, &imageURL)
 
 	assert.Equal(s.T(), len(recipe.Ingredients), 3)
 	assert.Equal(s.T(), recipe.Ingredients[0].Name, ingName)

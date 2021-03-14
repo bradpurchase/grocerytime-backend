@@ -105,9 +105,6 @@ func (s *Suite) TestPlanMeal_Valid() {
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), storeID, userID))
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trip_categories\"*").
-		WithArgs(tripID, "Misc.").
-		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 
 	itemID := uuid.NewV4()
 	// UPDATE for before item insertion hook

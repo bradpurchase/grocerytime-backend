@@ -12,7 +12,7 @@ import (
 )
 
 // CreateUser creates a user account with details provided
-func CreateUser(email string, password string, name string, deviceName string, clientID uuid.UUID) (*models.User, error) {
+func CreateUser(email string, password string, name string, deviceName string, clientID uuid.UUID) (user *models.User, err error) {
 	passhash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func CreateUser(email string, password string, name string, deviceName string, c
 		return nil, errors.New("An account with this email address already exists")
 	}
 
-	user := &models.User{
+	user = &models.User{
 		Name:       name,
 		Email:      email,
 		Password:   string(passhash),
