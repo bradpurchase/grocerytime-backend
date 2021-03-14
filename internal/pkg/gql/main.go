@@ -455,10 +455,16 @@ func init() {
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},
+						"description": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 						"mealType": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
 						"url": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"imageUrl": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
 						"ingredients": &graphql.ArgumentConfig{
