@@ -97,7 +97,12 @@ func init() {
 				"recipes": &graphql.Field{
 					Type:        graphql.NewList(gql.RecipeType),
 					Description: "Retrieve recipes added by the current user",
-					Resolve:     resolvers.RecipesResolver,
+					Args: graphql.FieldConfigArgument{
+						"mealType": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+					},
+					Resolve: resolvers.RecipesResolver,
 				},
 				"recipe": &graphql.Field{
 					Type:        gql.RecipeType,
