@@ -15,7 +15,7 @@ func RecipesResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 
 	userID := user.ID
-	recipes, err := meals.RetrieveRecipes(userID)
+	recipes, err := meals.RetrieveRecipes(userID, p.Args["mealType"])
 	if err != nil {
 		return nil, err
 	}
