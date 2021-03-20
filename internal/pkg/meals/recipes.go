@@ -7,10 +7,13 @@ import (
 )
 
 // RetrieveRecipes retrieves recipes added by userID
-func RetrieveRecipes(userID uuid.UUID, mealType interface{}) (recipes []models.Recipe, err error) {
+func RetrieveRecipes(userID uuid.UUID, args map[string]interface{}) (recipes []models.Recipe, err error) {
 	query := db.Manager.Where("user_id = ?", userID)
-	if mealType != nil {
-		query = query.Where("meal_type = ?", mealType)
+	if args["mealType"] != nil {
+		query = query.Where("meal_type = ?", args["mealType"].(string))
+	}
+	if args["limit"] != nil {
+		query = query.Limit(args["limit"].(int))
 	}
 	query = query.Order("created_at DESC").Find(&recipes)
 	if err := query.Error; err != nil {
