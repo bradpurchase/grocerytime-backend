@@ -101,6 +101,9 @@ func init() {
 						"mealType": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
+						"limit": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
 					},
 					Resolve: resolvers.RecipesResolver,
 				},
