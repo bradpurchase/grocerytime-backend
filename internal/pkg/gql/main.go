@@ -97,7 +97,15 @@ func init() {
 				"recipes": &graphql.Field{
 					Type:        graphql.NewList(gql.RecipeType),
 					Description: "Retrieve recipes added by the current user",
-					Resolve:     resolvers.RecipesResolver,
+					Args: graphql.FieldConfigArgument{
+						"mealType": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"limit": &graphql.ArgumentConfig{
+							Type: graphql.Int,
+						},
+					},
+					Resolve: resolvers.RecipesResolver,
 				},
 				"recipe": &graphql.Field{
 					Type:        gql.RecipeType,
@@ -455,10 +463,16 @@ func init() {
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},
+						"description": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 						"mealType": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
 						"url": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"imageUrl": &graphql.ArgumentConfig{
 							Type: graphql.String,
 						},
 						"ingredients": &graphql.ArgumentConfig{

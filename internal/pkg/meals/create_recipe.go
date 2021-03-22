@@ -10,13 +10,22 @@ import (
 
 // CreateRecipe creates a recipe record and associated records
 func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models.Recipe, err error) {
+	// Optional fields
+	var mealType string
+	if args["mealType"] != nil {
+		mealType = args["mealType"].(string)
+	}
 	var url string
 	if args["url"] != nil {
 		url = args["url"].(string)
 	}
-	var mealType string
-	if args["mealType"] != nil {
-		mealType = args["mealType"].(string)
+	var imageURL string
+	if args["imageUrl"] != nil {
+		imageURL = args["imageUrl"].(string)
+	}
+	var desc string
+	if args["description"] != nil {
+		desc = args["description"].(string)
 	}
 
 	ingredientsArg := args["ingredients"]
@@ -30,8 +39,10 @@ func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models
 	recipe = &models.Recipe{
 		UserID:      userID,
 		Name:        args["name"].(string),
-		URL:         &url,
+		Description: &desc,
 		MealType:    &mealType,
+		URL:         &url,
+		ImageURL:    &imageURL,
 		Ingredients: ingredients,
 	}
 	if err := db.Manager.Create(&recipe).Error; err != nil {

@@ -16,10 +16,16 @@ var RecipeType = graphql.NewObject(
 			"name": &graphql.Field{
 				Type: graphql.String,
 			},
+			"description": &graphql.Field{
+				Type: graphql.String,
+			},
 			"mealType": &graphql.Field{
 				Type: graphql.String,
 			},
 			"url": &graphql.Field{
+				Type: graphql.String,
+			},
+			"imageUrl": &graphql.Field{
 				Type: graphql.String,
 			},
 			"ingredients": &graphql.Field{
