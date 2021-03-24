@@ -8,7 +8,7 @@ import (
 
 // RetrieveRecipes retrieves recipes added by userID
 func RetrieveRecipes(userID uuid.UUID, args map[string]interface{}) (recipes []models.Recipe, err error) {
-	query := db.Manager.Where("user_id = ?", userID)
+	query := db.Manager.Preload("Ingredients").Where("user_id = ?", userID)
 	if args["mealType"] != nil {
 		query = query.Where("meal_type = ?", args["mealType"].(string))
 	}

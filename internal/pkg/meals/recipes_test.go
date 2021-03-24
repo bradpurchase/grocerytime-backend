@@ -25,6 +25,9 @@ func (s *Suite) TestRetrieveRecipes_RecipesNoMealTypeFilter() {
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipes\"*").
 		WithArgs(userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(recipeID, userID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipe_ingredients\"*").
+		WithArgs(recipeID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "recipe_id"}).AddRow(uuid.NewV4(), recipeID))
 
 	var args map[string]interface{}
 	recipes, err := RetrieveRecipes(userID, args)
@@ -47,6 +50,9 @@ func (s *Suite) TestRetrieveRecipes_RecipesWithMealTypeFilter() {
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipes\"*").
 		WithArgs(userID, mealTypeStr).
 		WillReturnRows(rows)
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipe_ingredients\"*").
+		WithArgs(recipeID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "recipe_id"}).AddRow(uuid.NewV4(), recipeID))
 
 	recipes, err := RetrieveRecipes(userID, args)
 	require.NoError(s.T(), err)
@@ -69,6 +75,9 @@ func (s *Suite) TestRetrieveRecipes_RecipesWithLimit() {
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipes\" (.+) LIMIT 2*").
 		WithArgs(userID).
 		WillReturnRows(rows)
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipe_ingredients\"*").
+		WithArgs(recipeID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "recipe_id"}).AddRow(uuid.NewV4(), recipeID))
 
 	recipes, err := RetrieveRecipes(userID, args)
 	require.NoError(s.T(), err)
