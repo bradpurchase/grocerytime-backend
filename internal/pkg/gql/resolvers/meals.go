@@ -1,8 +1,6 @@
 package resolvers
 
 import (
-	"time"
-
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/meals"
 	"github.com/graphql-go/graphql"
@@ -16,14 +14,7 @@ func MealsResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	year := p.Args["year"]
-	weekNumber := p.Args["weekNumber"]
-	// we allow no value for year and weekNumber args and use current time for this case
-	if year == nil || weekNumber == nil {
-		t := time.Now()
-		year, weekNumber = t.ISOWeek()
-	}
-	meals, err := meals.RetrieveMeals(user.ID, weekNumber.(int), year.(int))
+	meals, err := meals.RetrieveMeals(user.ID, p.Args)
 	if err != nil {
 		return nil, err
 	}
