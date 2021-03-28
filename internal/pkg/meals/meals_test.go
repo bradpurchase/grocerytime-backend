@@ -53,7 +53,11 @@ func (s *Suite) TestRetrieveMeals_InvalidWeekNumber() {
 	userID := uuid.NewV4()
 	weekNumber := 54
 	year := 2021
-	_, e := RetrieveMeals(userID, weekNumber, year)
+	args := map[string]interface{}{
+		"weekNumber": weekNumber,
+		"year":       year,
+	}
+	_, e := RetrieveMeals(userID, args)
 	require.Error(s.T(), e)
 	assert.Contains(s.T(), e.Error(), "number of week can't be less than 1 or greater than 53")
 }
@@ -62,11 +66,15 @@ func (s *Suite) TestRetrieveMeals_NoMeals() {
 	userID := uuid.NewV4()
 	weekNumber := 1
 	year := 2021
+	args := map[string]interface{}{
+		"weekNumber": weekNumber,
+		"year":       year,
+	}
 	s.mock.ExpectQuery("^SELECT meals.* FROM \"meals\"*").
 		WithArgs(userID, "2021-01-04", "2021-01-10").
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
-	meals, err := RetrieveMeals(userID, weekNumber, year)
+	meals, err := RetrieveMeals(userID, args)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), len(meals), 0)
 }
@@ -75,6 +83,10 @@ func (s *Suite) TestRetrieveMeals_ExistingMeals() {
 	userID := uuid.NewV4()
 	weekNumber := 1
 	year := 2021
+	args := map[string]interface{}{
+		"weekNumber": weekNumber,
+		"year":       year,
+	}
 
 	meal1ID := uuid.NewV4()
 	meal2ID := uuid.NewV4()
@@ -92,7 +104,7 @@ func (s *Suite) TestRetrieveMeals_ExistingMeals() {
 		WithArgs(meal1ID, meal2ID).
 		WillReturnRows(mealUserRows)
 
-	meals, err := RetrieveMeals(userID, weekNumber, year)
+	meals, err := RetrieveMeals(userID, args)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), len(meals), 2)
 	assert.Equal(s.T(), meals[0].ID, meal1ID)
