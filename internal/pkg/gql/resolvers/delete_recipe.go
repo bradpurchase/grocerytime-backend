@@ -6,17 +6,20 @@ import (
 	"github.com/graphql-go/graphql"
 )
 
-// MealsResolver resolves the meals query
-func MealsResolver(p graphql.ResolveParams) (interface{}, error) {
+// DeleteRecipeResolver resolves the deleteRecipe mutation
+func DeleteRecipeResolver(p graphql.ResolveParams) (interface{}, error) {
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(header.(string))
 	if err != nil {
 		return nil, err
 	}
 
-	meals, err := meals.RetrieveMeals(user.ID, p.Args)
+	recipeID := p.Args["id"]
+	userID := user.ID
+	recipe, err := meals.DeleteRecipe(recipeID, userID)
 	if err != nil {
 		return nil, err
 	}
-	return meals, nil
+
+	return recipe, err
 }

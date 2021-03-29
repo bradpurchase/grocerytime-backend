@@ -121,6 +121,9 @@ func init() {
 					Type:        graphql.NewList(gql.MealType),
 					Description: "Retrieve planned meals for the current user within the provided time period",
 					Args: graphql.FieldConfigArgument{
+						"mealType": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
 						"year": &graphql.ArgumentConfig{
 							Type: graphql.Int,
 						},
@@ -498,6 +501,16 @@ func init() {
 						},
 					},
 					Resolve: resolvers.CreateRecipeResolver,
+				},
+				"deleteRecipe": &graphql.Field{
+					Type:        gql.RecipeType,
+					Description: "Deletes a recipe",
+					Args: graphql.FieldConfigArgument{
+						"id": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.DeleteRecipeResolver,
 				},
 				"planMeal": &graphql.Field{
 					Type:        gql.MealType,
