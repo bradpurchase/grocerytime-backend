@@ -10,16 +10,24 @@ import (
 
 // DeleteRecipe deletes a recipe
 func DeleteRecipe(recipeID interface{}, userID uuid.UUID) (recipe models.Recipe, err error) {
+	query := db.Manager.
+		Where("id = ? AND user_id = ?", recipeID, userID).
+		Last(&recipe).
+		Error
+	if err := query; err != nil {
+		return recipe, err
+	}
+
 	// Check if this recipe is in the user's upcoming meal plan and prevent delete
 	var upcomingMealsCount int64
-	query := db.Manager.
+	upcomingMealsExistQuery := db.Manager.
 		Model(&models.Meal{}).
 		Where("recipe_id = ?", recipeID).
 		Where("user_id = ?", userID).
 		Where("date::date >= current_date").
 		Count(&upcomingMealsCount).
 		Error
-	if err := query; err != nil {
+	if err := upcomingMealsExistQuery; err != nil {
 		return recipe, err
 	}
 	if upcomingMealsCount > 0 {
