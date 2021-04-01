@@ -68,6 +68,7 @@ var MealType = graphql.NewObject(
 					var recipe models.Recipe
 					recipeID := p.Source.(models.Meal).RecipeID
 					query := db.Manager.
+						Unscoped().
 						Preload("Ingredients").
 						Where("id = ?", recipeID).
 						Last(&recipe).
