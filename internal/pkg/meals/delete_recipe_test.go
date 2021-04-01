@@ -19,31 +19,13 @@ func (s *Suite) TestDeleteRecipe_RecipeNotFound() {
 	assert.Equal(s.T(), e.Error(), "record not found")
 }
 
-func (s *Suite) TestDeleteRecipe_UpcomingMealsPlanned() {
-	recipeID := uuid.NewV4()
-	userID := uuid.NewV4()
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipes\"*").
-		WithArgs(recipeID, userID).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(recipeID))
-	s.mock.ExpectQuery("^SELECT count*").
-		WithArgs(recipeID, userID).
-		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
-
-	_, e := DeleteRecipe(recipeID, userID)
-	require.Error(s.T(), e)
-	assert.Equal(s.T(), e.Error(), "cannot delete recipe because there are upcoming meals planned for it")
-}
-
-func (s *Suite) TestDeleteRecipe_NoUpcomingMealsPlanned() {
+func (s *Suite) TestDeleteRecipe_RecipeFound() {
 	recipeID := uuid.NewV4()
 	userID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"recipes\"*").
 		WithArgs(recipeID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(recipeID))
 
-	s.mock.ExpectQuery("^SELECT count*").
-		WithArgs(recipeID, userID).
-		WillReturnRows(sqlmock.NewRows([]string{}))
 	s.mock.ExpectExec("^UPDATE \"recipes\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
