@@ -61,6 +61,16 @@ func init() {
 					},
 					Resolve: resolvers.StoreUserPrefsResolver,
 				},
+				"storeCategories": &graphql.Field{
+					Type:        graphql.NewList(gql.StoreCategoryType),
+					Description: "Retrieves store categories for a store",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.StoreCategoriesResolver,
+				},
 				"trips": &graphql.Field{
 					Type:        graphql.NewList(gql.GroceryTripType),
 					Description: "Retrieve trip history for a store",
@@ -322,6 +332,29 @@ func init() {
 					},
 					Resolve: resolvers.UpdateStoreUserPrefsResolver,
 				},
+				"updateTrip": &graphql.Field{
+					Type:        gql.GroceryTripType,
+					Description: "Update the details about a grocery trip",
+					Args: graphql.FieldConfigArgument{
+						"tripId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"name": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+						"completed": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+						"copyRemainingItems": &graphql.ArgumentConfig{
+							Type: graphql.Boolean,
+						},
+						"newTripName": &graphql.ArgumentConfig{
+							Type: graphql.String,
+						},
+					},
+					Resolve: resolvers.UpdateTripResolver,
+				},
+				// Items
 				"deleteItem": &graphql.Field{
 					Type:        gql.ItemType,
 					Description: "Remove an item from a trip",
@@ -338,6 +371,9 @@ func init() {
 					Args: graphql.FieldConfigArgument{
 						"itemId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"storeCategoryId": &graphql.ArgumentConfig{
+							Type: graphql.ID,
 						},
 						"name": &graphql.ArgumentConfig{
 							Type: graphql.String,
@@ -414,51 +450,7 @@ func init() {
 					},
 					Resolve: resolvers.AddItemsToStore,
 				},
-				"updateTrip": &graphql.Field{
-					Type:        gql.GroceryTripType,
-					Description: "Update the details about a grocery trip",
-					Args: graphql.FieldConfigArgument{
-						"tripId": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.ID),
-						},
-						"name": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-						"completed": &graphql.ArgumentConfig{
-							Type: graphql.Boolean,
-						},
-						"copyRemainingItems": &graphql.ArgumentConfig{
-							Type: graphql.Boolean,
-						},
-						"newTripName": &graphql.ArgumentConfig{
-							Type: graphql.String,
-						},
-					},
-					Resolve: resolvers.UpdateTripResolver,
-				},
-				"addDevice": &graphql.Field{
-					Type:        gql.DeviceType,
-					Description: "Stores a device token for the current user for push notifications",
-					Args: graphql.FieldConfigArgument{
-						"token": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
-						},
-					},
-					Resolve: resolvers.AddDeviceResolver,
-				},
-				"notifyTripUpdatedItemsAdded": &graphql.Field{
-					Type:        graphql.Boolean,
-					Description: "Notifies store users about a trip being updated after items were added by the current user",
-					Args: graphql.FieldConfigArgument{
-						"storeId": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.ID),
-						},
-						"numItemsAdded": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.Int),
-						},
-					},
-					Resolve: resolvers.NotifyTripUpdatedItemsAddedResolver,
-				},
+				// Meals
 				"createRecipe": &graphql.Field{
 					Type:        gql.RecipeType,
 					Description: "Creates a recipe",
@@ -589,6 +581,30 @@ func init() {
 						},
 					},
 					Resolve: resolvers.UpdateMealResolver,
+				},
+				// Notifications
+				"addDevice": &graphql.Field{
+					Type:        gql.DeviceType,
+					Description: "Stores a device token for the current user for push notifications",
+					Args: graphql.FieldConfigArgument{
+						"token": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.AddDeviceResolver,
+				},
+				"notifyTripUpdatedItemsAdded": &graphql.Field{
+					Type:        graphql.Boolean,
+					Description: "Notifies store users about a trip being updated after items were added by the current user",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"numItemsAdded": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.Int),
+						},
+					},
+					Resolve: resolvers.NotifyTripUpdatedItemsAddedResolver,
 				},
 			},
 		},
