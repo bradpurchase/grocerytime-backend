@@ -31,9 +31,18 @@ func UpdateItem(args map[string]interface{}) (interface{}, error) {
 		notes := args["notes"].(string)
 		item.Notes = &notes
 	}
-	if args["categoryId"] != nil {
-		categoryID := args["categoryId"].(uuid.UUID)
-		item.CategoryID = &categoryID
+	if args["storeCategoryId"] != nil {
+		storeCategoryID, _ := uuid.FromString(args["storeCategoryId"].(string))
+		groceryTripCategory := models.GroceryTripCategory{
+			GroceryTripID:   item.GroceryTripID,
+			StoreCategoryID: storeCategoryID,
+		}
+		// This returns nothing unless the category is already present in the trip,
+		// so we do a FirstOrCreate here
+		if err := db.Manager.Where(groceryTripCategory).FirstOrCreate(&groceryTripCategory).Error; err != nil {
+			return nil, err
+		}
+		item.CategoryID = &groceryTripCategory.ID
 	}
 	if err := db.Manager.Save(&item).Error; err != nil {
 		return nil, err
