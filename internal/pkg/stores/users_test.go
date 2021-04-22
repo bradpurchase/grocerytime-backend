@@ -226,7 +226,7 @@ func (s *Suite) TestRetrieveStoreUsers_HasStoreUsers() {
 		AddRow(uuid.NewV4(), storeID, uuid.NewV4(), true, true, time.Now(), time.Now()).
 		AddRow(uuid.NewV4(), storeID, uuid.NewV4(), false, true, time.Now(), time.Now())
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
-		WithArgs(storeID).
+		WithArgs(storeID, true).
 		WillReturnRows(storeUserRows)
 
 	storeUsers, err := RetrieveStoreUsers(store.ID)
