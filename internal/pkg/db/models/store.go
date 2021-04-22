@@ -25,7 +25,7 @@ type Store struct {
 	GroceryTrips []GroceryTrip
 }
 
-// BeforeCreate handles generating tokens and also handles old token cleanup
+// BeforeCreate handles some prep work before a store is created
 func (s *Store) BeforeCreate(tx *gorm.DB) (err error) {
 	s.ShareCode = strings.ToUpper(utils.RandString(6))
 	return
