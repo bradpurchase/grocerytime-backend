@@ -1,9 +1,11 @@
 package models
 
 import (
+	"strings"
 	"time"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/utils"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
@@ -21,6 +23,12 @@ type Store struct {
 	// Associations
 	StoreUsers   []StoreUser
 	GroceryTrips []GroceryTrip
+}
+
+// BeforeCreate handles generating tokens and also handles old token cleanup
+func (s *Store) BeforeCreate(tx *gorm.DB) (err error) {
+	s.ShareCode = strings.ToUpper(utils.RandString(6))
+	return
 }
 
 // AfterCreate hook to automatically create some associated records
