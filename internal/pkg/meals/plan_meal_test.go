@@ -77,7 +77,7 @@ func (s *Suite) TestPlanMeal_Valid() {
 	s.mock.ExpectBegin()
 
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
-		WithArgs(storeID).
+		WithArgs(storeID, true).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), storeID, userID))
 
 	s.mock.ExpectQuery("^INSERT INTO \"meals\" (.+)$").
