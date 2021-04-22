@@ -47,6 +47,12 @@ func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (storeUser m
 	return storeUser, nil
 }
 
+func AddUserToStoreWithCode(user models.User, store models.Store, code string) (su models.StoreUser, err error) {
+	//TODO
+	return su, nil
+}
+
+// DEPRECATED
 // AddUserToStore properly associates a user with a store by userID by removing
 // the email value and adding the userID value
 func AddUserToStore(user models.User, storeID interface{}) (su models.StoreUser, err error) {
@@ -139,6 +145,7 @@ func RemoveUserFromStore(user models.User, storeID interface{}) (interface{}, er
 func RetrieveStoreUsers(storeID uuid.UUID) (storeUsers []models.StoreUser, err error) {
 	query := db.Manager.
 		Where("store_id = ?", storeID).
+		Where("active = ?", true).
 		Order("created_at ASC").
 		Find(&storeUsers).
 		Error

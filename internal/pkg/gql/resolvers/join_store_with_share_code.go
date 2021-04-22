@@ -1,31 +1,31 @@
 package resolvers
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
+
 	"github.com/graphql-go/graphql"
 )
 
-// InviteToStoreResolver resolves the inviteToStore mutation by creating a pending
-// store_users record for the given storeId and email
-func InviteToStoreResolver(p graphql.ResolveParams) (interface{}, error) {
+// JoinStoreWithShareCodeResolver resolves the joinStoreWithShareCode mutation
+func JoinStoreWithShareCodeResolver(p graphql.ResolveParams) (interface{}, error) {
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(header.(string))
 	if err != nil {
 		return nil, err
 	}
-	userEmail := user.Email
 
+	// Verify that the store with the ID provided exists
 	storeID := p.Args["storeId"]
-	invitedUserEmail := strings.TrimSpace(p.Args["email"].(string))
-	if userEmail == invitedUserEmail {
-		return models.StoreUser{}, errors.New("cannot invite yourself to a store")
+	var store models.Store
+	if err := db.Manager.Model(&models.Store{}).Where("id = ?", storeID).First(&store).Error; err != nil {
+		return nil, err
 	}
-	storeUser, err := stores.InviteToStoreByEmail(storeID, invitedUserEmail)
+
+	code := p.Args["code"].(string)
+	storeUser, err := stores.AddUserToStoreWithCode(user, store, code)
 	if err != nil {
 		return nil, err
 	}

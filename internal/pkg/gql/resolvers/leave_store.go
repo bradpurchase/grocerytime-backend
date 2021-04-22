@@ -14,7 +14,6 @@ func LeaveStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	// Verify that the store with the ID provided exists
 	storeID := p.Args["storeId"]
 	storeUser, err := stores.RemoveUserFromStore(user, storeID)
 	if err != nil {

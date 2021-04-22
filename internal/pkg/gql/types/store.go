@@ -23,6 +23,9 @@ var StoreType = graphql.NewObject(
 			"name": &graphql.Field{
 				Type: graphql.NewNonNull(graphql.String),
 			},
+			"shareCode": &graphql.Field{
+				Type: graphql.String,
+			},
 			"creator": &graphql.Field{
 				Type:    BasicUserType,
 				Resolve: resolvers.BasicUserResolver,
