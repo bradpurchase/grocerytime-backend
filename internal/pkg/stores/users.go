@@ -48,8 +48,19 @@ func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (storeUser m
 }
 
 func AddUserToStoreWithCode(user models.User, store models.Store, code string) (su models.StoreUser, err error) {
-	//TODO
-	return su, nil
+	// Validate the code
+	if code != store.ShareCode {
+		return su, errors.New("provided code is invalid")
+	}
+	storeUser := models.StoreUser{StoreID: store.ID, UserID: user.ID}
+	if err := db.Manager.Create(&storeUser).Error; err != nil {
+		return su, err
+	}
+
+	// TODO
+	// 1. Test this function
+	// 2. Perhaps send a notification to the store owner informing them someone joined their store?
+	return storeUser, nil
 }
 
 // DEPRECATED
