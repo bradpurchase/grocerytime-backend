@@ -16,6 +16,7 @@ func JoinStoreWithShareCodeResolver(p graphql.ResolveParams) (interface{}, error
 	if err != nil {
 		return nil, err
 	}
+	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
 
 	// Verify that the store with the ID provided exists
 	storeID := p.Args["storeId"]
@@ -25,7 +26,7 @@ func JoinStoreWithShareCodeResolver(p graphql.ResolveParams) (interface{}, error
 	}
 
 	code := p.Args["code"].(string)
-	storeUser, err := stores.AddUserToStoreWithCode(user, store, code)
+	storeUser, err := stores.AddUserToStoreWithCode(user, store, code, appScheme.(string))
 	if err != nil {
 		return nil, err
 	}

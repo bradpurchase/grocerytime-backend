@@ -6,26 +6,22 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	uuid "github.com/satori/go.uuid"
 )
 
-// ItemsAdded sends a push notification to store users about a new item
-func ItemsAdded(userID uuid.UUID, storeID interface{}, numItemsAdded int, appScheme string) {
+// UserJoinedStore sends a push notification when a user joins a store via share code
+func UserJoinedStore(user models.User, storeID interface{}, appScheme string) {
 	var store models.Store
 	if err := db.Manager.Select("id, name").Where("id = ?", storeID).First(&store).Error; err != nil {
 		log.Println(err)
 	}
 
-	deviceTokens, err := StoreUserTokens(store.ID, userID)
+	deviceTokens, err := StoreUserTokens(store.ID, user.ID)
 	if err != nil {
 		log.Println(err)
 	}
 
-	title := "Trip Updated"
-	body := fmt.Sprintf("%d items added to your %v trip", numItemsAdded, store.Name)
-	if numItemsAdded == 1 {
-		body = fmt.Sprintf("An item was added to your %v trip", store.Name)
-	}
+	title := fmt.Sprintf("%v Joined Your Store", user.Name)
+	body := fmt.Sprintf("%v has just joined your %v store. Now you can plan groceries and meals together!", user.Name, store.Name)
 	for i := range deviceTokens {
 		Send(title, body, deviceTokens[i], "Store", storeID.(string), appScheme)
 	}

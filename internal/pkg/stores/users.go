@@ -6,6 +6,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/notifications"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -47,7 +48,7 @@ func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (storeUser m
 	return storeUser, nil
 }
 
-func AddUserToStoreWithCode(user models.User, store models.Store, code string) (su models.StoreUser, err error) {
+func AddUserToStoreWithCode(user models.User, store models.Store, code string, appScheme string) (su models.StoreUser, err error) {
 	// Validate the code
 	if code != store.ShareCode {
 		return su, errors.New("provided code is invalid")
@@ -58,7 +59,9 @@ func AddUserToStoreWithCode(user models.User, store models.Store, code string) (
 		return su, err
 	}
 
-	// TODO send a notification to the store owner informing them someone joined their store?
+	// Send a notification to users in store informing them someone joined their store
+	go notifications.UserJoinedStore(user, store.ID, appScheme)
+
 	return storeUser, nil
 }
 
