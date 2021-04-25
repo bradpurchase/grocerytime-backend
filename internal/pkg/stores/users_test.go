@@ -176,7 +176,7 @@ func (s *Suite) TestAddUserToStoreWithCode_CodeInvalid() {
 
 	_, e := AddUserToStoreWithCode(user, code, "Test")
 	require.Error(s.T(), e)
-	assert.Equal(s.T(), e.Error(), "provided code is invalid")
+	assert.Equal(s.T(), e.Error(), "sorry, that code was invalid")
 }
 
 func (s *Suite) TestAddUserToStoreWithCode_UserAlreadyInStore() {

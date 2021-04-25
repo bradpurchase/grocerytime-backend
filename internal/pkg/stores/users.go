@@ -52,7 +52,7 @@ func AddUserToStoreWithCode(user models.User, code string, appScheme string) (su
 	// Validate that there's a store associated with the code provided
 	var store models.Store
 	if err := db.Manager.Where("share_code = ?", code).First(&store).Error; err != nil {
-		return su, errors.New("provided code is invalid")
+		return su, errors.New("sorry, that code was invalid")
 	}
 
 	storeUser := models.StoreUser{StoreID: store.ID, UserID: user.ID}
