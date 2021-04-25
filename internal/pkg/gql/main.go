@@ -310,9 +310,6 @@ func init() {
 					Type:        gql.StoreUserType,
 					Description: "Add user to a store by share code",
 					Args: graphql.FieldConfigArgument{
-						"storeId": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.ID),
-						},
 						"code": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.String),
 						},

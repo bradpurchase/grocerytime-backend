@@ -161,16 +161,20 @@ func (s *Suite) TestRemoveUserFromStore_SuccessJoinedStoreUser() {
 }
 
 func (s *Suite) TestAddUserToStoreWithCode_CodeInvalid() {
-	store := models.Store{
-		ID: uuid.NewV4(),
-		UserID: uuid.NewV4(),
-		Name: "Example Store",
-		ShareCode: "ABC123",
-	}
+	// store := models.Store{
+	// 	ID:        uuid.NewV4(),
+	// 	UserID:    uuid.NewV4(),
+	// 	Name:      "Example Store",
+	// 	ShareCode: "ABC123",
+	// }
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 
 	code := "DEF456"
-	_, e := AddUserToStoreWithCode(user, store, code)
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(code).
+		WillReturnRows(sqlmock.NewRows([]string{}))
+
+	_, e := AddUserToStoreWithCode(user, code, "Test")
 	require.Error(s.T(), e)
 	assert.Equal(s.T(), e.Error(), "provided code is invalid")
 }
@@ -179,25 +183,22 @@ func (s *Suite) TestAddUserToStoreWithCode_UserAlreadyInStore() {
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	storeID := uuid.NewV4()
 	storeUser := models.StoreUser{
-		ID: uuid.NewV4(),
+		ID:      uuid.NewV4(),
 		StoreID: storeID,
-		UserID: user.ID,
+		UserID:  user.ID,
 	}
-	store := models.Store{
-		ID: storeID,
-		UserID: uuid.NewV4(),
-		Name: "Example Store",
-		ShareCode: "ABC123",
-		StoreUsers: []models.StoreUser{storeUser},
-	}
+
+	code := "ABC123"
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(code).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
 
 	// Assert that record was retrieved, not created (since we call FirstOrCreate)
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, user.ID).
 		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(storeUser.ID))
 
-	code := "ABC123"
-	su, err := AddUserToStoreWithCode(user, store, code)
+	su, err := AddUserToStoreWithCode(user, code, "Test")
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), su.ID, storeUser.ID)
 }
@@ -205,30 +206,28 @@ func (s *Suite) TestAddUserToStoreWithCode_UserAlreadyInStore() {
 func (s *Suite) TestAddUserToStoreWithCode_UserNotAlreadyInStore() {
 	user := models.User{ID: uuid.NewV4(), Email: "test@example.com"}
 	storeID := uuid.NewV4()
-	store := models.Store{
-		ID: storeID,
-		UserID: uuid.NewV4(),
-		Name: "Example Store",
-		ShareCode: "ABC123",
-	}
+
+	code := "ABC123"
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(code).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeID))
 
 	// Assert that record was created, not retrieved (since we call FirstOrCreate)
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, user.ID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
-	
+
 	storeUserID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"store_users\" (.+)$").
-		WithArgs(store.ID, user.ID, "", false, true, AnyTime{}, AnyTime{}, nil).
+		WithArgs(storeID, user.ID, "", false, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(storeUserID))
 	s.mock.ExpectQuery("^INSERT INTO \"store_user_preferences\" (.+)$").
 		WithArgs(storeUserID, false, true, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"store_user_id"}).AddRow(storeUserID))
 
-	code := "ABC123"
-	su, err := AddUserToStoreWithCode(user, store, code)
+	su, err := AddUserToStoreWithCode(user, code, "Test")
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), su.StoreID, store.ID)
+	assert.Equal(s.T(), su.StoreID, storeID)
 	assert.Equal(s.T(), su.UserID, user.ID)
 }
 

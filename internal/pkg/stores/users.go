@@ -48,9 +48,10 @@ func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (storeUser m
 	return storeUser, nil
 }
 
-func AddUserToStoreWithCode(user models.User, store models.Store, code string, appScheme string) (su models.StoreUser, err error) {
-	// Validate the code
-	if code != store.ShareCode {
+func AddUserToStoreWithCode(user models.User, code string, appScheme string) (su models.StoreUser, err error) {
+	// Validate that there's a store associated with the code provided
+	var store models.Store
+	if err := db.Manager.Where("share_code = ?", code).First(&store).Error; err != nil {
 		return su, errors.New("provided code is invalid")
 	}
 
