@@ -20,7 +20,6 @@ func InviteToStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 	}
 	userEmail := user.Email
 
-	// Verify that the store with the ID provided exists
 	storeID := p.Args["storeId"]
 	invitedUserEmail := strings.TrimSpace(p.Args["email"].(string))
 	if userEmail == invitedUserEmail {

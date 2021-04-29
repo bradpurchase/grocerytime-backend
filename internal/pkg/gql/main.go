@@ -288,7 +288,7 @@ func init() {
 				},
 				"joinStore": &graphql.Field{
 					Type:        gql.StoreUserType,
-					Description: "Removes the pending state from a pending store user",
+					Description: "(DEPRECATED) Removes the pending state from a pending store user",
 					Args: graphql.FieldConfigArgument{
 						"storeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
@@ -305,6 +305,16 @@ func init() {
 						},
 					},
 					Resolve: resolvers.DeclineStoreInviteResolver,
+				},
+				"joinStoreWithShareCode": &graphql.Field{
+					Type:        gql.StoreUserType,
+					Description: "Add user to a store by share code",
+					Args: graphql.FieldConfigArgument{
+						"code": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.String),
+						},
+					},
+					Resolve: resolvers.JoinStoreWithShareCodeResolver,
 				},
 				"leaveStore": &graphql.Field{
 					Type:        gql.StoreUserType,

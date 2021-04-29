@@ -6,6 +6,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/notifications"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -47,6 +48,25 @@ func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (storeUser m
 	return storeUser, nil
 }
 
+func AddUserToStoreWithCode(user models.User, code string, appScheme string) (su models.StoreUser, err error) {
+	// Validate that there's a store associated with the code provided
+	var store models.Store
+	if err := db.Manager.Where("share_code = ?", code).First(&store).Error; err != nil {
+		return su, errors.New("sorry, that code was invalid")
+	}
+
+	storeUser := models.StoreUser{StoreID: store.ID, UserID: user.ID}
+	if err := db.Manager.Where(storeUser).FirstOrCreate(&storeUser).Error; err != nil {
+		return su, err
+	}
+
+	// Send a notification to users in store informing them someone joined their store
+	go notifications.UserJoinedStore(user, store.ID, appScheme)
+
+	return storeUser, nil
+}
+
+// DEPRECATED
 // AddUserToStore properly associates a user with a store by userID by removing
 // the email value and adding the userID value
 func AddUserToStore(user models.User, storeID interface{}) (su models.StoreUser, err error) {
@@ -139,6 +159,7 @@ func RemoveUserFromStore(user models.User, storeID interface{}) (interface{}, er
 func RetrieveStoreUsers(storeID uuid.UUID) (storeUsers []models.StoreUser, err error) {
 	query := db.Manager.
 		Where("store_id = ?", storeID).
+		Where("active = ?", true).
 		Order("created_at ASC").
 		Find(&storeUsers).
 		Error

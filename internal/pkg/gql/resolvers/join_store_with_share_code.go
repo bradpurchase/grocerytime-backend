@@ -3,19 +3,21 @@ package resolvers
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
+
 	"github.com/graphql-go/graphql"
 )
 
-// LeaveStoreResolver resolves the leaveStore resolver by removing the current user from the store
-func LeaveStoreResolver(p graphql.ResolveParams) (interface{}, error) {
+// JoinStoreWithShareCodeResolver resolves the joinStoreWithShareCode mutation
+func JoinStoreWithShareCodeResolver(p graphql.ResolveParams) (interface{}, error) {
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
 	user, err := auth.FetchAuthenticatedUser(header.(string))
 	if err != nil {
 		return nil, err
 	}
+	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
 
-	storeID := p.Args["storeId"]
-	storeUser, err := stores.RemoveUserFromStore(user, storeID)
+	code := p.Args["code"].(string)
+	storeUser, err := stores.AddUserToStoreWithCode(user, code, appScheme.(string))
 	if err != nil {
 		return nil, err
 	}

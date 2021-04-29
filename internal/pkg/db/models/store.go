@@ -1,17 +1,20 @@
 package models
 
 import (
+	"strings"
 	"time"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/mailer"
+	"github.com/bradpurchase/grocerytime-backend/internal/pkg/utils"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
 type Store struct {
-	ID     uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	UserID uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();not null"`
-	Name   string    `gorm:"type:varchar(100);not null"`
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	UserID    uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();not null"`
+	Name      string    `gorm:"type:varchar(100);not null"`
+	ShareCode string    `gorm:"type:varchar(255);uniqueIndex"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -20,6 +23,12 @@ type Store struct {
 	// Associations
 	StoreUsers   []StoreUser
 	GroceryTrips []GroceryTrip
+}
+
+// BeforeCreate handles some prep work before a store is created
+func (s *Store) BeforeCreate(tx *gorm.DB) (err error) {
+	s.ShareCode = strings.ToUpper(utils.RandString(6))
+	return
 }
 
 // AfterCreate hook to automatically create some associated records

@@ -32,7 +32,7 @@ func (s *Suite) TestCreateStore_Created() {
 	storeID := uuid.NewV4()
 	s.mock.ExpectBegin()
 	s.mock.ExpectQuery("^INSERT INTO \"stores\" (.+)$").
-		WithArgs(storeName, AnyTime{}, AnyTime{}, nil, userID).
+		WithArgs(storeName, sqlmock.AnyArg(), AnyTime{}, AnyTime{}, nil, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "user_id"}).AddRow(storeID, userID))
 
 	storeUserID := uuid.NewV4()
