@@ -1,6 +1,8 @@
 package trips
 
 import (
+	"encoding/json"
+
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
@@ -43,6 +45,15 @@ func UpdateItem(args map[string]interface{}) (interface{}, error) {
 			return nil, err
 		}
 		item.CategoryID = &groceryTripCategory.ID
+
+		// If the user opted to remember the store category ID, add it to
+		// the store_item_category_settings table
+		remember := args["rememberStoreCategoryId"]
+		if remember != nil && remember.(bool) {
+			if err := RememberStoreCategorySelection(item, storeCategoryID); err != nil {
+				return nil, err
+			}
+		}
 	}
 	if err := db.Manager.Save(&item).Error; err != nil {
 		return nil, err
@@ -66,4 +77,59 @@ func GetNewPosition(tripID uuid.UUID, completed bool) int {
 		newPosition = bottomItem.Position
 	}
 	return newPosition
+}
+
+// RememberStoreCategorySelection updates the store item category settings
+// for a given item in a store, so that the item will be added to this category going forwards
+func RememberStoreCategorySelection(item *models.Item, storeCategoryID uuid.UUID) (err error) {
+	var store models.Store
+	query := db.Manager.
+		Model(&models.Item{}).
+		Select("stores.id").
+		Joins("INNER JOIN grocery_trips ON grocery_trips.id = items.grocery_trip_id").
+		Joins("INNER JOIN stores ON stores.id = grocery_trips.store_id").
+		Where("items.id = ?", item.ID).
+		Last(&store).
+		Error
+	if err := query; err != nil {
+		return err
+	}
+
+	storeItemCategorySetting := models.StoreItemCategorySettings{StoreID: store.ID}
+	settingQuery := db.Manager.Where(storeItemCategorySetting).FirstOrCreate(&storeItemCategorySetting).Error
+	if err := settingQuery; err != nil {
+		return err
+	}
+
+	// Set the value in the store_item_category_settings.items jsonb
+	itemName := item.Name
+	if err := UpdateStoreItemCategorySettings(itemName, storeCategoryID, storeItemCategorySetting); err != nil {
+		return err
+	}
+
+	return
+}
+
+// UpdateStoreItemCategorySettings unpacks the item settings, adds/updates the key
+// by item name, repacks the updated item settings into JSON, and saves it
+func UpdateStoreItemCategorySettings(itemName string, storeCategoryID uuid.UUID, storeItemCategorySetting models.StoreItemCategorySettings) (err error) {
+	itemSettings := storeItemCategorySetting.Items
+	var settings map[string]interface{}
+	if err := json.Unmarshal(itemSettings, &settings); err != nil {
+		return err
+	}
+	settings[itemName] = storeCategoryID
+	newItemSettings, err := json.Marshal(settings)
+	if err != nil {
+		return err
+	}
+	updateQuery := db.Manager.
+		Model(&models.StoreItemCategorySettings{}).
+		Where("id = ?", storeItemCategorySetting.ID).
+		Update("items", newItemSettings).
+		Error
+	if err := updateQuery; err != nil {
+		return err
+	}
+	return
 }
