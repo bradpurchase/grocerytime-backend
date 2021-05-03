@@ -148,7 +148,6 @@ func CompileItemSettingsMap(itemSettings datatypes.JSON) (settings map[string]in
 		settings = make(map[string]interface{})
 	}
 	if err := json.Unmarshal(itemSettings, &settings); err != nil {
-		``
 		return nil, err
 	}
 	return settings, nil
