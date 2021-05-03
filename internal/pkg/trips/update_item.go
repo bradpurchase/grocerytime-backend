@@ -2,10 +2,12 @@ package trips
 
 import (
 	"encoding/json"
+	"strings"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/datatypes"
 )
 
 // UpdateItem updates an item by itemID
@@ -117,11 +119,12 @@ func UpdateStoreItemCategorySettings(
 	storeCategoryID uuid.UUID,
 	storeItemCategorySetting models.StoreItemCategorySettings,
 ) (err error) {
-	itemSettings := storeItemCategorySetting.Items
-	var settings map[string]interface{}
-	if err := json.Unmarshal(itemSettings, &settings); err != nil {
+	settings, err := CompileItemSettingsMap(storeItemCategorySetting.Items)
+	if err != nil {
 		return err
 	}
+
+	itemName = strings.ToLower(itemName)
 	settings[itemName] = storeCategoryID
 	newItemSettings, err := json.Marshal(settings)
 	if err != nil {
@@ -136,4 +139,17 @@ func UpdateStoreItemCategorySettings(
 		return err
 	}
 	return
+}
+
+// CompileItemSettingsMap unmarshals the existing item settings json map,
+// or makes a new map if one does not exist yet
+func CompileItemSettingsMap(itemSettings datatypes.JSON) (settings map[string]interface{}, err error) {
+	if itemSettings == nil {
+		settings = make(map[string]interface{})
+	}
+	if err := json.Unmarshal(itemSettings, &settings); err != nil {
+		``
+		return nil, err
+	}
+	return settings, nil
 }

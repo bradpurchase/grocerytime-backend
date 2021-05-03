@@ -120,6 +120,7 @@ func CreateGroceryTripCategory(tripID uuid.UUID, name string) (category models.G
 // As a fallback, it opens the FoodClassification.json file and scans it
 func DetermineCategoryName(name string, storeID uuid.UUID) (result string, err error) {
 	result = "Misc."
+	name = strings.ToLower(name) // for case-insensitivity
 
 	// Look for the category in store_item_category_settings
 	// TODO: case insensitivity
@@ -150,7 +151,7 @@ func DetermineCategoryName(name string, storeID uuid.UUID) (result string, err e
 	}
 
 	// Use gjson to quickly fetch it from the embedded FoodClassification.json file
-	properName := strings.TrimSpace(strings.ToLower(name))
+	properName := strings.TrimSpace(name)
 	search := fmt.Sprintf("foods.#(text%%\"%s*\").label", properName)
 	value := gjson.Get(foods, search)
 	foundCategory := value.String()
