@@ -40,11 +40,12 @@ func AddItemsToStore(userID uuid.UUID, args map[string]interface{}) (addedItems 
 	itemNames := args["items"].([]interface{})
 	for i := range itemNames {
 		itemName := itemNames[i].(string)
-		item, err := AddItem(userID, map[string]interface{}{
+		args := map[string]interface{}{
 			"tripId":   trip.ID,
 			"name":     itemName,
 			"quantity": 1,
-		})
+		}
+		item, err := AddItem(userID, args)
 		if err != nil {
 			errorStrings = append(errorStrings, err.Error())
 		}

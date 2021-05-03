@@ -46,11 +46,11 @@ func UpdateItem(args map[string]interface{}) (interface{}, error) {
 		}
 		item.CategoryID = &groceryTripCategory.ID
 
-		// If the user opted to remember the store category ID, add it to
+		// If the user opted to save the store category ID, add it to
 		// the store_item_category_settings table
-		remember := args["rememberStoreCategoryId"]
-		if remember != nil && remember.(bool) {
-			if err := RememberStoreCategorySelection(item, storeCategoryID); err != nil {
+		saveCategory := args["saveStoreCategoryId"]
+		if saveCategory != nil && saveCategory.(bool) {
+			if err := SaveStoreCategorySelection(item, storeCategoryID); err != nil {
 				return nil, err
 			}
 		}
@@ -79,9 +79,9 @@ func GetNewPosition(tripID uuid.UUID, completed bool) int {
 	return newPosition
 }
 
-// RememberStoreCategorySelection updates the store item category settings
+// SaveStoreCategorySelection updates the store item category settings
 // for a given item in a store, so that the item will be added to this category going forwards
-func RememberStoreCategorySelection(item *models.Item, storeCategoryID uuid.UUID) (err error) {
+func SaveStoreCategorySelection(item *models.Item, storeCategoryID uuid.UUID) (err error) {
 	var store models.Store
 	query := db.Manager.
 		Model(&models.Item{}).
@@ -112,7 +112,11 @@ func RememberStoreCategorySelection(item *models.Item, storeCategoryID uuid.UUID
 
 // UpdateStoreItemCategorySettings unpacks the item settings, adds/updates the key
 // by item name, repacks the updated item settings into JSON, and saves it
-func UpdateStoreItemCategorySettings(itemName string, storeCategoryID uuid.UUID, storeItemCategorySetting models.StoreItemCategorySettings) (err error) {
+func UpdateStoreItemCategorySettings(
+	itemName string,
+	storeCategoryID uuid.UUID,
+	storeItemCategorySetting models.StoreItemCategorySettings,
+) (err error) {
 	itemSettings := storeItemCategorySetting.Items
 	var settings map[string]interface{}
 	if err := json.Unmarshal(itemSettings, &settings); err != nil {

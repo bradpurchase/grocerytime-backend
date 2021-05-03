@@ -385,7 +385,7 @@ func init() {
 						"storeCategoryId": &graphql.ArgumentConfig{
 							Type: graphql.ID,
 						},
-						"rememberStoreCategoryId": &graphql.ArgumentConfig{
+						"saveStoreCategoryId": &graphql.ArgumentConfig{
 							Type: graphql.Boolean,
 						},
 						"name": &graphql.ArgumentConfig{
