@@ -145,7 +145,7 @@ func UpdateStoreItemCategorySettings(
 // or makes a new map if one does not exist yet
 func CompileItemSettingsMap(itemSettings datatypes.JSON) (settings map[string]interface{}, err error) {
 	if itemSettings == nil {
-		settings = make(map[string]interface{})
+		return make(map[string]interface{}), nil
 	}
 	if err := json.Unmarshal(itemSettings, &settings); err != nil {
 		return nil, err
