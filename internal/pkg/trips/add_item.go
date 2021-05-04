@@ -101,7 +101,14 @@ func FetchGroceryTripCategory(tripID uuid.UUID, name string) (category models.Gr
 // CreateGroceryTripCategory creates a grocery trip category by name
 func CreateGroceryTripCategory(tripID uuid.UUID, name string) (category models.GroceryTripCategory, err error) {
 	storeCategory := models.StoreCategory{}
-	query := db.Manager.Select("id").Where("name = ?", name).First(&storeCategory).Error
+	query := db.Manager.
+		Select("store_categories.id").
+		Joins("INNER JOIN stores ON stores.id = store_categories.store_id").
+		Joins("INNER JOIN grocery_trips ON grocery_trips.store_id = stores.id").
+		Where("store_categories.name = ?", name).
+		Where("grocery_trips.id = ?", tripID).
+		First(&storeCategory).
+		Error
 	if err := query; err != nil {
 		return category, errors.New("could not find store category")
 	}
