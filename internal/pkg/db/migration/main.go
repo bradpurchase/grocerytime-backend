@@ -3,13 +3,14 @@ package migration
 import (
 	"fmt"
 	"log"
-	"strings"
+	"time"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/gofrs/uuid"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/utils"
 )
 
 func migrate(db *gorm.DB) error {
@@ -87,36 +88,22 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 		},
 		{
-			// Add stores.share_code column
-			ID: "202104201930_add_share_code_to_stores",
+			// Create store_item_category_settings
+			ID: "202105020850_create_store_item_category_settings",
 			Migrate: func(tx *gorm.DB) error {
-				type Store struct {
-					ShareCode string `gorm:"type:varchar(255);uniqueIndex"`
+				type StoreItemCategorySettings struct {
+					ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					StoreID uuid.UUID `gorm:"type:uuid;not null;index:idx_store_category_items_store_id"`
+					Items   datatypes.JSON
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
 				}
-				return tx.AutoMigrate(&Store{})
+				return tx.AutoMigrate(&StoreItemCategorySettings{})
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Exec("ALTER TABLE stores DROP COLUMN share_code").Error
-			},
-		},
-		{
-			// Backfill stores.share_code column
-			ID: "202104201933_backfill_stores_share_code",
-			Migrate: func(tx *gorm.DB) error {
-				var stores []models.Store
-				if err := tx.Find(&stores).Error; err != nil {
-					return err
-				}
-				for i := range stores {
-					share_code := strings.ToUpper(utils.RandString(6))
-					if err := tx.Model(&models.Store{}).Where("id = ?", stores[i].ID).Update("share_code", share_code).Error; err != nil {
-						return err
-					}
-				}
-				return nil
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Model(&models.Store{}).Not("share_code", nil).Update("share_code", nil).Error
+				return tx.Migrator().DropTable("store_item_category_settings")
 			},
 		},
 	})

@@ -2,6 +2,7 @@ package trips
 
 import (
 	_ "embed"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -12,6 +13,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
 	"github.com/tidwall/gjson"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -20,11 +22,9 @@ var foods string
 
 // AddItem adds an item to a trip and handles things like permission checks
 func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.Item, err error) {
-	tripID := args["tripId"]
-	// TODO: also accept trip to avoid this query
-	// For example, in AddItemsToStore, we fetch the trip, then fetch it again here by ID. this is pointless
+	tripID := args["tripId"].(uuid.UUID)
 	trip := &models.GroceryTrip{}
-	if err := db.Manager.Where("id = ?", tripID).Find(&trip).Error; err != nil {
+	if err := db.Manager.Select("store_id").Where("id = ?", tripID).Last(&trip).Error; err != nil {
 		return addedItem, errors.New("trip does not exist")
 	}
 
@@ -43,7 +43,7 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 	itemName, quantity = ParseItemName(itemName, quantity)
 
 	item := &models.Item{
-		GroceryTripID: trip.ID,
+		GroceryTripID: tripID,
 		UserID:        userID,
 		Name:          itemName,
 		Quantity:      quantity,
@@ -57,10 +57,13 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 	if args["categoryName"] != nil {
 		categoryName = args["categoryName"].(string)
 	} else {
-		categoryName = DetermineCategoryName(itemName)
+		categoryName, err = DetermineCategoryName(itemName, trip.StoreID)
+		if err != nil {
+			return item, err
+		}
 	}
 
-	category, err := FetchGroceryTripCategory(trip.ID, categoryName)
+	category, err := FetchGroceryTripCategory(tripID, categoryName)
 	if err != nil {
 		return addedItem, errors.New("could not find or create grocery trip category")
 	}
@@ -112,17 +115,50 @@ func CreateGroceryTripCategory(tripID uuid.UUID, name string) (category models.G
 	return newCategory, nil
 }
 
-// DetermineCategoryName opens the FoodClassification.json file and
-// scans it for the classification associated with the food item very quickly using gson
-func DetermineCategoryName(name string) string {
-	properName := strings.TrimSpace(strings.ToLower(name))
+// DetermineCategoryName first checks to see if this item's preferred category
+// has been saved in the store settings and uses that if so.
+// As a fallback, it opens the FoodClassification.json file and scans it
+func DetermineCategoryName(name string, storeID uuid.UUID) (result string, err error) {
+	result = "Misc."
+	name = strings.ToLower(name) // for case-insensitivity
+
+	// Look for the category in store_item_category_settings
+	var settings models.StoreItemCategorySettings
+	query := db.Manager.
+		Where("store_id = ?", storeID).
+		Where(datatypes.JSONQuery("items").HasKey(name)).
+		First(&settings).
+		Error
+	if !errors.Is(query, gorm.ErrRecordNotFound) {
+		if err := query; err != nil {
+			return result, err
+		}
+		itemSettings := settings.Items
+		var settingsMap map[string]interface{}
+		if err := json.Unmarshal(itemSettings, &settingsMap); err != nil {
+			return result, err
+		}
+		if settingsMap[name] != nil {
+			// There is an assigned storeCategoryID in settings for this item.
+			// From this we need to find the name of the category and return it
+			storeCategoryID, err := uuid.FromString(settingsMap[name].(string))
+			if err != nil {
+				return result, err
+			}
+			return FindStoreCategoryName(storeCategoryID), nil
+		}
+	}
+
+	// Use gjson to quickly fetch it from the embedded FoodClassification.json file
+	properName := strings.TrimSpace(name)
 	search := fmt.Sprintf("foods.#(text%%\"%s*\").label", properName)
 	value := gjson.Get(foods, search)
 	foundCategory := value.String()
 	if len(foundCategory) > 0 {
-		return foundCategory
+		return foundCategory, nil
 	}
-	return "Misc."
+
+	return result, nil
 }
 
 // ParseItemName handles inline quantity in the item name (e.g. Orange x 5) and
@@ -141,4 +177,17 @@ func ParseItemName(name string, quantity int) (parsedName string, parsedQuantity
 		return parsedName, parsedQuantity
 	}
 	return name, quantity
+}
+
+func FindStoreCategoryName(id uuid.UUID) (name string) {
+	var storeCategory models.StoreCategory
+	query := db.Manager.
+		Select("store_categories.name").
+		Where("store_categories.id = ?", id).
+		First(&storeCategory).
+		Error
+	if err := query; err != nil {
+		return "Misc."
+	}
+	return storeCategory.Name
 }
