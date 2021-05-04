@@ -1,6 +1,8 @@
 package meals
 
 import (
+	"strings"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
@@ -101,10 +103,15 @@ func (s *Suite) TestPlanMeal_Valid() {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id"}).AddRow(tripID, storeID))
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(tripID).
-		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id"}).AddRow(tripID, storeID))
+		WillReturnRows(sqlmock.NewRows([]string{"store_id"}).AddRow(storeID))
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
 		WithArgs(storeID, userID).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), storeID, userID))
+
+	// Store item category settings
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_item_category_settings\"*").
+		WithArgs(storeID, strings.ToLower(itemName)).
+		WillReturnRows(sqlmock.NewRows([]string{}))
 
 	itemID := uuid.NewV4()
 	// UPDATE for before item insertion hook

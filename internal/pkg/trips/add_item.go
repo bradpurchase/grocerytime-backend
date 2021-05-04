@@ -123,7 +123,6 @@ func DetermineCategoryName(name string, storeID uuid.UUID) (result string, err e
 	name = strings.ToLower(name) // for case-insensitivity
 
 	// Look for the category in store_item_category_settings
-	// TODO: case insensitivity
 	var settings models.StoreItemCategorySettings
 	query := db.Manager.
 		Where("store_id = ?", storeID).
