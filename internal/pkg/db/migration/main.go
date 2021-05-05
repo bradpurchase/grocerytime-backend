@@ -106,6 +106,24 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Migrator().DropTable("store_item_category_settings")
 			},
 		},
+		{
+			ID: "202105050742_create_store_staple_items",
+			Migrate: func(tx *gorm.DB) error {
+				type StoreStapleItem struct {
+					ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					StoreID uuid.UUID `gorm:"type:uuid;not null;index:idx_store_staple_items_store_id"`
+					Name    string    `gorm:"type:varchar(100);not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
+				}
+				return tx.AutoMigrate(&StoreStapleItem{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("store_staple_items")
+			},
+		},
 	})
 	return m.Migrate()
 }
