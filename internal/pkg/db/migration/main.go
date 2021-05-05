@@ -124,6 +124,17 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Migrator().DropTable("store_staple_items")
 			},
 		},
+
+		{
+			// Add index idx_store_staple_items_store_id_name
+			ID: "202105050820_add_idx_store_staple_items_store_id_name",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Exec("CREATE INDEX IF NOT EXISTS idx_store_staple_items_store_id_name ON store_staple_items (store_id, name)").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("DROP INDEX idx_store_staple_items_store_id_name").Error
+			},
+		},
 	})
 	return m.Migrate()
 }
