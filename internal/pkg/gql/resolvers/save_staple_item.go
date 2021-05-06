@@ -10,7 +10,7 @@ import (
 // SaveStapleItem resolves the saveStapleItem mutation
 func SaveStapleItem(p graphql.ResolveParams) (interface{}, error) {
 	header := p.Info.RootValue.(map[string]interface{})["Authorization"]
-	user, err := auth.FetchAuthenticatedUser(header.(string))
+	_, err := auth.FetchAuthenticatedUser(header.(string))
 	if err != nil {
 		return nil, err
 	}
@@ -19,8 +19,11 @@ func SaveStapleItem(p graphql.ResolveParams) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	name := p.Args["name"].(string)
-	item, err := stores.SaveStapleItem(user.ID, storeID, name)
+	itemID, err := uuid.FromString(p.Args["itemId"].(string))
+	if err != nil {
+		return nil, err
+	}
+	item, err := stores.SaveStapleItem(storeID, itemID)
 	if err != nil {
 		return nil, err
 	}

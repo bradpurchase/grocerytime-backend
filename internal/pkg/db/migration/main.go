@@ -124,7 +124,6 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Migrator().DropTable("store_staple_items")
 			},
 		},
-
 		{
 			// Add index idx_store_staple_items_store_id_name
 			ID: "202105050820_add_idx_store_staple_items_store_id_name",
@@ -133,6 +132,19 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Exec("DROP INDEX idx_store_staple_items_store_id_name").Error
+			},
+		},
+		{
+			// Add column staple_id to items
+			ID: "202105060735_add_staple_id_to_items",
+			Migrate: func(tx *gorm.DB) error {
+				type Item struct {
+					StapleItemID *uuid.UUID `gorm:"type:uuid;index"`
+				}
+				return tx.AutoMigrate(&Item{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropColumn("people", "age")
 			},
 		},
 	})

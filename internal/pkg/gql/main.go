@@ -470,8 +470,8 @@ func init() {
 						"storeId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
-						"name": &graphql.ArgumentConfig{
-							Type: graphql.NewNonNull(graphql.String),
+						"itemId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},
 					Resolve: resolvers.SaveStapleItem,
