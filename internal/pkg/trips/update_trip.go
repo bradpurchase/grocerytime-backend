@@ -31,6 +31,7 @@ func UpdateTrip(args map[string]interface{}) (interface{}, error) {
 
 	// If the trip was completed, create the next trip for the user
 	if trip.Completed {
+		var newTrip models.GroceryTrip
 		db.Manager.Transaction(func(tx *gorm.DB) error {
 			var newTripName string
 			// If a newTripName argument is passed, use it instead of creating one from the
@@ -42,13 +43,13 @@ func UpdateTrip(args map[string]interface{}) (interface{}, error) {
 				currentTime := time.Now()
 				newTripName = currentTime.Format("Jan 2, 2006")
 			}
-			newTrip := &models.GroceryTrip{StoreID: trip.StoreID, Name: newTripName}
+			newTrip = models.GroceryTrip{StoreID: trip.StoreID, Name: newTripName}
 			if err := tx.Create(&newTrip).Error; err != nil {
 				return err
 			}
 
 			if trip.CopyRemainingItems {
-				if err := CopyRemainingItemsToNewTrip(trip, newTrip, tx); err != nil {
+				if err := CopyRemainingItemsToNewTrip(trip, &newTrip, tx); err != nil {
 					return err
 				}
 			}
@@ -57,10 +58,12 @@ func UpdateTrip(args map[string]interface{}) (interface{}, error) {
 				return err
 			}
 
-			// TODO: Move staple items to new trip
-
 			return nil
 		})
+
+		if err := AddStapleItemsToNewTrip(newTrip); err != nil {
+			return trip, err
+		}
 	}
 
 	return trip, nil
@@ -71,9 +74,15 @@ func CopyRemainingItemsToNewTrip(
 	newTrip *models.GroceryTrip,
 	tx *gorm.DB,
 ) (err error) {
-	// Duplicate the category associated with each item
+	// Fetch the remaining items, excluding those that are staple items (since these will be added anyway)
 	var remainingItems []models.Item
-	if err := tx.Where("grocery_trip_id = ? AND completed = ?", trip.ID, false).Find(&remainingItems).Error; err != nil {
+	itemsQuery := tx.
+		Where("grocery_trip_id = ?", trip.ID).
+		Where("completed = ?", false).
+		Where("staple_item_id IS NULL").
+		Find(&remainingItems).
+		Error
+	if err := itemsQuery; err != nil {
 		return err
 	}
 
@@ -132,5 +141,33 @@ func MarkItemsInOldTripAsCompleted(trip models.GroceryTrip, tx *gorm.DB) (err er
 	if err := updateItemsQuery; err != nil {
 		return err
 	}
+	return
+}
+
+// AddStapleItemsToNewTrip adds items set as staple items for this store to the new trip
+func AddStapleItemsToNewTrip(trip models.GroceryTrip) (err error) {
+	var store models.Store
+	if err := db.Manager.Where("id = ?", trip.StoreID).First(&store).Error; err != nil {
+		return err
+	}
+
+	var stapleItems []models.StoreStapleItem
+	if err := db.Manager.Where("store_id = ?", store.ID).Find(&stapleItems).Error; err != nil {
+		return err
+	}
+
+	for i := range stapleItems {
+		args := map[string]interface{}{
+			"tripId":       trip.ID,
+			"name":         stapleItems[i].Name,
+			"stapleItemId": stapleItems[i].ID,
+		}
+		userID := store.UserID
+		_, err := AddItem(userID, args)
+		if err != nil {
+			return err
+		}
+	}
+
 	return
 }

@@ -51,6 +51,11 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 		Completed:     &itemCompleted,
 	}
 
+	if args["stapleItemId"] != nil {
+		stapleItemID := args["stapleItemId"].(uuid.UUID)
+		item.StapleItemID = &stapleItemID
+	}
+
 	// If categoryName is explicitly provided in the arguments, use it,
 	// otherwise we need to determine it automagically ✨
 	var categoryName string
