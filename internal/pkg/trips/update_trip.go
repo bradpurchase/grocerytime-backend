@@ -147,7 +147,7 @@ func MarkItemsInOldTripAsCompleted(trip models.GroceryTrip, tx *gorm.DB) (err er
 // AddStapleItemsToNewTrip adds items set as staple items for this store to the new trip
 func AddStapleItemsToNewTrip(trip models.GroceryTrip) (err error) {
 	var store models.Store
-	if err := db.Manager.Where("id = ?", trip.StoreID).First(&store).Error; err != nil {
+	if err := db.Manager.Select("id, user_id").Where("id = ?", trip.StoreID).First(&store).Error; err != nil {
 		return err
 	}
 

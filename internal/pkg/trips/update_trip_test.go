@@ -60,10 +60,6 @@ func (s *Suite) TestUpdateTrip_DupeTripName() {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	s.mock.ExpectBegin()
-	s.mock.ExpectQuery("^SELECT count*").
-		WithArgs(storeID).
-		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(0))
-
 	// Test case where a trip already exists in this store with this name
 	// and assert that it affixes a count after the name
 	//
@@ -82,6 +78,14 @@ func (s *Suite) TestUpdateTrip_DupeTripName() {
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectCommit()
+
+	// AddStapleItemsToNewTrip
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(storeID).
+		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(storeID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_staple_items\"*").
+		WithArgs(storeID).
+		WillReturnRows(s.mock.NewRows([]string{}))
 
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
@@ -107,10 +111,6 @@ func (s *Suite) TestUpdateTrip_MarkCompleted() {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	s.mock.ExpectBegin()
-	s.mock.ExpectQuery("^SELECT count*").
-		WithArgs(storeID).
-		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
-
 	currentTime := time.Now()
 	tripName := currentTime.Format("Jan 2, 2006")
 	likeTripName := fmt.Sprintf("%%%s%%", tripName)
@@ -124,6 +124,14 @@ func (s *Suite) TestUpdateTrip_MarkCompleted() {
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectCommit()
+
+	// AddStapleItemsToNewTrip
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(storeID).
+		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(storeID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_staple_items\"*").
+		WithArgs(storeID).
+		WillReturnRows(s.mock.NewRows([]string{}))
 
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
@@ -142,10 +150,6 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	s.mock.ExpectBegin()
-	s.mock.ExpectQuery("^SELECT count*").
-		WithArgs(storeID).
-		WillReturnRows(s.mock.NewRows([]string{"count"}).AddRow(1))
-
 	newTripID := uuid.NewV4()
 	currentTime := time.Now()
 	tripName := currentTime.Format("Jan 2, 2006")
@@ -171,7 +175,7 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 		WithArgs(newTripID, storeCategoryID).
 		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	s.mock.ExpectQuery("^INSERT INTO \"items\" (.+)$").
-		WithArgs(newTripID, sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), 1, false, 1, nil, sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, nil).
+		WithArgs(newTripID, sqlmock.AnyArg(), sqlmock.AnyArg(), nil, sqlmock.AnyArg(), 1, false, 1, nil, sqlmock.AnyArg(), sqlmock.AnyArg(), AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(uuid.NewV4()))
 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -182,6 +186,14 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 		"copyRemainingItems": true,
 	}
 	s.mock.ExpectCommit()
+
+	// AddStapleItemsToNewTrip
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"stores\"*").
+		WithArgs(storeID).
+		WillReturnRows(s.mock.NewRows([]string{"id"}).AddRow(storeID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_staple_items\"*").
+		WithArgs(storeID).
+		WillReturnRows(s.mock.NewRows([]string{}))
 
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
