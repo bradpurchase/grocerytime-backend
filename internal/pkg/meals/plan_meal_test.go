@@ -118,7 +118,7 @@ func (s *Suite) TestPlanMeal_Valid() {
 	s.mock.ExpectExec("^UPDATE items SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.mock.ExpectQuery("^INSERT INTO \"items\" (.+)$").
-		WithArgs(tripID, sqlmock.AnyArg(), userID, itemName, quantity, false, 1, nil, nil, nil, AnyTime{}, AnyTime{}, nil).
+		WithArgs(tripID, sqlmock.AnyArg(), userID, nil, itemName, quantity, false, 1, nil, nil, nil, AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
 		WillReturnResult(sqlmock.NewResult(1, 1))
