@@ -476,6 +476,16 @@ func init() {
 					},
 					Resolve: resolvers.SaveStapleItem,
 				},
+				"removeStapleItem": &graphql.Field{
+					Type:        gql.StoreStapleItemType,
+					Description: "Unmarks an item as a staple in a store",
+					Args: graphql.FieldConfigArgument{
+						"stapleItemId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.RemoveStapleItem,
+				},
 				// Meals
 				"createRecipe": &graphql.Field{
 					Type:        gql.RecipeType,
