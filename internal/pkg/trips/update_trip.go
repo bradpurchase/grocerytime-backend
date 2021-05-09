@@ -157,10 +157,11 @@ func AddStapleItemsToNewTrip(trip models.GroceryTrip) (err error) {
 	}
 
 	for i := range stapleItems {
+		stapleItem := stapleItems[i]
 		args := map[string]interface{}{
 			"tripId":       trip.ID,
-			"name":         stapleItems[i].Name,
-			"stapleItemId": stapleItems[i].ID,
+			"name":         stapleItem.Name,
+			"stapleItemId": stapleItem.ID,
 		}
 		userID := store.UserID
 		_, err := AddItem(userID, args)
