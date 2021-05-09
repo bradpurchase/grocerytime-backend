@@ -9,7 +9,6 @@ import (
 )
 
 // SaveStapleItem saves an item as a staple in the store ID provided
-// TODO test this
 func SaveStapleItem(storeID uuid.UUID, itemID uuid.UUID) (staple models.StoreStapleItem, err error) {
 	var item models.Item
 	if err := db.Manager.Where("id = ?", itemID).First(&item).Error; err != nil {
