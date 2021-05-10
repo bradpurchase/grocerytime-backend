@@ -6,19 +6,22 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// RemoveStapleItem saves an item as a staple in the store ID provided
+// RemoveStapleItem dissocates any staple_item_id from items for this staple item and deletes the staple item
 func RemoveStapleItem(itemID uuid.UUID) (staple models.StoreStapleItem, err error) {
 	var item models.Item
 	if err := db.Manager.Select("staple_item_id").Where("id = ?", itemID).First(&item).Error; err != nil {
 		return staple, err
 	}
-
 	if err := db.Manager.Where("id = ?", item.StapleItemID).Delete(&staple).Error; err != nil {
 		return staple, err
 	}
 
-	// Update the item to dissociate staple_item_id
-	if err := db.Manager.Model(&item).Where("staple_item_id = ?", item.StapleItemID).Update("staple_item_id", nil).Error; err != nil {
+	updateQuery := db.Manager.
+		Model(&item).
+		Where("staple_item_id = ?", item.StapleItemID).
+		Update("staple_item_id", nil).
+		Error
+	if err := updateQuery; err != nil {
 		return staple, err
 	}
 
