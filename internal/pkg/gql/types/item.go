@@ -75,6 +75,9 @@ var ItemType = graphql.NewObject(
 			"mealName": &graphql.Field{
 				Type: graphql.String,
 			},
+			"stapleItemId": &graphql.Field{
+				Type: graphql.ID,
+			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},

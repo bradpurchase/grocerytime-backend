@@ -463,6 +463,29 @@ func init() {
 					},
 					Resolve: resolvers.AddItemsToStore,
 				},
+				"saveStapleItem": &graphql.Field{
+					Type:        gql.StoreStapleItemType,
+					Description: "Saves an item as a staple, meaning that will be automatically added to each trip",
+					Args: graphql.FieldConfigArgument{
+						"storeId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+						"itemId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.SaveStapleItem,
+				},
+				"removeStapleItem": &graphql.Field{
+					Type:        gql.StoreStapleItemType,
+					Description: "Unmarks an item as a staple in a store",
+					Args: graphql.FieldConfigArgument{
+						"itemId": &graphql.ArgumentConfig{
+							Type: graphql.NewNonNull(graphql.ID),
+						},
+					},
+					Resolve: resolvers.RemoveStapleItem,
+				},
 				// Meals
 				"createRecipe": &graphql.Field{
 					Type:        gql.RecipeType,

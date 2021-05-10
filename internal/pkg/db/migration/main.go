@@ -106,6 +106,47 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Migrator().DropTable("store_item_category_settings")
 			},
 		},
+		{
+			ID: "202105050742_create_store_staple_items",
+			Migrate: func(tx *gorm.DB) error {
+				type StoreStapleItem struct {
+					ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+					StoreID uuid.UUID `gorm:"type:uuid;not null;index:idx_store_staple_items_store_id"`
+					Name    string    `gorm:"type:varchar(100);not null"`
+
+					CreatedAt time.Time
+					UpdatedAt time.Time
+					DeletedAt gorm.DeletedAt
+				}
+				return tx.AutoMigrate(&StoreStapleItem{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("store_staple_items")
+			},
+		},
+		{
+			// Add index idx_store_staple_items_store_id_name
+			ID: "202105050820_add_idx_store_staple_items_store_id_name",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.Exec("CREATE INDEX IF NOT EXISTS idx_store_staple_items_store_id_name ON store_staple_items (store_id, name)").Error
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Exec("DROP INDEX idx_store_staple_items_store_id_name").Error
+			},
+		},
+		{
+			// Add column staple_id to items
+			ID: "202105060735_add_staple_id_to_items",
+			Migrate: func(tx *gorm.DB) error {
+				type Item struct {
+					StapleItemID *uuid.UUID `gorm:"type:uuid;index"`
+				}
+				return tx.AutoMigrate(&Item{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropColumn("people", "age")
+			},
+		},
 	})
 	return m.Migrate()
 }

@@ -13,6 +13,7 @@ type Item struct {
 	GroceryTripID uuid.UUID  `gorm:"type:uuid;not null;index:idx_items_grocery_trip_id_name"`
 	CategoryID    *uuid.UUID `gorm:"type:uuid;not null"`
 	UserID        uuid.UUID  `gorm:"type:uuid;not null"`
+	StapleItemID  *uuid.UUID `gorm:"type:uuid;index"`
 	Name          string     `gorm:"type:varchar(100);not null;index:idx_items_grocery_trip_id_name"`
 	Quantity      int        `gorm:"default:1;not null"`
 	Completed     *bool      `gorm:"default:false;not null"`
@@ -28,6 +29,7 @@ type Item struct {
 	// Associations
 	GroceryTrip GroceryTrip
 	Meal        Meal
+	StapleItem  StoreStapleItem
 }
 
 // BeforeCreate hook updates the item position
