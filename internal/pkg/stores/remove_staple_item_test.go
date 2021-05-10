@@ -9,7 +9,7 @@ import (
 
 func (s *Suite) TestRemoveStapleItem_StapleItemNotFound() {
 	itemID := uuid.NewV4()
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_staple_items\"*").
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
 		WillReturnRows(sqlmock.NewRows([]string{}))
 
@@ -20,14 +20,20 @@ func (s *Suite) TestRemoveStapleItem_StapleItemNotFound() {
 
 func (s *Suite) TestRemoveStapleItem_StapleItemRemoved() {
 	itemID := uuid.NewV4()
-	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_staple_items\"*").
+	stapleItemID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
 		WithArgs(itemID).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
+		WillReturnRows(sqlmock.NewRows([]string{"id", "staple_item_id"}).AddRow(itemID, stapleItemID))
 
 	s.mock.ExpectExec("^UPDATE \"store_staple_items\"*").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	stapleItem, err := RemoveStapleItem(itemID)
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
+	s.mock.ExpectExec("^UPDATE \"items\"*").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	_, err := RemoveStapleItem(itemID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), stapleItem.ID, itemID)
 }

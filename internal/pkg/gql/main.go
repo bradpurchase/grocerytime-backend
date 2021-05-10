@@ -480,7 +480,7 @@ func init() {
 					Type:        gql.StoreStapleItemType,
 					Description: "Unmarks an item as a staple in a store",
 					Args: graphql.FieldConfigArgument{
-						"stapleItemId": &graphql.ArgumentConfig{
+						"itemId": &graphql.ArgumentConfig{
 							Type: graphql.NewNonNull(graphql.ID),
 						},
 					},

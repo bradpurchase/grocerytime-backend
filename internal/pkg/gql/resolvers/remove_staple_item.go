@@ -15,11 +15,11 @@ func RemoveStapleItem(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	stapleItemID, err := uuid.FromString(p.Args["stapleItemId"].(string))
+	itemID, err := uuid.FromString(p.Args["itemId"].(string))
 	if err != nil {
 		return nil, err
 	}
-	item, err := stores.RemoveStapleItem(stapleItemID)
+	item, err := stores.RemoveStapleItem(itemID)
 	if err != nil {
 		return nil, err
 	}

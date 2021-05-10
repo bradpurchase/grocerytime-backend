@@ -7,14 +7,20 @@ import (
 )
 
 // RemoveStapleItem saves an item as a staple in the store ID provided
-func RemoveStapleItem(stapleItemID uuid.UUID) (staple models.StoreStapleItem, err error) {
-	if err := db.Manager.Where("id = ?", stapleItemID).First(&staple).Error; err != nil {
+func RemoveStapleItem(itemID uuid.UUID) (staple models.StoreStapleItem, err error) {
+	var item models.Item
+	if err := db.Manager.Select("staple_item_id").Where("id = ?", itemID).First(&item).Error; err != nil {
 		return staple, err
 	}
 
-	// This makes for quick lookup and setting/unsetting items as staples
-	if err := db.Manager.Delete(&staple).Error; err != nil {
+	if err := db.Manager.Where("id = ?", item.StapleItemID).Delete(&staple).Error; err != nil {
 		return staple, err
 	}
+
+	// Update the item to dissociate staple_item_id
+	if err := db.Manager.Model(&item).Where("staple_item_id = ?", item.StapleItemID).Update("staple_item_id", nil).Error; err != nil {
+		return staple, err
+	}
+
 	return staple, nil
 }
