@@ -3,7 +3,6 @@ package models
 import (
 	"time"
 
-	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
@@ -40,18 +39,18 @@ func (u *User) BeforeDelete(tx *gorm.DB) (err error) {
 		return err
 	}
 
+	// Delete store users
+	var storeUsers []StoreUser
+	if err := tx.Unscoped().Where("user_id = ?", u.ID).Delete(&storeUsers).Error; err != nil {
+		return err
+	}
+
 	// Delete stores
 	// The Store model has an AfterDelete hook which handles deleting associated
 	// records after the store is deleted
 	var userStores []Store
-	if err := tx.Where("user_id = ?").Find(&userStores).Error; err != nil {
+	if err := tx.Unscoped().Where("user_id = ?", u.ID).Delete(&userStores).Error; err != nil {
 		return err
-	}
-	for i := range userStores {
-		_, err := stores.DeleteStore(userStores[i].ID, u.ID)
-		if err != nil {
-			return err
-		}
 	}
 
 	// TODO: Delete meals/recipes
