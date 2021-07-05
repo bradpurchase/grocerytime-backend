@@ -240,6 +240,11 @@ func init() {
 					},
 					Resolve: resolvers.ResetPasswordResolver,
 				},
+				"deleteAccount": &graphql.Field{
+					Type:        gql.UserType,
+					Description: "Deletes a user account",
+					Resolve:     resolvers.DeleteAccountResolver,
+				},
 				"createStore": &graphql.Field{
 					Type:        gql.StoreType,
 					Description: "Create a store",

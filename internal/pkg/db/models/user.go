@@ -4,6 +4,7 @@ import (
 	"time"
 
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -22,4 +23,36 @@ type User struct {
 	// Associations
 	Stores []Store
 	Tokens []AuthToken
+}
+
+// BeforeDelete handles removing associated data before a user account is deleted
+func (u *User) BeforeDelete(tx *gorm.DB) (err error) {
+	// Hard-delete auth tokens
+	var authTokens []AuthToken
+	if err := tx.Unscoped().Where("user_id = ?", u.ID).Delete(&authTokens).Error; err != nil {
+		return err
+	}
+
+	// Hard-delete devices
+	var devices []Device
+	if err := tx.Unscoped().Where("user_id = ?", u.ID).Delete(&devices).Error; err != nil {
+		return err
+	}
+
+	// Delete store users
+	var storeUsers []StoreUser
+	if err := tx.Unscoped().Where("user_id = ?", u.ID).Delete(&storeUsers).Error; err != nil {
+		return err
+	}
+
+	// Delete stores
+	// The Store model has an AfterDelete hook which handles deleting associated
+	// records after the store is deleted
+	var userStores []Store
+	if err := tx.Unscoped().Where("user_id = ?", u.ID).Delete(&userStores).Error; err != nil {
+		return err
+	}
+
+	// TODO: Delete meals/recipes
+	return nil
 }
