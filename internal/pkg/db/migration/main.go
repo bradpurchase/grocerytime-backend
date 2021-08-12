@@ -144,7 +144,7 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.AutoMigrate(&Item{})
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropColumn("people", "age")
+				return tx.Migrator().DropColumn("items", "staple_item_id")
 			},
 		},
 	})
