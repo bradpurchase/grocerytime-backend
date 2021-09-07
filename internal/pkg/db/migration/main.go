@@ -152,12 +152,15 @@ func AutoMigrateService(db *gorm.DB) error {
 			ID: "202109070759_add_instructions_to_recipes",
 			Migrate: func(tx *gorm.DB) error {
 				type Recipe struct {
-					Instructions *string `gorm:"type:text"`
+					Instructions datatypes.JSON
 				}
 				return tx.AutoMigrate(&Recipe{})
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropColumn("recipes", "instructions")
+				type Recipe struct {
+					Instructions datatypes.JSON
+				}
+				return tx.Migrator().DropColumn(&Recipe{}, "instructions")
 			},
 		},
 	})
