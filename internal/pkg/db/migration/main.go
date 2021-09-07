@@ -147,6 +147,19 @@ func AutoMigrateService(db *gorm.DB) error {
 				return tx.Migrator().DropColumn("people", "age")
 			},
 		},
+		{
+			// Add column instructions to recipes
+			ID: "202109070759_add_instructions_to_recipes",
+			Migrate: func(tx *gorm.DB) error {
+				type Recipe struct {
+					Instructions *string `gorm:"type:text"`
+				}
+				return tx.AutoMigrate(&Recipe{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropColumn("recipes", "instructions")
+			},
+		},
 	})
 	return m.Migrate()
 }
