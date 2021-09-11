@@ -1,25 +1,31 @@
 package meals
 
 import (
+	"encoding/json"
+
 	"github.com/DATA-DOG/go-sqlmock"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/datatypes"
 )
 
 func (s *Suite) TestCreateRecipe_NoIngredients() {
 	userID := uuid.NewV4()
+	var instructions []interface{}
+	instructionsEncoded, _ := json.Marshal(instructions)
+	instructionsJSON := datatypes.JSON(instructionsEncoded)
 
 	args := map[string]interface{}{
 		"name":        "PB&J",
 		"mealType":    "Snack",
 		"url":         "https://www.food.com/recipe/traditional-peanut-butter-and-jelly-243965",
-		"ingredients": nil,
+		"ingredients": instructions,
 	}
 
 	recipeID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"recipes\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), args["name"], "", args["mealType"], args["url"], "", AnyTime{}, AnyTime{}, nil).
+		WithArgs(sqlmock.AnyArg(), args["name"], "", instructionsJSON, args["mealType"], args["url"], "", AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(recipeID))
 
 	recipe, err := CreateRecipe(userID, args)
@@ -47,6 +53,8 @@ func (s *Suite) TestCreateRecipe_FullDetails() {
 	ingName2 := "Strawberry Jam"
 	unit2 := "tsp"
 
+	var instructions []interface{}
+
 	args := map[string]interface{}{
 		"name":        "PB&J",
 		"description": "Nothing fancy, just a classic. Either smooth or crunch peanut butter is acceptable. Classically, the jelly is either strawberry or grape.",
@@ -71,11 +79,15 @@ func (s *Suite) TestCreateRecipe_FullDetails() {
 				"notes":  notes1,
 			},
 		},
+		"instructions": instructions,
 	}
+
+	instructionsEncoded, _ := json.Marshal(instructions)
+	instructionsJSON := datatypes.JSON(instructionsEncoded)
 
 	recipeID := uuid.NewV4()
 	s.mock.ExpectQuery("^INSERT INTO \"recipes\" (.+)$").
-		WithArgs(sqlmock.AnyArg(), args["name"], args["description"], args["mealType"], args["url"], args["imageUrl"], AnyTime{}, AnyTime{}, nil).
+		WithArgs(sqlmock.AnyArg(), args["name"], args["description"], instructionsJSON, args["mealType"], args["url"], args["imageUrl"], AnyTime{}, AnyTime{}, nil).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(recipeID))
 
 	// Note: because we are creating the recipe_ingredients using the association,
