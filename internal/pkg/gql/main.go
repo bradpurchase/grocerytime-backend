@@ -532,6 +532,24 @@ func init() {
 								},
 							)),
 						},
+						"instructions": &graphql.ArgumentConfig{
+							Type: graphql.NewList(graphql.NewInputObject(
+								graphql.InputObjectConfig{
+									Name: "RecipeInstructionInput",
+									Fields: graphql.InputObjectConfigFieldMap{
+										"url": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+										"name": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+										"text": &graphql.InputObjectFieldConfig{
+											Type: graphql.String,
+										},
+									},
+								},
+							)),
+						},
 					},
 					Resolve: resolvers.CreateRecipeResolver,
 				},

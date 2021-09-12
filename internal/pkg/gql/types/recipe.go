@@ -34,6 +34,9 @@ var RecipeType = graphql.NewObject(
 					return p.Source.(models.Recipe).Ingredients, nil
 				},
 			},
+			"instructions": &graphql.Field{
+				Type: graphql.String,
+			},
 			"createdAt": &graphql.Field{
 				Type: graphql.DateTime,
 			},

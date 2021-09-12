@@ -1,11 +1,13 @@
 package meals
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/datatypes"
 )
 
 // CreateRecipe creates a recipe record and associated records
@@ -36,14 +38,26 @@ func CreateRecipe(userID uuid.UUID, args map[string]interface{}) (recipe *models
 			return recipe, errors.New("could not create ingredients")
 		}
 	}
+
+	var instructions []interface{}
+	if args["instructions"] != nil {
+		instructions = args["instructions"].([]interface{})
+	}
+	instructionsEncoded, err := json.Marshal(instructions)
+	if err != nil {
+		return recipe, err
+	}
+	instructionsJSON := datatypes.JSON(instructionsEncoded)
+
 	recipe = &models.Recipe{
-		UserID:      userID,
-		Name:        args["name"].(string),
-		Description: &desc,
-		MealType:    &mealType,
-		URL:         &url,
-		ImageURL:    &imageURL,
-		Ingredients: ingredients,
+		UserID:       userID,
+		Name:         args["name"].(string),
+		Description:  &desc,
+		MealType:     &mealType,
+		URL:          &url,
+		ImageURL:     &imageURL,
+		Ingredients:  ingredients,
+		Instructions: &instructionsJSON,
 	}
 	if err := db.Manager.Create(&recipe).Error; err != nil {
 		return recipe, err
