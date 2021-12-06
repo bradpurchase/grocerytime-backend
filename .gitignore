@@ -4,4 +4,4 @@
 *.db
 .vscode
 .idea
-certs/*.p12
+certs/**/*.p12
