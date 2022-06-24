@@ -1,6 +1,8 @@
 package models
 
 import (
+	"regexp"
+	"strconv"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -45,6 +47,12 @@ func (i *Item) AfterCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
+// BeforeSave hook
+func (i *Item) BeforeSave(tx *gorm.DB) (err error) {
+	i.Name, i.Quantity = i.parseItemName()
+	return nil
+}
+
 // BeforeUpdate hook handles reordering items
 func (i *Item) BeforeUpdate(tx *gorm.DB) (err error) {
 	item := &Item{}
@@ -67,4 +75,22 @@ func (i *Item) BeforeUpdate(tx *gorm.DB) (err error) {
 func (i *Item) AfterUpdate(tx *gorm.DB) (err error) {
 	tx.Model(&GroceryTrip{}).Where("id = ?", i.GroceryTripID).Update("updated_at", time.Now())
 	return nil
+}
+
+// ParseItemName handles inline quantity in the item name (e.g. Orange x 5) and
+// returns a parsed version of both the name and quantity
+func (i *Item) parseItemName() (parsedName string, parsedQuantity int) {
+	re := regexp.MustCompile("^(.*)(\\s)x(\\s?)(\\d+)(\\s+)?")
+	match := re.FindStringSubmatch(i.Name)
+	if match != nil {
+		var err error
+		parsedQuantity, err = strconv.Atoi(match[4])
+		if err != nil {
+			return i.Name, i.Quantity
+		}
+		// Strip the quantity out of the name
+		parsedName = re.ReplaceAllString(i.Name, "$1")
+		return parsedName, parsedQuantity
+	}
+	return i.Name, i.Quantity
 }

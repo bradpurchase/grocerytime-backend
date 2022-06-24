@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
@@ -40,7 +38,6 @@ func AddItem(userID uuid.UUID, args map[string]interface{}) (addedItem *models.I
 	if args["quantity"] != nil {
 		quantity = args["quantity"].(int)
 	}
-	itemName, quantity = ParseItemName(itemName, quantity)
 
 	item := &models.Item{
 		GroceryTripID: tripID,
@@ -171,24 +168,6 @@ func DetermineCategoryName(name string, storeID uuid.UUID) (result string, err e
 	}
 
 	return result, nil
-}
-
-// ParseItemName handles inline quantity in the item name (e.g. Orange x 5) and
-// returns a parsed version of both the name and quantity
-func ParseItemName(name string, quantity int) (parsedName string, parsedQuantity int) {
-	re := regexp.MustCompile("^(.*)(\\s)x(\\s?)(\\d+)(\\s+)?")
-	match := re.FindStringSubmatch(name)
-	if match != nil {
-		var err error
-		parsedQuantity, err = strconv.Atoi(match[4])
-		if err != nil {
-			return name, quantity
-		}
-		// Strip the quantity out of the name
-		parsedName = re.ReplaceAllString(name, "$1")
-		return parsedName, parsedQuantity
-	}
-	return name, quantity
 }
 
 func FindStoreCategoryName(id uuid.UUID) (name string) {

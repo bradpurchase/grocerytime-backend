@@ -23,7 +23,6 @@ func UpdateItem(args map[string]interface{}) (interface{}, error) {
 	if args["completed"] != nil {
 		completed := args["completed"].(bool)
 		item.Completed = &completed
-		//item.Position = GetNewPosition(db, item.GroceryTripID, completed)
 	}
 	if args["quantity"] != nil {
 		item.Quantity = args["quantity"].(int)
@@ -57,6 +56,7 @@ func UpdateItem(args map[string]interface{}) (interface{}, error) {
 			}
 		}
 	}
+
 	if err := db.Manager.Save(&item).Error; err != nil {
 		return nil, err
 	}
