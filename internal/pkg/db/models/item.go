@@ -59,7 +59,7 @@ func (i *Item) AfterCreate(tx *gorm.DB) (err error) {
 
 // BeforeSave hook
 func (i *Item) BeforeSave(tx *gorm.DB) (err error) {
-	// Verify that the current user belongs to this store
+	// Verify that the item can be added/saved to the trip
 	var trip GroceryTrip
 	if err := tx.Select("store_id").Where("id = ?", i.GroceryTripID).Last(&trip).Error; err != nil {
 		return errors.New("trip does not exist")
