@@ -59,7 +59,7 @@ func (s *Suite) TestRetrieveCurrentStoreTripForUser_UserNotMemberOfStore() {
 	user := models.User{ID: uuid.NewV4()}
 	_, err := RetrieveCurrentStoreTripForUser(storeID, user)
 	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "user is not a member of this store")
+	assert.Equal(s.T(), "user is not a member of this store", err.Error())
 }
 
 func (s *Suite) TestRetrieveCurrentStoreTripForUser_TripNotAssociatedWithStore() {
@@ -71,7 +71,7 @@ func (s *Suite) TestRetrieveCurrentStoreTripForUser_TripNotAssociatedWithStore()
 
 	_, err := RetrieveCurrentStoreTripForUser(storeID, user)
 	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "could not find trip associated with this store")
+	assert.Equal(s.T(), "could not find trip associated with this store", err.Error())
 }
 
 func (s *Suite) TestRetrieveCurrentStoreTripForUser_FoundResult() {

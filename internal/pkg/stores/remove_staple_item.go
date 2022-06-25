@@ -19,7 +19,7 @@ func RemoveStapleItem(itemID uuid.UUID) (staple models.StoreStapleItem, err erro
 	updateQuery := db.Manager.
 		Model(&item).
 		Where("staple_item_id = ?", item.StapleItemID).
-		Update("staple_item_id", nil).
+		UpdateColumn("staple_item_id", nil).
 		Error
 	if err := updateQuery; err != nil {
 		return staple, err
