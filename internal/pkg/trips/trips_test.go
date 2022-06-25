@@ -148,33 +148,32 @@ func (s *Suite) TestRetrieveTrip_Found() {
 func (s *Suite) TestUpdateTrip_TripNotFound() {
 	tripID := uuid.NewV4()
 
-	args := map[string]interface{}{"tripId": tripID}
-	result, e := UpdateTrip(args)
-	require.Error(s.T(), e)
-	assert.Nil(s.T(), result)
-	assert.Equal(s.T(), e.Error(), "trip does not exist")
-}
-
-func (s *Suite) TestUpdateTrip_NameUpdate() {
-	tripID := uuid.NewV4()
 	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
 		WithArgs(tripID).
-		WillReturnRows(s.mock.NewRows([]string{"id", "name"}).AddRow(tripID, "My First Trip"))
+		WillReturnRows(s.mock.NewRows([]string{}))
 
-	args := map[string]interface{}{
-		"tripId": tripID,
-		"name":   "My Second Trip",
-	}
-
-	s.mock.ExpectBegin()
-	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
-		WillReturnResult(sqlmock.NewResult(1, 1))
-	s.mock.ExpectCommit()
-
-	trip, err := UpdateTrip(args)
-	require.NoError(s.T(), err)
-	assert.Equal(s.T(), trip.(models.GroceryTrip).Name, "My Second Trip")
+	args := map[string]interface{}{"tripId": tripID}
+	_, e := UpdateTrip(args)
+	require.Error(s.T(), e)
 }
+
+// func (s *Suite) TestUpdateTrip_NameUpdate() {
+// 	tripID := uuid.NewV4()
+// 	args := map[string]interface{}{
+// 		"tripId": tripID,
+// 		"name":   "My Second Trip",
+// 	}
+// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+// 		WithArgs(tripID).
+// 		WillReturnRows(s.mock.NewRows([]string{"id", "name"}).AddRow(tripID, "My First Trip"))
+
+// 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+// 		WillReturnResult(sqlmock.NewResult(1, 1))
+
+// 	_, err := UpdateTrip(args)
+// 	require.NoError(s.T(), err)
+// 	assert.Equal(s.T(), "My Second Trip", trip.(models.GroceryTrip).Name)
+// }
 
 func (s *Suite) TestUpdateTrip_DupeTripName() {
 	tripID := uuid.NewV4()
@@ -422,6 +421,10 @@ func (s *Suite) TestAddItem_TripDoesntExist() {
 	tripID := uuid.NewV4()
 	userID := uuid.NewV4()
 	args := map[string]interface{}{"tripId": tripID, "name": "Test"}
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(tripID).
+		WillReturnRows(s.mock.NewRows([]string{}))
 
 	_, err := AddItem(userID, args)
 	require.Error(s.T(), err)
@@ -674,98 +677,195 @@ func (s *Suite) TestUpdateItem_NoUpdates() {
 	assert.Equal(s.T(), item.(*models.Item).Quantity, 5)
 }
 
-// func (s *Suite) TestUpdateItem_UpdateSingleColumn() {
-// 	itemID := uuid.NewV4()
-// 	tripID := uuid.NewV4()
-// 	userID := uuid.NewV4()
+func (s *Suite) TestUpdateItem_UpdateSingleColumn() {
+	itemID := uuid.NewV4()
+	tripID := uuid.NewV4()
+	storeID := uuid.NewV4()
+	userID := uuid.NewV4()
 
-// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
-// 		WithArgs(itemID).
-// 		WillReturnRows(sqlmock.
-// 			NewRows([]string{
-// 				"id",
-// 				"grocery_trip_id",
-// 				"user_id",
-// 				"name",
-// 				"quantity",
-// 				"completed",
-// 				"created_at",
-// 				"updated_at",
-// 			}).
-// 			AddRow(itemID, tripID, userID, "Apples", 5, false, time.Now(), time.Now()))
+	trip := &models.GroceryTrip{ID: tripID, StoreID: storeID}
 
-// 	s.mock.ExpectBegin()
-// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
-// 		WithArgs(itemID).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
-// 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
-// 		WillReturnResult(sqlmock.NewResult(1, 1))
-// 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
-// 		WillReturnResult(sqlmock.NewResult(1, 1))
-// 	s.mock.ExpectCommit()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.
+			NewRows([]string{
+				"id",
+				"grocery_trip_id",
+				"user_id",
+				"name",
+				"quantity",
+				"completed",
+				"notes",
+				"created_at",
+				"updated_at",
+			}).
+			AddRow(itemID, trip.ID, userID, "Apples", 5, false, nil, time.Now(), time.Now()))
 
-// 	completed := true
-// 	args := map[string]interface{}{"itemId": itemID, "completed": completed}
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(trip.ID).
+		WillReturnRows(s.mock.NewRows([]string{"id", "store_id"}).AddRow(trip.ID, trip.StoreID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(trip.StoreID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), trip.StoreID, userID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_item_category_settings\"*").
+		WithArgs(trip.StoreID, "apples").
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
-// 	item, err := UpdateItem(args)
-// 	require.NoError(s.T(), err)
-// 	// Assert only completed state changed
-// 	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
-// 	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
-// 	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
-// 	assert.Equal(s.T(), item.(*models.Item).Name, "Apples")
-// 	assert.Equal(s.T(), item.(*models.Item).Quantity, 5)
-// 	assert.Equal(s.T(), item.(*models.Item).Completed, &completed)
-// }
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
 
-// func (s *Suite) TestUpdateItem_UpdateMultiColumn() {
-// 	itemID := uuid.NewV4()
-// 	tripID := uuid.NewV4()
-// 	userID := uuid.NewV4()
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
 
-// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
-// 		WithArgs(itemID).
-// 		WillReturnRows(sqlmock.
-// 			NewRows([]string{
-// 				"id",
-// 				"grocery_trip_id",
-// 				"user_id",
-// 				"name",
-// 				"quantity",
-// 				"completed",
-// 				"created_at",
-// 				"updated_at",
-// 			}).
-// 			AddRow(itemID, tripID, userID, "Apples", 5, false, time.Now(), time.Now()))
+	completed := true
+	args := map[string]interface{}{"itemId": itemID, "completed": completed}
 
-// 	s.mock.ExpectBegin()
-// 	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
-// 		WithArgs(itemID).
-// 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
-// 	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
-// 		WillReturnResult(sqlmock.NewResult(1, 1))
-// 	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
-// 		WillReturnResult(sqlmock.NewResult(1, 1))
-// 	s.mock.ExpectCommit()
+	item, err := UpdateItem(args)
+	require.NoError(s.T(), err)
+	// Assert only completed state changed
+	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
+	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
+	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
+	assert.Equal(s.T(), item.(*models.Item).Name, "Apples")
+	assert.Equal(s.T(), item.(*models.Item).Quantity, 5)
+	assert.Equal(s.T(), item.(*models.Item).Completed, &completed)
+}
 
-// 	completed := true
-// 	args := map[string]interface{}{
-// 		"itemId":    itemID,
-// 		"quantity":  10,
-// 		"completed": completed,
-// 		"name":      "Bananas",
-// 	}
+func (s *Suite) TestUpdateItem_UpdateMultiColumn() {
+	itemID := uuid.NewV4()
+	tripID := uuid.NewV4()
+	storeID := uuid.NewV4()
+	userID := uuid.NewV4()
 
-// 	item, err := UpdateItem(args)
-// 	require.NoError(s.T(), err)
-// 	// Assert only quantity and completed states changed
-// 	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
-// 	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
-// 	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
-// 	assert.Equal(s.T(), item.(*models.Item).Name, "Bananas")
-// 	assert.Equal(s.T(), item.(*models.Item).Quantity, 10)
-// 	assert.Equal(s.T(), item.(*models.Item).Completed, &completed)
-// }
+	trip := &models.GroceryTrip{ID: tripID, StoreID: storeID}
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.
+			NewRows([]string{
+				"id",
+				"grocery_trip_id",
+				"user_id",
+				"name",
+				"quantity",
+				"completed",
+				"notes",
+				"created_at",
+				"updated_at",
+			}).
+			AddRow(itemID, trip.ID, userID, "Apples", 5, false, nil, time.Now(), time.Now()))
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(trip.ID).
+		WillReturnRows(s.mock.NewRows([]string{"id", "store_id"}).AddRow(trip.ID, trip.StoreID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(trip.StoreID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), trip.StoreID, userID))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_item_category_settings\"*").
+		WithArgs(trip.StoreID, "bananas").
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
+
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	completed := true
+	args := map[string]interface{}{
+		"itemId":    itemID,
+		"quantity":  10,
+		"completed": completed,
+		"name":      "Bananas",
+	}
+
+	item, err := UpdateItem(args)
+	require.NoError(s.T(), err)
+	// Assert only quantity and completed states changed
+	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
+	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
+	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
+	assert.Equal(s.T(), item.(*models.Item).Name, "Bananas")
+	assert.Equal(s.T(), item.(*models.Item).Quantity, 10)
+	assert.Equal(s.T(), item.(*models.Item).Completed, &completed)
+}
+
+// Item reordering
+
+func (s *Suite) TestReorderItem_ReorderItemPosition() {
+	itemID := uuid.NewV4()
+	userID := uuid.NewV4()
+	tripID := uuid.NewV4()
+	storeID := uuid.NewV4()
+
+	trip := &models.GroceryTrip{ID: tripID, StoreID: storeID}
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "grocery_trip_id", "user_id", "name"}).AddRow(itemID, tripID, userID, "Apples"))
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(trip.ID).
+		WillReturnRows(s.mock.NewRows([]string{"id", "store_id"}).AddRow(trip.ID, trip.StoreID))
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_users\"*").
+		WithArgs(trip.StoreID, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "store_id", "user_id"}).AddRow(uuid.NewV4(), trip.StoreID, userID))
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"store_item_category_settings\"*").
+		WithArgs(trip.StoreID, strings.ToLower("apples")).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(itemID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
+
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	s.mock.ExpectExec("^UPDATE \"grocery_trips\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(tripID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
+
+	trip, err := ReorderItem(itemID, 4)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), trip.ID, tripID)
+}
+
+// Mark item as completed
+
+func (s *Suite) TestMarkItemAsCompleted_CouldNotUpdate() {
+	userID := uuid.NewV4()
+
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	_, err := MarkItemAsCompleted("", userID)
+	require.Error(s.T(), err)
+	assert.Equal(s.T(), err.Error(), "could not update items")
+}
+
+func (s *Suite) TestMarkItemAsCompleted_Updated() {
+	userID := uuid.NewV4()
+	name := "Apples"
+
+	s.mock.ExpectExec("^UPDATE \"items\" SET (.+)$").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	itemID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(name, userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(itemID))
+
+	_, err := MarkItemAsCompleted(name, userID)
+	require.NoError(s.T(), err)
+}
 
 // Delete item
 
@@ -831,4 +931,56 @@ func (s *Suite) TestDeleteItem_SuccessLastInCategory() {
 	item, err := DeleteItem(itemID)
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), item.ID, itemID)
+}
+
+// Item search
+
+func (s *Suite) TestSearchForItemByName_NoTripHistory() {
+	userID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+
+	_, e := SearchForItemByName("zap", userID)
+	require.Error(s.T(), e)
+	assert.Equal(s.T(), e.Error(), "no item matches the search term")
+}
+
+func (s *Suite) TestSearchForItemByName_ItemNotFound() {
+	userID := uuid.NewV4()
+	tripID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
+
+	name := "zonk"
+	nameArg := fmt.Sprintf("%%%s%%", name)
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(nameArg, tripID).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "name"}))
+
+	result, err := SearchForItemByName(name, userID)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), result.Name, "")
+}
+
+func (s *Suite) TestSearchForItemByName_Found() {
+	userID := uuid.NewV4()
+	tripID := uuid.NewV4()
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"grocery_trips\"*").
+		WithArgs(userID).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(tripID))
+
+	name := "app"
+	nameArg := fmt.Sprintf("%%%s%%", name)
+	rows := sqlmock.
+		NewRows([]string{"id", "name"}).
+		AddRow(uuid.NewV4(), "Apples")
+	s.mock.ExpectQuery("^SELECT (.+) FROM \"items\"*").
+		WithArgs(nameArg, tripID).
+		WillReturnRows(rows)
+
+	item, err := SearchForItemByName(name, userID)
+	require.NoError(s.T(), err)
+	assert.Equal(s.T(), item.Name, "Apples")
 }

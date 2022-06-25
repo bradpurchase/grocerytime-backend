@@ -12,7 +12,7 @@ import (
 
 // UpdateTrip updates a grocery trip with the given args by tripID
 func UpdateTrip(args map[string]interface{}) (interface{}, error) {
-	trip := models.GroceryTrip{}
+	var trip models.GroceryTrip
 	if err := db.Manager.Where("id = ?", args["tripId"]).First(&trip).Error; err != nil {
 		return nil, errors.New("trip does not exist")
 	}
