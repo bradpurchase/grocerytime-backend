@@ -62,7 +62,7 @@ func (i *Item) BeforeSave(tx *gorm.DB) (err error) {
 	// Verify that the item can be added/saved to the trip
 	var trip GroceryTrip
 	if err := tx.Select("store_id").Where("id = ?", i.GroceryTripID).Last(&trip).Error; err != nil {
-		return err
+		return errors.New("trip does not exist")
 	}
 	var storeUser StoreUser
 	if err := tx.Where("store_id = ? AND user_id = ?", trip.StoreID, i.UserID).First(&storeUser).Error; err != nil {

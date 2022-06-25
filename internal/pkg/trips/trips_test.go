@@ -89,7 +89,7 @@ func (s *Suite) TestRetrieveCurrentStoreTripForUser_FoundResult() {
 
 	trip, err := RetrieveCurrentStoreTripForUser(storeID, user)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), trip.Name, tripName)
+	assert.Equal(s.T(), tripName, trip.Name)
 }
 
 func (s *Suite) TestRetrieveTrips_UserNotActive() {
@@ -101,7 +101,7 @@ func (s *Suite) TestRetrieveTrips_UserNotActive() {
 
 	_, e := RetrieveTrips(storeID, userID, false)
 	require.Error(s.T(), e)
-	assert.Equal(s.T(), e.Error(), "user is not active in this store")
+	assert.Equal(s.T(), "user is not active in this store", e.Error())
 }
 
 func (s *Suite) TestRetrieveTrips_Found() {
@@ -120,7 +120,7 @@ func (s *Suite) TestRetrieveTrips_Found() {
 
 	trips, err := RetrieveTrips(storeID, userID, false)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), len(trips), 2)
+	assert.Equal(s.T(), 2, len(trips))
 }
 
 func (s *Suite) TestRetrieveTrip_NotFound() {
@@ -131,7 +131,7 @@ func (s *Suite) TestRetrieveTrip_NotFound() {
 
 	_, e := RetrieveTrip(tripID)
 	require.Error(s.T(), e)
-	assert.Equal(s.T(), e.Error(), "trip not found")
+	assert.Equal(s.T(), "trip not found", e.Error())
 }
 
 func (s *Suite) TestRetrieveTrip_Found() {
@@ -142,7 +142,7 @@ func (s *Suite) TestRetrieveTrip_Found() {
 
 	trip, err := RetrieveTrip(tripID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), trip.ID, tripID)
+	assert.Equal(s.T(), tripID, trip.ID)
 }
 
 func (s *Suite) TestUpdateTrip_TripNotFound() {
@@ -222,8 +222,8 @@ func (s *Suite) TestUpdateTrip_DupeTripName() {
 
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), trip.(models.GroceryTrip).Completed, true)
-	assert.Equal(s.T(), trip.(models.GroceryTrip).CopyRemainingItems, false)
+	assert.Equal(s.T(), true, trip.(models.GroceryTrip).Completed)
+	assert.Equal(s.T(), false, trip.(models.GroceryTrip).CopyRemainingItems)
 }
 
 func (s *Suite) TestUpdateTrip_MarkCompleted() {
@@ -268,8 +268,8 @@ func (s *Suite) TestUpdateTrip_MarkCompleted() {
 
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), trip.(models.GroceryTrip).Completed, true)
-	assert.Equal(s.T(), trip.(models.GroceryTrip).CopyRemainingItems, false)
+	assert.Equal(s.T(), true, trip.(models.GroceryTrip).Completed)
+	assert.Equal(s.T(), false, trip.(models.GroceryTrip).CopyRemainingItems)
 }
 
 func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
@@ -331,8 +331,8 @@ func (s *Suite) TestUpdateTrip_MarkCompletedAndCopyRemainingItems() {
 
 	trip, err := UpdateTrip(args)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), trip.(models.GroceryTrip).Completed, true)
-	assert.Equal(s.T(), trip.(models.GroceryTrip).CopyRemainingItems, true)
+	assert.Equal(s.T(), true, trip.(models.GroceryTrip).Completed)
+	assert.Equal(s.T(), true, trip.(models.GroceryTrip).CopyRemainingItems)
 }
 
 // Items
@@ -369,10 +369,10 @@ func (s *Suite) TestRetrieveItems_HasItems() {
 
 	items, err := RetrieveItems(tripID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), len(items.([]models.Item)), 2)
-	assert.Equal(s.T(), items.([]models.Item)[0].GroceryTripID, tripID)
-	assert.Equal(s.T(), items.([]models.Item)[0].Name, "Apples")
-	assert.Equal(s.T(), items.([]models.Item)[1].Name, "Bananas")
+	assert.Equal(s.T(), 2, len(items.([]models.Item)))
+	assert.Equal(s.T(), tripID, items.([]models.Item)[0].GroceryTripID)
+	assert.Equal(s.T(), "Apples", items.([]models.Item)[0].Name)
+	assert.Equal(s.T(), "Bananas", items.([]models.Item)[1].Name)
 }
 
 func (s *Suite) TestRetrieveItemsInCategory_NoItems() {
@@ -384,7 +384,7 @@ func (s *Suite) TestRetrieveItemsInCategory_NoItems() {
 
 	items, err := RetrieveItemsInCategory(tripID, categoryID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), len(items.([]models.Item)), 0)
+	assert.Equal(s.T(), 0, len(items.([]models.Item)))
 }
 
 func (s *Suite) TestRetrieveItemsInCategory_HasItems() {
@@ -409,10 +409,10 @@ func (s *Suite) TestRetrieveItemsInCategory_HasItems() {
 
 	items, err := RetrieveItemsInCategory(tripID, categoryID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), len(items.([]models.Item)), 2)
-	assert.Equal(s.T(), items.([]models.Item)[0].GroceryTripID, tripID)
-	assert.Equal(s.T(), items.([]models.Item)[0].Name, "Apples")
-	assert.Equal(s.T(), items.([]models.Item)[1].Name, "Bananas")
+	assert.Equal(s.T(), 2, len(items.([]models.Item)))
+	assert.Equal(s.T(), tripID, items.([]models.Item)[0].GroceryTripID)
+	assert.Equal(s.T(), "Apples", items.([]models.Item)[0].Name)
+	assert.Equal(s.T(), "Bananas", items.([]models.Item)[1].Name)
 }
 
 // Add items
@@ -428,7 +428,7 @@ func (s *Suite) TestAddItem_TripDoesntExist() {
 
 	_, err := AddItem(userID, args)
 	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "trip does not exist")
+	assert.Equal(s.T(), "trip does not exist", err.Error())
 }
 
 func (s *Suite) TestAddItem_UserDoesntBelongInStore() {
@@ -446,7 +446,7 @@ func (s *Suite) TestAddItem_UserDoesntBelongInStore() {
 	args := map[string]interface{}{"tripId": tripID, "name": "Test"}
 	_, err := AddItem(userID, args)
 	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "user does not belong to this store")
+	assert.Equal(s.T(), "user does not belong to this store", err.Error())
 }
 
 func (s *Suite) TestAddItem_NoQuantityArg() {
@@ -512,9 +512,9 @@ func (s *Suite) TestAddItem_InlineQuantityInItemName() {
 
 	item, err := AddItem(userID, args)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), item.ID, itemID)
-	assert.Equal(s.T(), item.Name, "Apples")
-	assert.Equal(s.T(), item.Quantity, 6)
+	assert.Equal(s.T(), itemID, item.ID)
+	assert.Equal(s.T(), "Apples", item.Name)
+	assert.Equal(s.T(), 6, item.Quantity)
 }
 
 // Add items to store
@@ -531,7 +531,7 @@ func (s *Suite) TestAddItemsToStore_CannotFindCurrentTrip() {
 
 	_, err := AddItemsToStore(userID, args)
 	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "could not find current trip in store")
+	assert.Equal(s.T(), "could not find current trip in store", err.Error())
 }
 
 func (s *Suite) TestFindOrCreateStore_ExistingStoreFound() {
@@ -544,9 +544,9 @@ func (s *Suite) TestFindOrCreateStore_ExistingStoreFound() {
 
 	store, err := FindOrCreateStore(userID, storeName)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), store.ID, storeID)
-	assert.Equal(s.T(), store.UserID, userID)
-	assert.Equal(s.T(), store.Name, storeName)
+	assert.Equal(s.T(), storeID, store.ID)
+	assert.Equal(s.T(), userID, store.UserID)
+	assert.Equal(s.T(), storeName, store.Name)
 }
 
 func (s *Suite) TestFindOrCreateStore_StoreCreated() {
@@ -591,34 +591,7 @@ func (s *Suite) TestFindOrCreateStore_StoreCreated() {
 
 	store, err := FindOrCreateStore(userID, storeName)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), store.Name, storeName)
-}
-
-// TODO: duplicated code with the store model... DRY this up
-func fetchCategories() [20]string {
-	categories := [20]string{
-		"Produce",
-		"Bakery",
-		"Meat",
-		"Seafood",
-		"Dairy",
-		"Cereal",
-		"Baking",
-		"Dry Goods",
-		"Canned Goods",
-		"Frozen Foods",
-		"Cleaning",
-		"Paper Products",
-		"Beverages",
-		"Candy & Snacks",
-		"Condiments",
-		"Personal Care",
-		"Baby",
-		"Alcohol",
-		"Pharmacy",
-		"Misc.",
-	}
-	return categories
+	assert.Equal(s.T(), storeName, store.Name)
 }
 
 // Update item
@@ -670,11 +643,11 @@ func (s *Suite) TestUpdateItem_NoUpdates() {
 	item, err := UpdateItem(args)
 	require.NoError(s.T(), err)
 	// Assert no changes
-	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
-	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
-	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
-	assert.Equal(s.T(), item.(*models.Item).Name, "Apples")
-	assert.Equal(s.T(), item.(*models.Item).Quantity, 5)
+	assert.Equal(s.T(), itemID, item.(*models.Item).ID)
+	assert.Equal(s.T(), tripID, item.(*models.Item).GroceryTripID)
+	assert.Equal(s.T(), userID, item.(*models.Item).UserID)
+	assert.Equal(s.T(), "Apples", item.(*models.Item).Name)
+	assert.Equal(s.T(), 5, item.(*models.Item).Quantity)
 }
 
 func (s *Suite) TestUpdateItem_UpdateSingleColumn() {
@@ -726,12 +699,12 @@ func (s *Suite) TestUpdateItem_UpdateSingleColumn() {
 	item, err := UpdateItem(args)
 	require.NoError(s.T(), err)
 	// Assert only completed state changed
-	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
-	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
-	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
-	assert.Equal(s.T(), item.(*models.Item).Name, "Apples")
-	assert.Equal(s.T(), item.(*models.Item).Quantity, 5)
-	assert.Equal(s.T(), item.(*models.Item).Completed, &completed)
+	assert.Equal(s.T(), itemID, item.(*models.Item).ID)
+	assert.Equal(s.T(), tripID, item.(*models.Item).GroceryTripID)
+	assert.Equal(s.T(), userID, item.(*models.Item).UserID)
+	assert.Equal(s.T(), "Apples", item.(*models.Item).Name)
+	assert.Equal(s.T(), 5, item.(*models.Item).Quantity)
+	assert.Equal(s.T(), &completed, item.(*models.Item).Completed)
 }
 
 func (s *Suite) TestUpdateItem_UpdateMultiColumn() {
@@ -788,12 +761,12 @@ func (s *Suite) TestUpdateItem_UpdateMultiColumn() {
 	item, err := UpdateItem(args)
 	require.NoError(s.T(), err)
 	// Assert only quantity and completed states changed
-	assert.Equal(s.T(), item.(*models.Item).ID, itemID)
-	assert.Equal(s.T(), item.(*models.Item).GroceryTripID, tripID)
-	assert.Equal(s.T(), item.(*models.Item).UserID, userID)
-	assert.Equal(s.T(), item.(*models.Item).Name, "Bananas")
-	assert.Equal(s.T(), item.(*models.Item).Quantity, 10)
-	assert.Equal(s.T(), item.(*models.Item).Completed, &completed)
+	assert.Equal(s.T(), itemID, item.(*models.Item).ID)
+	assert.Equal(s.T(), tripID, item.(*models.Item).GroceryTripID)
+	assert.Equal(s.T(), userID, item.(*models.Item).UserID)
+	assert.Equal(s.T(), "Bananas", item.(*models.Item).Name)
+	assert.Equal(s.T(), 10, item.(*models.Item).Quantity)
+	assert.Equal(s.T(), &completed, item.(*models.Item).Completed)
 }
 
 // Item reordering
@@ -836,7 +809,7 @@ func (s *Suite) TestReorderItem_ReorderItemPosition() {
 
 	trip, err := ReorderItem(itemID, 4)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), trip.ID, tripID)
+	assert.Equal(s.T(), tripID, trip.ID)
 }
 
 // Mark item as completed
@@ -849,7 +822,7 @@ func (s *Suite) TestMarkItemAsCompleted_CouldNotUpdate() {
 
 	_, err := MarkItemAsCompleted("", userID)
 	require.Error(s.T(), err)
-	assert.Equal(s.T(), err.Error(), "could not update items")
+	assert.Equal(s.T(), "could not update items", err.Error())
 }
 
 func (s *Suite) TestMarkItemAsCompleted_Updated() {
@@ -877,7 +850,7 @@ func (s *Suite) TestDeleteItem_ItemNotFound() {
 
 	_, e := DeleteItem(itemID)
 	require.Error(s.T(), e)
-	assert.Equal(s.T(), e.Error(), "item not found")
+	assert.Equal(s.T(), "item not found", e.Error())
 }
 
 func (s *Suite) TestDeleteItem_SuccessMoreInCategory() {
@@ -901,7 +874,7 @@ func (s *Suite) TestDeleteItem_SuccessMoreInCategory() {
 
 	item, err := DeleteItem(itemID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), item.ID, itemID)
+	assert.Equal(s.T(), itemID, item.ID)
 }
 
 func (s *Suite) TestDeleteItem_SuccessLastInCategory() {
@@ -930,7 +903,7 @@ func (s *Suite) TestDeleteItem_SuccessLastInCategory() {
 
 	item, err := DeleteItem(itemID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), item.ID, itemID)
+	assert.Equal(s.T(), itemID, item.ID)
 }
 
 // Item search
@@ -943,7 +916,7 @@ func (s *Suite) TestSearchForItemByName_NoTripHistory() {
 
 	_, e := SearchForItemByName("zap", userID)
 	require.Error(s.T(), e)
-	assert.Equal(s.T(), e.Error(), "no item matches the search term")
+	assert.Equal(s.T(), "no item matches the search term", e.Error())
 }
 
 func (s *Suite) TestSearchForItemByName_ItemNotFound() {
@@ -961,7 +934,7 @@ func (s *Suite) TestSearchForItemByName_ItemNotFound() {
 
 	result, err := SearchForItemByName(name, userID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), result.Name, "")
+	assert.Equal(s.T(), "", result.Name)
 }
 
 func (s *Suite) TestSearchForItemByName_Found() {
@@ -982,5 +955,32 @@ func (s *Suite) TestSearchForItemByName_Found() {
 
 	item, err := SearchForItemByName(name, userID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), item.Name, "Apples")
+	assert.Equal(s.T(), "Apples", item.Name)
+}
+
+// TODO: duplicated code with the store model... DRY this up
+func fetchCategories() [20]string {
+	categories := [20]string{
+		"Produce",
+		"Bakery",
+		"Meat",
+		"Seafood",
+		"Dairy",
+		"Cereal",
+		"Baking",
+		"Dry Goods",
+		"Canned Goods",
+		"Frozen Foods",
+		"Cleaning",
+		"Paper Products",
+		"Beverages",
+		"Candy & Snacks",
+		"Condiments",
+		"Personal Care",
+		"Baby",
+		"Alcohol",
+		"Pharmacy",
+		"Misc.",
+	}
+	return categories
 }
