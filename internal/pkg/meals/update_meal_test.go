@@ -23,7 +23,7 @@ func (s *Suite) TestUpdateMeal_MealNotFound() {
 
 	_, e := UpdateMeal(args)
 	require.Error(s.T(), e)
-	assert.Equal(s.T(), e.Error(), "record not found")
+	assert.Equal(s.T(), "record not found", e.Error())
 }
 
 func (s *Suite) TestUpdateMeal_SingleColumn() {
@@ -43,7 +43,7 @@ func (s *Suite) TestUpdateMeal_SingleColumn() {
 
 	meal, err := UpdateMeal(args)
 	require.Error(s.T(), err)
-	assert.Equal(s.T(), meal.Name, name)
+	assert.Equal(s.T(), name, meal.Name)
 }
 
 func (s *Suite) TestUpdateMeal_MultiColumn() {
@@ -64,6 +64,6 @@ func (s *Suite) TestUpdateMeal_MultiColumn() {
 
 	meal, err := UpdateMeal(args)
 	require.Error(s.T(), err)
-	assert.Equal(s.T(), meal.Name, name)
-	assert.Equal(s.T(), meal.MealType, &mealType)
+	assert.Equal(s.T(), name, meal.Name)
+	assert.Equal(s.T(), &mealType, meal.MealType)
 }

@@ -1,8 +1,6 @@
 package stores
 
 import (
-	"errors"
-
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
 	uuid "github.com/satori/go.uuid"
@@ -21,8 +19,8 @@ func SaveStapleItem(storeID uuid.UUID, itemID uuid.UUID) (staple models.StoreSta
 	}
 
 	// This makes for quick lookup and setting/unsetting items as staples
-	if err := db.Manager.Model(&item).Update("staple_item_id", &stapleItem.ID).Error; err != nil {
-		return stapleItem, errors.New("could not associate staple item ID with item")
+	if err := db.Manager.Model(&item).UpdateColumn("staple_item_id", &stapleItem.ID).Error; err != nil {
+		return stapleItem, err
 	}
 
 	return stapleItem, nil
