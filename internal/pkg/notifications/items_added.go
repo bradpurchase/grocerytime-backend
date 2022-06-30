@@ -10,7 +10,7 @@ import (
 )
 
 // ItemsAdded sends a push notification to store users about a new item
-func ItemsAdded(userID uuid.UUID, storeID interface{}, numItemsAdded int, appScheme string) {
+func ItemsAdded(userID uuid.UUID, storeID uuid.UUID, numItemsAdded int, appScheme string) {
 	var store models.Store
 	if err := db.Manager.Select("id, name").Where("id = ?", storeID).First(&store).Error; err != nil {
 		log.Println(err)
@@ -27,6 +27,7 @@ func ItemsAdded(userID uuid.UUID, storeID interface{}, numItemsAdded int, appSch
 		body = fmt.Sprintf("An item was added to your %v trip", store.Name)
 	}
 	for i := range deviceTokens {
-		Send(title, body, deviceTokens[i], "Store", storeID.(string), appScheme)
+		storeIDStr := storeID.String()
+		Send(title, body, deviceTokens[i], "Store", storeIDStr, appScheme)
 	}
 }

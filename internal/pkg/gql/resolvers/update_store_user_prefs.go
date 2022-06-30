@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // UpdateStoreUserPrefsResolver resolves the updateStoreUserPrefs mutation
@@ -15,7 +16,7 @@ func UpdateStoreUserPrefsResolver(p graphql.ResolveParams) (interface{}, error) 
 	}
 
 	// Find the StoreUser record from the storeId arg provided and current user ID
-	storeID := p.Args["storeId"]
+	storeID := p.Args["storeId"].(uuid.UUID)
 	userID := user.ID
 	storeUserID, err := stores.RetrieveStoreUserID(storeID, userID)
 	if err != nil {

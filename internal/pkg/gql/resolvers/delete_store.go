@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // DeleteStoreResolver resolves the deleteStore mutation by deleting a store
@@ -15,7 +16,7 @@ func DeleteStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	storeID := p.Args["storeId"]
+	storeID := p.Args["storeId"].(uuid.UUID)
 	store, err := stores.DeleteStore(storeID, user.ID)
 	if err != nil {
 		return nil, err

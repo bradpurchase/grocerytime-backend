@@ -3,6 +3,7 @@ package resolvers
 import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
+	uuid "github.com/satori/go.uuid"
 
 	"github.com/graphql-go/graphql"
 )
@@ -16,7 +17,7 @@ func JoinStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	storeID := p.Args["storeId"]
+	storeID := p.Args["storeId"].(uuid.UUID)
 	storeUser, err := stores.AddUserToStore(user, storeID)
 	if err != nil {
 		return nil, err

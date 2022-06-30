@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/stores"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // LeaveStoreResolver resolves the leaveStore resolver by removing the current user from the store
@@ -14,7 +15,7 @@ func LeaveStoreResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	storeID := p.Args["storeId"]
+	storeID := p.Args["storeId"].(uuid.UUID)
 	storeUser, err := stores.RemoveUserFromStore(user, storeID)
 	if err != nil {
 		return nil, err

@@ -6,11 +6,12 @@ import (
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
+	uuid "github.com/satori/go.uuid"
 )
 
 // DeleteItem deletes an item from a trip and handles trip category cleanup
 // (i.e. if this is the last item in a trip category, it deletes the trip category)
-func DeleteItem(itemID interface{}) (deletedItem models.Item, err error) {
+func DeleteItem(itemID uuid.UUID) (deletedItem models.Item, err error) {
 	item := models.Item{}
 	if err := db.Manager.Where("id = ?", itemID).First(&item).Error; err != nil {
 		return deletedItem, errors.New("item not found")

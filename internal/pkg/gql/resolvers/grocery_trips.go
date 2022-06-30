@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // GroceryTripsResolver resolves the trips mutation
@@ -14,7 +15,7 @@ func GroceryTripsResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	storeID := p.Args["storeId"]
+	storeID := p.Args["storeId"].(uuid.UUID)
 	userID := user.ID
 	completed := p.Args["completed"].(bool)
 	trips, err := trips.RetrieveTrips(storeID, userID, completed)

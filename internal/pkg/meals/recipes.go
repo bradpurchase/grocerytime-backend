@@ -23,7 +23,7 @@ func RetrieveRecipes(userID uuid.UUID, args map[string]interface{}) (recipes []m
 }
 
 // RetrieveRecipe retrieves a recipe by ID
-func RetrieveRecipe(id interface{}) (recipe models.Recipe, err error) {
+func RetrieveRecipe(id uuid.UUID) (recipe models.Recipe, err error) {
 	query := db.Manager.
 		Preload("Ingredients").
 		Where("id = ?", id).

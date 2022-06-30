@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // GroceryTripResolver retrieves a grocery trip by ID
@@ -14,7 +15,7 @@ func GroceryTripResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	tripID := p.Args["id"]
+	tripID := p.Args["id"].(uuid.UUID)
 	trip, err := trips.RetrieveTrip(tripID)
 	if err != nil {
 		return nil, err
