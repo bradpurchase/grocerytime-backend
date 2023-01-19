@@ -1,16 +1,12 @@
 package utils
 
-import "math/rand"
+import "github.com/dchest/uniuri"
 
 var chars = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
 
 // RandString generates a random string with the length provided
 func RandString(length int) string {
-	b := make([]rune, length)
-	for i := range b {
-		b[i] = chars[rand.Intn(len(chars))]
-	}
-	return string(b)
+	return uniuri.NewLen(length)
 }
 
 // TruncateString returns a truncated version of a string by maxLength with ellipsis

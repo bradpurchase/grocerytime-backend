@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/dchest/uniuri v1.2.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/gofrs/uuid v3.3.0+incompatible
