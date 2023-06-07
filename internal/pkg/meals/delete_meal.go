@@ -8,7 +8,7 @@ import (
 )
 
 // DeleteMeal deletes a meal by ID
-func DeleteMeal(mealID interface{}, userID uuid.UUID, appScheme string) (meal models.Meal, err error) {
+func DeleteMeal(mealID uuid.UUID, userID uuid.UUID, appScheme string) (meal models.Meal, err error) {
 	query := db.Manager.
 		Joins("INNER JOIN meal_users ON meal_users.meal_id = meals.id").
 		Where("meals.id = ?", mealID).

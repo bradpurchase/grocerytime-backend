@@ -6,6 +6,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/notifications"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // NotifyTripUpdatedItemsAddedResolver resolves the notifyTripUpdatedItemsAdded mutation
@@ -21,7 +22,7 @@ func NotifyTripUpdatedItemsAddedResolver(p graphql.ResolveParams) (interface{}, 
 	appScheme := p.Info.RootValue.(map[string]interface{})["App-Scheme"]
 	if appScheme != nil {
 		userID := user.ID
-		storeID := p.Args["storeId"]
+		storeID := p.Args["storeId"].(uuid.UUID)
 		numItemsAdded := p.Args["numItemsAdded"].(int)
 		go notifications.ItemsAdded(userID, storeID, numItemsAdded, appScheme.(string))
 		return true, nil

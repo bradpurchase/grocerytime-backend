@@ -14,7 +14,7 @@ import (
 //
 // The store user will be considered pending until the invitation is accepted
 // by the user in the app, at which point they are associated by userID instead.
-func InviteToStoreByEmail(storeID interface{}, invitedEmail string) (storeUser models.StoreUser, err error) {
+func InviteToStoreByEmail(storeID uuid.UUID, invitedEmail string) (storeUser models.StoreUser, err error) {
 	store := &models.Store{}
 	if err := db.Manager.Where("id = ?", storeID).First(&store).Error; err != nil {
 		return storeUser, err
@@ -69,7 +69,7 @@ func AddUserToStoreWithCode(user models.User, code string, appScheme string) (su
 // DEPRECATED
 // AddUserToStore properly associates a user with a store by userID by removing
 // the email value and adding the userID value
-func AddUserToStore(user models.User, storeID interface{}) (su models.StoreUser, err error) {
+func AddUserToStore(user models.User, storeID uuid.UUID) (su models.StoreUser, err error) {
 	store := &models.Store{}
 	if err := db.Manager.Where("id = ?", storeID).First(&store).Error; err != nil {
 		return su, err
@@ -103,7 +103,7 @@ func AddUserToStore(user models.User, storeID interface{}) (su models.StoreUser,
 // RemoveUserFromStore removes a user from a store either by userID or email, whichever is present
 //
 // Used for declining a store invite, and simply removing a user from a store
-func RemoveUserFromStore(user models.User, storeID interface{}) (interface{}, error) {
+func RemoveUserFromStore(user models.User, storeID uuid.UUID) (interface{}, error) {
 	store := &models.Store{}
 	if err := db.Manager.Where("id = ?", storeID).First(&store).Error; err != nil {
 		return nil, errors.New("store not found")

@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/trips"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // DeleteItemResolver deletes an item by itemId param
@@ -14,7 +15,7 @@ func DeleteItemResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	itemID := p.Args["itemId"]
+	itemID := p.Args["itemId"].(uuid.UUID)
 	item, err := trips.DeleteItem(itemID)
 	if err != nil {
 		return nil, err
