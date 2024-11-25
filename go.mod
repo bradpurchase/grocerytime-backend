@@ -23,7 +23,7 @@ require (
 	github.com/sendgrid/sendgrid-go v3.7.2+incompatible
 	github.com/sideshow/apns2 v0.20.0
 	github.com/stretchr/testify v1.6.1
-	github.com/tidwall/gjson v1.6.5
+	github.com/tidwall/gjson v1.9.3
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
 	golang.org/x/text v0.3.4 // indirect
 	gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b // indirect
