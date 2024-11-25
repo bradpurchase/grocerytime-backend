@@ -46,7 +46,7 @@ func RetrieveInvitedUserStores(user models.User) (stores []models.Store, err err
 }
 
 // RetrieveStoreForUser retrieves a specific store by storeID and userID
-func RetrieveStoreForUser(storeID interface{}, userID uuid.UUID) (store models.Store, err error) {
+func RetrieveStoreForUser(storeID uuid.UUID, userID uuid.UUID) (store models.Store, err error) {
 	if err := db.Manager.Where("id = ?", storeID).First(&store).Error; err != nil {
 		return store, err
 	}
@@ -71,7 +71,7 @@ func RetrieveStoreForUserByName(name string, userID uuid.UUID) (models.Store, er
 
 // DeleteStore handles deletion of a store record
 // Note: Associated trips, items, store users etc. are deleted in the AfterDelete hook on the model
-func DeleteStore(storeID interface{}, userID uuid.UUID) (deletedStore models.Store, err error) {
+func DeleteStore(storeID uuid.UUID, userID uuid.UUID) (deletedStore models.Store, err error) {
 	var store models.Store
 	if err := db.Manager.Where("id = ? AND user_id = ?", storeID, userID).First(&store).Error; err != nil {
 		return deletedStore, errors.New("couldn't retrieve store")
@@ -83,7 +83,7 @@ func DeleteStore(storeID interface{}, userID uuid.UUID) (deletedStore models.Sto
 }
 
 // RetrieveStoreUserID retrieves the ID of the store_users record associated with a storeID and userID
-func RetrieveStoreUserID(storeID interface{}, userID uuid.UUID) (storeUserID uuid.UUID, err error) {
+func RetrieveStoreUserID(storeID uuid.UUID, userID uuid.UUID) (storeUserID uuid.UUID, err error) {
 	var storeUser models.StoreUser
 	storeUserQuery := db.Manager.
 		Select("id").

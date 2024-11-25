@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/meals"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // MealResolver resolves the meals query
@@ -14,7 +15,8 @@ func MealResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	meal, err := meals.RetrieveMealForUser(p.Args["id"], user.ID)
+	mealID := p.Args["id"].(uuid.UUID)
+	meal, err := meals.RetrieveMealForUser(mealID, user.ID)
 	if err != nil {
 		return nil, err
 	}

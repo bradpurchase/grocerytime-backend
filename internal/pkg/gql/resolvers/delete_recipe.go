@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/meals"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // DeleteRecipeResolver resolves the deleteRecipe mutation
@@ -14,7 +15,7 @@ func DeleteRecipeResolver(p graphql.ResolveParams) (interface{}, error) {
 		return nil, err
 	}
 
-	recipeID := p.Args["id"]
+	recipeID := p.Args["id"].(uuid.UUID)
 	userID := user.ID
 	recipe, err := meals.DeleteRecipe(recipeID, userID)
 	if err != nil {

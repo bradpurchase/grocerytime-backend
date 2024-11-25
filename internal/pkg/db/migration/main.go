@@ -3,11 +3,8 @@ package migration
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/gofrs/uuid"
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/db/models"
@@ -65,102 +62,6 @@ func AutoMigrateService(db *gorm.DB) error {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Exec("TRUNCATE TABLE api_clients").Error
-			},
-		},
-		{
-			// Add index idx_items_grocery_trip_id_category_id
-			ID: "202006021110_add_idx_items_grocery_trip_id_category_id",
-			Migrate: func(tx *gorm.DB) error {
-				return tx.Exec("CREATE INDEX IF NOT EXISTS idx_grocery_trip_id_category_id ON items (grocery_trip_id, category_id)").Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Exec("DROP INDEX idx_grocery_trip_id_category_id").Error
-			},
-		},
-		{
-			// Add index idx_store_users_store_id
-			ID: "202006021117_add_idx_store_users_store_id_user_id",
-			Migrate: func(tx *gorm.DB) error {
-				return tx.Exec("CREATE INDEX IF NOT EXISTS idx_store_users_store_id_user_id ON store_users (store_id, user_id)").Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Exec("DROP INDEX idx_store_users_store_id_user_id").Error
-			},
-		},
-		{
-			// Create store_item_category_settings
-			ID: "202105020850_create_store_item_category_settings",
-			Migrate: func(tx *gorm.DB) error {
-				type StoreItemCategorySettings struct {
-					ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-					StoreID uuid.UUID `gorm:"type:uuid;not null;index:idx_store_category_items_store_id"`
-					Items   datatypes.JSON
-
-					CreatedAt time.Time
-					UpdatedAt time.Time
-					DeletedAt gorm.DeletedAt
-				}
-				return tx.AutoMigrate(&StoreItemCategorySettings{})
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropTable("store_item_category_settings")
-			},
-		},
-		{
-			ID: "202105050742_create_store_staple_items",
-			Migrate: func(tx *gorm.DB) error {
-				type StoreStapleItem struct {
-					ID      uuid.UUID `gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-					StoreID uuid.UUID `gorm:"type:uuid;not null;index:idx_store_staple_items_store_id"`
-					Name    string    `gorm:"type:varchar(100);not null"`
-
-					CreatedAt time.Time
-					UpdatedAt time.Time
-					DeletedAt gorm.DeletedAt
-				}
-				return tx.AutoMigrate(&StoreStapleItem{})
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropTable("store_staple_items")
-			},
-		},
-		{
-			// Add index idx_store_staple_items_store_id_name
-			ID: "202105050820_add_idx_store_staple_items_store_id_name",
-			Migrate: func(tx *gorm.DB) error {
-				return tx.Exec("CREATE INDEX IF NOT EXISTS idx_store_staple_items_store_id_name ON store_staple_items (store_id, name)").Error
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Exec("DROP INDEX idx_store_staple_items_store_id_name").Error
-			},
-		},
-		{
-			// Add column staple_id to items
-			ID: "202105060735_add_staple_id_to_items",
-			Migrate: func(tx *gorm.DB) error {
-				type Item struct {
-					StapleItemID *uuid.UUID `gorm:"type:uuid;index"`
-				}
-				return tx.AutoMigrate(&Item{})
-			},
-			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropColumn("people", "age")
-			},
-		},
-		{
-			// Add column instructions to recipes
-			ID: "202109070759_add_instructions_to_recipes",
-			Migrate: func(tx *gorm.DB) error {
-				type Recipe struct {
-					Instructions datatypes.JSON
-				}
-				return tx.AutoMigrate(&Recipe{})
-			},
-			Rollback: func(tx *gorm.DB) error {
-				type Recipe struct {
-					Instructions datatypes.JSON
-				}
-				return tx.Migrator().DropColumn(&Recipe{}, "instructions")
 			},
 		},
 	})

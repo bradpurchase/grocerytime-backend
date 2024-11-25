@@ -4,6 +4,7 @@ import (
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/auth"
 	"github.com/bradpurchase/grocerytime-backend/internal/pkg/meals"
 	"github.com/graphql-go/graphql"
+	uuid "github.com/satori/go.uuid"
 )
 
 // RecipesResolver resolves the recipes query
@@ -24,7 +25,7 @@ func RecipesResolver(p graphql.ResolveParams) (interface{}, error) {
 
 // RecipeResolver resolves the recipe query
 func RecipeResolver(p graphql.ResolveParams) (interface{}, error) {
-	recipeID := p.Args["id"]
+	recipeID := p.Args["id"].(uuid.UUID)
 	recipe, err := meals.RetrieveRecipe(recipeID)
 	if err != nil {
 		return nil, err

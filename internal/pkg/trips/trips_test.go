@@ -345,7 +345,7 @@ func (s *Suite) TestRetrieveItems_NoItems() {
 
 	items, err := RetrieveItems(tripID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), len(items.([]models.Item)), 0)
+	assert.Equal(s.T(), len(items), 0)
 }
 
 func (s *Suite) TestRetrieveItems_HasItems() {
@@ -369,10 +369,10 @@ func (s *Suite) TestRetrieveItems_HasItems() {
 
 	items, err := RetrieveItems(tripID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), 2, len(items.([]models.Item)))
-	assert.Equal(s.T(), tripID, items.([]models.Item)[0].GroceryTripID)
-	assert.Equal(s.T(), "Apples", items.([]models.Item)[0].Name)
-	assert.Equal(s.T(), "Bananas", items.([]models.Item)[1].Name)
+	assert.Equal(s.T(), 2, len(items))
+	assert.Equal(s.T(), tripID, items[0].GroceryTripID)
+	assert.Equal(s.T(), "Apples", items[0].Name)
+	assert.Equal(s.T(), "Bananas", items[1].Name)
 }
 
 func (s *Suite) TestRetrieveItemsInCategory_NoItems() {
@@ -384,7 +384,7 @@ func (s *Suite) TestRetrieveItemsInCategory_NoItems() {
 
 	items, err := RetrieveItemsInCategory(tripID, categoryID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), 0, len(items.([]models.Item)))
+	assert.Equal(s.T(), 0, len(items))
 }
 
 func (s *Suite) TestRetrieveItemsInCategory_HasItems() {
@@ -409,10 +409,10 @@ func (s *Suite) TestRetrieveItemsInCategory_HasItems() {
 
 	items, err := RetrieveItemsInCategory(tripID, categoryID)
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), 2, len(items.([]models.Item)))
-	assert.Equal(s.T(), tripID, items.([]models.Item)[0].GroceryTripID)
-	assert.Equal(s.T(), "Apples", items.([]models.Item)[0].Name)
-	assert.Equal(s.T(), "Bananas", items.([]models.Item)[1].Name)
+	assert.Equal(s.T(), 2, len(items))
+	assert.Equal(s.T(), tripID, items[0].GroceryTripID)
+	assert.Equal(s.T(), "Apples", items[0].Name)
+	assert.Equal(s.T(), "Bananas", items[1].Name)
 }
 
 // Add items

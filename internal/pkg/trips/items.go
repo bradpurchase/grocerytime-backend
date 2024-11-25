@@ -7,8 +7,7 @@ import (
 )
 
 // RetrieveItems finds all items in a grocery trip by tripID
-func RetrieveItems(tripID uuid.UUID) (interface{}, error) {
-	var items []models.Item
+func RetrieveItems(tripID uuid.UUID) (items []models.Item, err error) {
 	query := db.Manager.
 		Where("grocery_trip_id = ?", tripID).
 		Order("position ASC").
@@ -21,8 +20,7 @@ func RetrieveItems(tripID uuid.UUID) (interface{}, error) {
 }
 
 // RetrieveItemsInCategory finds all items in a grocery trip by category
-func RetrieveItemsInCategory(tripID uuid.UUID, categoryID uuid.UUID) (interface{}, error) {
-	var items []models.Item
+func RetrieveItemsInCategory(tripID uuid.UUID, categoryID uuid.UUID) (items []models.Item, err error) {
 	query := db.Manager.
 		Where("grocery_trip_id = ?", tripID).
 		Where("category_id = ?", categoryID).

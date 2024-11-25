@@ -42,7 +42,7 @@ func RetrieveCurrentStoreTrip(storeID uuid.UUID) (groceryTrip models.GroceryTrip
 }
 
 // RetrieveTrips retrieves grocery trips within a store
-func RetrieveTrips(storeID interface{}, userID uuid.UUID, completed bool) (tripsList []models.GroceryTrip, err error) {
+func RetrieveTrips(storeID uuid.UUID, userID uuid.UUID, completed bool) (tripsList []models.GroceryTrip, err error) {
 	// Verify that this store belongs to the user
 	var count int64
 	existsQuery := db.Manager.
@@ -70,7 +70,7 @@ func RetrieveTrips(storeID interface{}, userID uuid.UUID, completed bool) (trips
 }
 
 // RetrieveTrip retrieves a specific grocery trip by ID
-func RetrieveTrip(tripID interface{}) (models.GroceryTrip, error) {
+func RetrieveTrip(tripID uuid.UUID) (models.GroceryTrip, error) {
 	trip := models.GroceryTrip{}
 
 	if err := db.Manager.Where("id = ?", tripID).First(&trip).Error; err != nil {

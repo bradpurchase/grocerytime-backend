@@ -53,7 +53,7 @@ func RetrieveMeals(userID uuid.UUID, args map[string]interface{}) (meals []model
 }
 
 // RetrieveMealForUser retrieves a specific meal by mealID and userID
-func RetrieveMealForUser(mealID interface{}, userID uuid.UUID) (meal models.Meal, err error) {
+func RetrieveMealForUser(mealID uuid.UUID, userID uuid.UUID) (meal models.Meal, err error) {
 	query := db.Manager.
 		Select("meals.*").
 		Joins("INNER JOIN meal_users ON meal_users.meal_id = meals.id").

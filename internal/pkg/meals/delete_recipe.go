@@ -7,7 +7,7 @@ import (
 )
 
 // DeleteRecipe deletes a recipe
-func DeleteRecipe(recipeID interface{}, userID uuid.UUID) (recipe models.Recipe, err error) {
+func DeleteRecipe(recipeID uuid.UUID, userID uuid.UUID) (recipe models.Recipe, err error) {
 	query := db.Manager.
 		Where("id = ? AND user_id = ?", recipeID, userID).
 		Last(&recipe).
